@@ -12,7 +12,11 @@
       </sidebar-link>
       <sidebar-link to="/material-master" v-if="role == 'Requester'">
         <i class="nc-icon nc-app"></i>
-        <p>Material Master</p>
+        <p>Mother Coil</p>
+      </sidebar-link>
+      <sidebar-link to="/slit-coil" v-if="role == 'Requester'">
+        <i class="nc-icon nc-support-17"></i>
+        <p>Slit Coil</p>
       </sidebar-link>
       <sidebar-link to="/job-request" v-if="role == 'Requester'">
         <i class="nc-icon nc-notes"></i>

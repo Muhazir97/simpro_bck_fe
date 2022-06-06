@@ -1,3 +1,4 @@
+// GeneralViews
 import Vue from "vue";
 import Router from "vue-router";
 import AppHeader from "./layout/AppHeader";
@@ -7,12 +8,14 @@ import Landing from "./views/Landing.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import TableList from './views/admin/TableList.vue'
+import NotFound from './views/NotFoundPage.vue'
 
 // =================== ADMIN =====================
 import DashboardLayout from "./views/admin/DashboardLayout";
 import Overview from './views/admin/Overview.vue'
 import ClientMaster from "./views/admin/page/ClientMaster";
 import MaterialMaster from "./views/admin/page/MaterialMaster";
+import SlitCoil from "./views/admin/page/SlitCoil";
 import JobRequest from "./views/admin/page/JobRequest";
 import DetailJobRequest from "./views/admin/page/DetailJobRequest";
 import Delivery from "./views/admin/page/Delivery";
@@ -69,6 +72,11 @@ const vurRouter = new Router({
         component: MaterialMaster
       },
       {
+        path: 'slit-coil',
+        name: 'SlitCoil',
+        component: SlitCoil
+      },
+      {
         path: 'job-request',
         name: 'JobRequest',
         component: JobRequest
@@ -105,7 +113,7 @@ const vurRouter = new Router({
       },
     ]
   },
-  // { path: '*', component: NotFound },
+  { path: '*', component: NotFound },
 
   // =================== GENERAL =====================
     {

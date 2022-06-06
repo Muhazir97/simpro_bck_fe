@@ -109,7 +109,7 @@
                     <td style="font-size: 13px;">{{row.created_at}}</td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
-                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="saveMaterial(row.id, 'delete')" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial(row.id, 'delete')" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -137,11 +137,11 @@
                 >
       </textarea>
 
-      <div v-if="jobRequestData.job_status == 'Draft'" class="text-center mt-5">
+      <!-- <div v-if="jobRequestData.job_status == 'Draft'" class="text-center mt-5">
         <button type="submit" class="btn btn-sm btn-primary btn-fill" @click="sendRequest('Process')" :disabled="(tableMatReq.data.length == 0)">
           <i class="fa fa-paper-plane" aria-hidden="true"></i> Process
         </button>
-      </div>
+      </div> -->
       
       <!-- MODAL CREATE MATERIAL-->
       <div>
@@ -184,7 +184,7 @@
                     <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
                     <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
-                      <i class="fa fa-plus text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial(row.id, 'add')" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-check-square-o text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial(row.id, 'add')" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                   </tr>
                 </tbody>
@@ -254,8 +254,8 @@
             context.jobRequestData = response.data.data[0];
             context.update_job_note = response.data.data[0].job_note
         }).onFinish(function() {  
-            Api(context, jobRequest.getMatMas({po_no: context.jobRequestData.po_no})).onSuccess(function(response) {
-                context.tableMatMas.data = response.data.data.data.data;                   
+            Api(context, jobRequest.getMatMas({client_name: context.jobRequestData.client_name})).onSuccess(function(response) {
+                context.tableMatMas.data = response.data.data;             
             })
             .onError(function(error) {                    
                 context.tableMatMas.data = []
@@ -287,8 +287,10 @@
         if (this.jobRequestData.job_no != undefined) {
           if (type == 'add') {
             formData.append('job_no', this.jobRequestData.job_no);
+            formData.append('po_no', this.jobRequestData.po_no);
           }else{
             formData.append('job_no', '');
+            formData.append('po_no', '');
           }
           formData.append('id', id);
         }else{
@@ -332,6 +334,29 @@
         })
         .call() 
       },
+      // bilangan) {
+      // /   var number_string = bilangan.toString(),
+      //       sisa    = number_string.length % 3,
+      //       rupiah  = number_string.substr(0, sisa),
+      //       ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+
+      //   var number_string_2 = bilangan.toString(),
+      //       sisaRatus     = number_string_2.length % 2,
+      //       rupiahRatusan = number_string_2.substr(0, sisaRatus),
+      //       ratusan       = number_string_2.substr(sisa).match(/\d{2}/g);
+
+      //   if(number_string.length == 3) {
+      //     var separator = sisaRatus ? '.' : '';
+      //     rupiahRatusan += separator + ratusan.join('.');
+      //     return rupiahRatusan
+      //   }else if(ribuan){
+      //     var separator = sisa ? ',' : '';
+      //     rupiah += separator + ribuan.join(',');
+      //     return rupiah
+      //   }else{
+      //     return bilangan
+      //   }
+      // },
 
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)

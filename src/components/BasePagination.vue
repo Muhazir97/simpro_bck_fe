@@ -22,7 +22,7 @@ export default {
   name: "base-pagination",
   props: {
     pageCount: {
-      type: Number,
+
       default: 0,
       description:
         "Pagination page count. This should be specified in combination with perPage"

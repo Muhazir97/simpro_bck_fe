@@ -3,7 +3,8 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-job-request'" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Generate Report</a>
+          <a :href="apiUrl+'report-excel/job-request?job_no='+search.job_no+'&job_name='+search.job_name+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&coil_no='+search.coil_no+'&owner='+search.owner+''" target="_BLANK" class="btn btn-sm btn-success mb-4"><i class="fa fa-upload fa-sm"></i> Import</a>
           <card class="strpied-tabled-with-hover shadow"
                 body-classes="table-full-width table-responsive"
           >
@@ -31,63 +32,65 @@
                 </div>
               </div>
             </template>
-            <table class="table">
-              <thead>
-                <slot name="columns">
-                  <tr style="background-color: #F0F8FF;">
-                    <th>Job Number</th>
-                    <th>Job Name</th>
-                    <!-- <th>Job Description</th> -->
-                    <th>Po Number</th>
-                    <th>Client</th>
-                    <th>Prod Class</th>
-                    <th>Weight</th>
-                    <th>Rate /KG</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                    <th>Created By</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th style="display: none" ></th>
+            <div class="scroll">
+              <table class="table">
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th>Job Number</th>
+                      <th>Job Name</th>
+                      <!-- <th>Job Description</th> -->
+                      <th>Po Number</th>
+                      <th>Client</th>
+                      <th>Prod Class</th>
+                      <th>Weight</th>
+                      <th>Rate /KG</th>
+                      <th>Status</th>
+                      <th>Created At</th>
+                      <th>Created By</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th style="display: none" ></th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in table.data" :key="i">
+                    <td style="font-size: 13px;">
+                      <label class="badge badge-success">{{row.job_no}}</label>
+                    </td>
+                    <td style="font-size: 13px;">{{row.job_name}}</td>
+                    <!-- <td style="font-size: 13px;">{{row.job_description}}</td> -->
+                    <td style="font-size: 13px;">{{row.po_no}}</td>
+                    <td style="font-size: 13px;">{{row.client_name}}</td>
+                    <td style="font-size: 13px;">{{row.prod_class}}</td>
+                    <td style="font-size: 13px;">{{row.weight}}</td>
+                    <td style="font-size: 13px;">{{row.rate}}</td>
+                    <td>
+                      <label class="badge badge-danger">{{row.job_status}}</label>
+                    </td>
+                    <td style="font-size: 13px;">{{row.created_at}}</td>
+                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <td>
+                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="row.job_status == 'Draft'"></i>
+                    </td>
+                    <td>
+                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)" v-if="row.job_status == 'Draft'"></i>
+                    </td>
+                    <td>
+                      <i class="fa fa-eye" aria-hidden="true" title="Detail" style="cursor: pointer;" @click="detail(row.job_no)"></i>
+                    </td>
+                    <td style="display: none" ></td>
                   </tr>
-                </slot>
-              </thead>
-              <tbody>
-                <tr v-for="(row, i) in table.data" :key="i">
-                  <td style="font-size: 13px;">
-                    <label class="badge badge-success">{{row.job_no}}</label>
-                  </td>
-                  <td style="font-size: 13px;">{{row.job_name}}</td>
-                  <!-- <td style="font-size: 13px;">{{row.job_description}}</td> -->
-                  <td style="font-size: 13px;">{{row.po_no}}</td>
-                  <td style="font-size: 13px;">{{row.client_name}}</td>
-                  <td style="font-size: 13px;">{{row.prod_class}}</td>
-                  <td style="font-size: 13px;">{{row.weight}}</td>
-                  <td style="font-size: 13px;">{{row.rate}}</td>
-                  <td>
-                    <label class="badge badge-danger">{{row.job_status}}</label>
-                  </td>
-                  <td style="font-size: 13px;">{{row.created_at}}</td>
-                  <td style="font-size: 13px;">{{row.created_by}}</td>
-                  <td>
-                    <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="row.job_status == 'Draft'"></i>
-                  </td>
-                  <td>
-                    <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)" v-if="row.job_status == 'Draft'"></i>
-                  </td>
-                  <td>
-                    <i class="fa fa-eye" aria-hidden="true" title="Detail" style="cursor: pointer;" @click="detail(row.job_no)"></i>
-                  </td>
-                  <td style="display: none" ></td>
-                  <!-- <td>
-                    <a :href="apiUrl+'invoice/'+row.job_no" target="_BLANK">
-                      <i class="fa fa-file-text" aria-hidden="true" title="Invoice" style="cursor: pointer;" @click="detail(row.job_no)" ></i>
-                    </a>
-                  </td> -->
-                </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
+            <template slot="footer">
+              <div class="float-right">
+                <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
+              </div>
+            </template>
           </card>
         </div>
 
@@ -232,6 +235,11 @@
     },
     data () {
       return {
+        pagination: {
+          page_count: '',
+          default: 1,
+          page: '',
+        },
         onLoading: false,
         table: {
           data: []
@@ -268,8 +276,9 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, jobRequest.index({job_no: context.search.job_no, job_name: context.search.job_name, po_no: context.search.po_no, client_name: context.search.client_name, prod_class: context.search.prod_class,})).onSuccess(function(response) {    
-            context.table.data = response.data.data.data.data;
+        Api(context, jobRequest.index({job_no: context.search.job_no, job_name: context.search.job_name, po_no: context.search.po_no, client_name: context.search.client_name, prod_class: context.search.prod_class, page: context.pagination.page})).onSuccess(function(response) {    
+            context.table.data            = response.data.data.data.data;
+            context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -278,9 +287,12 @@
         .call()
       },
       filter() {
-        this.formFilter.add   = true;
-        this.formFilter.show  = true;
-        this.formFilter.title = "Filter";
+        this.formFilter.add     = true;
+        this.formFilter.show    = true;
+        this.formFilter.title   = "Filter";
+        this.pagination.page    = 1 ;
+        this.search.client_name = ''
+        this.$refs.autocomplete.clearInput()
       },
       create() {
           this.form.add       = true;
@@ -355,6 +367,10 @@
             verticalAlign: verticalAlign,
             type: type
         })
+      },
+      changePage(page){
+        this.pagination.page = page;
+        this.get();
       },
 
       // ================= Autocomplete ============
