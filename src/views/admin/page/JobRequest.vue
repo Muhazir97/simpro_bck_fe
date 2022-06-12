@@ -12,15 +12,8 @@
               <div class="row">
                 <div class="col-4">
                   <h4 class="card-title">Job Order</h4>
-                  <!-- <p class="card-category">Here is a subtitle for this table</p> -->
                 </div>
                 <div class="col-4">
-                  <!-- <base-input type="text"
-                            placeholder="Search"
-                            v-model="search"
-                            v-on:keyup="filter"
-                            size="small">
-                  </base-input> -->
                 </div>
                 <div class="col-4">
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
@@ -58,15 +51,15 @@
                 <tbody>
                   <tr v-for="(row, i) in table.data" :key="i">
                     <td style="font-size: 13px;">
-                      <label class="badge badge-success">{{row.job_no}}</label>
+                      <label class="badge badge-success">{{ row.job_no }}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.job_name}}</td>
+                    <td style="font-size: 13px;">{{ row.job_name }}</td>
                     <!-- <td style="font-size: 13px;">{{row.job_description}}</td> -->
-                    <td style="font-size: 13px;">{{row.po_no}}</td>
-                    <td style="font-size: 13px;">{{row.client_name}}</td>
-                    <td style="font-size: 13px;">{{row.prod_class}}</td>
-                    <td style="font-size: 13px;">{{row.weight}}</td>
-                    <td style="font-size: 13px;">{{row.rate}}</td>
+                    <td style="font-size: 13px;">{{ row.po_no }}</td>
+                    <td style="font-size: 13px;">{{ row.client_name }}</td>
+                    <td style="font-size: 13px;">{{ row.prod_class }}</td>
+                    <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
+                    <td style="font-size: 13px;">{{ convertRp(row.rate) }}</td>
                     <td>
                       <label class="badge badge-danger">{{row.job_status}}</label>
                     </td>
@@ -328,7 +321,7 @@
           alert('Semua Field Wajib Di Isi')
         }
 
-        if (context.form.title == 'Create Job Request') {
+        if (context.form.title == 'Create Job Order') {
             api = Api(context, jobRequest.create(formData));
         } else {
             api = Api(context, jobRequest.update(this.jobRequestData.id, formData));
@@ -371,6 +364,31 @@
       changePage(page){
         this.pagination.page = page;
         this.get();
+      },
+      convertRp(bilangan) {
+        if (bilangan) {
+          var number_string = bilangan.toString(),
+              sisa    = number_string.length % 3,
+              rupiah  = number_string.substr(0, sisa),
+              ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+
+          var number_string_2 = bilangan.toString(),
+              sisaRatus     = number_string_2.length % 2,
+              rupiahRatusan = number_string_2.substr(0, sisaRatus),
+              ratusan       = number_string_2.substr(sisa).match(/\d{2}/g);
+
+          if(number_string.length == 3) {
+            var separator = sisaRatus ? '.' : '';
+            rupiahRatusan += separator + ratusan.join('.');
+            return rupiahRatusan
+          }else if(ribuan){
+            var separator = sisa ? ',' : '';
+            rupiah += separator + ribuan.join(',');
+            return rupiah
+          }else{
+            return bilangan
+          }
+        }
       },
 
       // ================= Autocomplete ============

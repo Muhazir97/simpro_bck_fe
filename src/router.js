@@ -58,7 +58,7 @@ const vurRouter = new Router({
     children: [
       {
         path: 'dashboard',
-        name: 'Overview',
+        name: 'Dashboard',
         component: Overview
       },
       {
@@ -113,7 +113,7 @@ const vurRouter = new Router({
       },
     ]
   },
-  { path: '*', component: NotFound },
+  // { path: '*', component: NotFound },
 
   // =================== GENERAL =====================
     {
@@ -161,7 +161,7 @@ vurRouter.beforeEach((to, from, next) => {
       const auth = JSON.parse(authenticated);
       if (to.name == 'login') {
           return next({
-              name: 'dashboard'
+              name: 'Dashboard'
           });
       }
       if (to.name != 'Relogin') {

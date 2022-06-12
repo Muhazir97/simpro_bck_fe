@@ -25,4 +25,11 @@ export default {
     delete(id) {
         return Service().post('material/delete/'+id);
     },
+    import(params) {
+        return Service().post('import/material-master', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
 }

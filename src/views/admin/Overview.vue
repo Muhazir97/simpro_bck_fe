@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <!-- <a :href="apiUrl+'report-all'" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Generate Report</a> -->
       <div class="row">
-        <!-- <div class="col-xl-2 col-md-6">
+        <!-- <div class="col-xl-3 col-md-6">
           <router-link :to="'/job-request'">
             <stats-card class="shadow">
               <div slot="header" class="icon-warning">
@@ -18,15 +18,30 @@
             </stats-card>
           </router-link>
         </div> -->
+        <div class="col-xl-3 col-md-6">
+          <router-link :to="'/client-master'">
+            <stats-card class="shadow">
+              <div slot="header" class="icon-warning">
+                <i class="nc-icon nc-badge text-muted"></i>
+              </div>
+              <div slot="content">
+                <p class="card-category">Client Master</p>
+                <h4 class="card-title">{{ count_task.client }}</h4>
+              </div>
+              <div slot="footer">
+              </div>
+            </stats-card>
+          </router-link>
+        </div>
 
-        <div class="col-xl-2 col-md-6">
+        <div class="col-xl-3 col-md-6">
           <router-link :to="'/material-master'">
             <stats-card class="shadow">
               <div slot="header" class="icon-warning">
                 <i class="nc-icon nc-app text-info"></i>
               </div>
               <div slot="content">
-                <p class="card-category">Material Master</p>
+                <p class="card-category">Mother Coil</p>
                 <h4 class="card-title">{{ count_task.material }}</h4>
               </div>
               <div slot="footer">
@@ -35,7 +50,23 @@
           </router-link>
         </div>
 
-        <div class="col-xl-2 col-md-6" v-if="role == 'Requester'">
+        <div class="col-xl-3 col-md-6">
+          <router-link :to="'/slit-coil'">
+            <stats-card class="shadow">
+              <div slot="header" class="icon-warning">
+                <i class="nc-icon nc-support-17 text-light"></i>
+              </div>
+              <div slot="content">
+                <p class="card-category">Slit Coil</p>
+                <h4 class="card-title">{{ count_task.slit_coil }}</h4>
+              </div>
+              <div slot="footer">
+              </div>
+            </stats-card>
+          </router-link>
+        </div>
+
+        <div class="col-xl-3 col-md-6" v-if="role == 'Requester'">
           <router-link :to="'/job-request'">
             <stats-card class="shadow">
               <div slot="header" class="icon-danger">
@@ -51,7 +82,7 @@
           </router-link>
         </div>
 
-        <div class="col-xl-2 col-md-6" v-if="role == 'Requester'">
+        <div class="col-xl-3 col-md-6" v-if="role == 'Requester'">
           <router-link :to="'/delivery'">
             <stats-card class="shadow">
               <div slot="header" class="icon-danger">
@@ -67,11 +98,11 @@
           </router-link>
         </div>
 
-        <div class="col-xl-2 col-md-6" v-if="role == 'Requester'">
+        <div class="col-xl-3 col-md-6" v-if="role == 'Requester'">
           <router-link :to="'/news'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
-                <i class="nc-icon nc-paper-2"></i>
+                <i class="nc-icon nc-paper-2 text-dark"></i>
               </div>
               <div slot="content">
                 <p class="card-category">News</p>
@@ -83,7 +114,7 @@
           </router-link>
         </div>
 
-        <div class="col-xl-2 col-md-6" v-if="role == 'Requester'">
+        <div class="col-xl-3 col-md-6" v-if="role == 'Requester'">
           <router-link :to="'/invoice'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
@@ -99,7 +130,7 @@
           </router-link>
         </div>
 
-        <div class="col-xl-2 col-md-6" v-if="role == 'Requester'">
+        <div class="col-xl-3 col-md-6" v-if="role == 'Requester'">
           <router-link :to="'/payment'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">

@@ -37,9 +37,9 @@
                 </tr>
                 <tr>
                   <td style="background-color: #F0F8FF; font-weight: bold;" width="150">Weight</td>
-                  <td>{{ jobRequestData.weight }}</td>
+                  <td>{{ convertRp(jobRequestData.weight) }}</td>
                   <td style="background-color: #F0F8FF; font-weight: bold;" width="150">Rate /KG</td>
-                  <td>{{ jobRequestData.rate }}</td>
+                  <td>{{ convertRp(jobRequestData.rate) }}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #F0F8FF; font-weight: bold;" width="150">Created By</td>
@@ -109,7 +109,7 @@
                     <td style="font-size: 13px;">{{row.created_at}}</td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
-                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial(row.id, 'delete')" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial(row.id, row.coil_no, 'delete')" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -184,7 +184,7 @@
                     <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
                     <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
-                      <i class="fa fa-check-square-o text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial(row.id, 'add')" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-check-square-o text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial(row.id, row.coil_no, 'add')" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                   </tr>
                 </tbody>
@@ -279,7 +279,7 @@
           this.form.show  = true;
           this.form.title = "Add Material";
       },
-      saveMaterial(id, type){
+      saveMaterial(id, coil_no, type){
         let api = null;
         let context = this;
         let formData = new FormData(); 
@@ -293,6 +293,7 @@
             formData.append('po_no', '');
           }
           formData.append('id', id);
+          formData.append('coil_no', coil_no);
         }else{
           alert('Semua Field Wajib Di Isi')
         }
@@ -334,29 +335,31 @@
         })
         .call() 
       },
-      // bilangan) {
-      // /   var number_string = bilangan.toString(),
-      //       sisa    = number_string.length % 3,
-      //       rupiah  = number_string.substr(0, sisa),
-      //       ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+      convertRp(bilangan) {
+        if (bilangan) {
+          var number_string = bilangan.toString(),
+              sisa    = number_string.length % 3,
+              rupiah  = number_string.substr(0, sisa),
+              ribuan  = number_string.substr(sisa).match(/\d{3}/g);
 
-      //   var number_string_2 = bilangan.toString(),
-      //       sisaRatus     = number_string_2.length % 2,
-      //       rupiahRatusan = number_string_2.substr(0, sisaRatus),
-      //       ratusan       = number_string_2.substr(sisa).match(/\d{2}/g);
+          var number_string_2 = bilangan.toString(),
+              sisaRatus     = number_string_2.length % 2,
+              rupiahRatusan = number_string_2.substr(0, sisaRatus),
+              ratusan       = number_string_2.substr(sisa).match(/\d{2}/g);
 
-      //   if(number_string.length == 3) {
-      //     var separator = sisaRatus ? '.' : '';
-      //     rupiahRatusan += separator + ratusan.join('.');
-      //     return rupiahRatusan
-      //   }else if(ribuan){
-      //     var separator = sisa ? ',' : '';
-      //     rupiah += separator + ribuan.join(',');
-      //     return rupiah
-      //   }else{
-      //     return bilangan
-      //   }
-      // },
+          if(number_string.length == 3) {
+            var separator = sisaRatus ? '.' : '';
+            rupiahRatusan += separator + ratusan.join('.');
+            return rupiahRatusan
+          }else if(ribuan){
+            var separator = sisa ? ',' : '';
+            rupiah += separator + ribuan.join(',');
+            return rupiah
+          }else{
+            return bilangan
+          }
+        }
+      },
 
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)

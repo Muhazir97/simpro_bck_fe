@@ -25,4 +25,11 @@ export default {
     delete(id) {
         return Service().post('slit-coil/delete/'+id);
     },
+    import(params) {
+        return Service().post('import/slit-coil', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
 }
