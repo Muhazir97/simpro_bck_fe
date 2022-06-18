@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-12">
           <a :href="apiUrl+'report-excel/job-request?job_no='+search.job_no+'&job_name='+search.job_name+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
-          <a :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&coil_no='+search.coil_no+'&owner='+search.owner+''" target="_BLANK" class="btn btn-sm btn-success mb-4"><i class="fa fa-upload fa-sm"></i> Import</a>
+          <!-- <a :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&coil_no='+search.coil_no+'&owner='+search.owner+''" target="_BLANK" class="btn btn-sm btn-success mb-4"><i class="fa fa-upload fa-sm"></i> Import</a> -->
           <card class="strpied-tabled-with-hover shadow"
                 body-classes="table-full-width table-responsive"
           >
@@ -43,7 +43,6 @@
                       <th>Created By</th>
                       <th></th>
                       <th></th>
-                      <th></th>
                       <th style="display: none" ></th>
                     </tr>
                   </slot>
@@ -51,7 +50,7 @@
                 <tbody>
                   <tr v-for="(row, i) in table.data" :key="i">
                     <td style="font-size: 13px;">
-                      <label class="badge badge-success">{{ row.job_no }}</label>
+                      <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.job_no)">{{ row.job_no }}</label>
                     </td>
                     <td style="font-size: 13px;">{{ row.job_name }}</td>
                     <!-- <td style="font-size: 13px;">{{row.job_description}}</td> -->
@@ -70,9 +69,6 @@
                     </td>
                     <td>
                       <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)" v-if="row.job_status == 'Draft'"></i>
-                    </td>
-                    <td>
-                      <i class="fa fa-eye" aria-hidden="true" title="Detail" style="cursor: pointer;" @click="detail(row.job_no)"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -112,7 +108,7 @@
               <div class="form-group">
                 <label>Client</label><br>
                 <autocomplete 
-                  ref="autocomplete"
+                  ref="autocompleteAdd"
                   :url="apiUrl+'client/find-client'"
                   :customHeaders="{ Authorization: tokenApi }"
                   anchor="client_name"
@@ -292,7 +288,7 @@
           this.form.show      = true;
           this.form.title     = "Create Job Order";
           this.jobRequestData = {}
-          this.$refs.autocomplete.clearInput()
+          this.$refs.autocompleteAdd.clearInput()
       },
       edit(id) {
         let context = this;               
@@ -300,7 +296,7 @@
             context.jobRequestData = response.data.data[0];
             context.form.show      = true;
             context.form.title     = 'Edit Job Order';
-            context.$refs.autocomplete.setValue(response.data.data[0].client_name)                        
+            context.$refs.autocompleteAdd.setValue(response.data.data[0].client_name)                        
         })
         .call()        
       },
@@ -372,18 +368,9 @@
               rupiah  = number_string.substr(0, sisa),
               ribuan  = number_string.substr(sisa).match(/\d{3}/g);
 
-          var number_string_2 = bilangan.toString(),
-              sisaRatus     = number_string_2.length % 2,
-              rupiahRatusan = number_string_2.substr(0, sisaRatus),
-              ratusan       = number_string_2.substr(sisa).match(/\d{2}/g);
-
-          if(number_string.length == 3) {
-            var separator = sisaRatus ? '.' : '';
-            rupiahRatusan += separator + ratusan.join('.');
-            return rupiahRatusan
-          }else if(ribuan){
-            var separator = sisa ? ',' : '';
-            rupiah += separator + ribuan.join(',');
+          if(ribuan){
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
             return rupiah
           }else{
             return bilangan

@@ -22,7 +22,7 @@ module.exports = {
     ]
   },
   pwa: {
-    name: 'Vue Light Bootstrap Dashboard',
+    name: 'SIMPRO BCK',
     themeColor: '#344675',
     msTileColor: '#344675',
     appleMobileWebAppCapable: 'yes',
@@ -31,5 +31,8 @@ module.exports = {
   css: {
     // Enable CSS source maps.
     sourceMap: process.env.NODE_ENV !== 'production'
-  }
+  },
+  publicPath: '/',
+  // assetsDir: 'assets',
+  outputDir: 'C:/xampp/htdocs/simpro_bck_build'
 };

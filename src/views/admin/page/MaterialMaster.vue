@@ -58,7 +58,7 @@
                     <td style="font-size: 13px;">{{row.po_no}}</td>
                     <td style="font-size: 13px;">
                       <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK">
-                        <small><label class="badge badge-primary" style="cursor: pointer;">{{ row.travel_latter_no }}</label></small>
+                        <small><label class="badge badge-info" style="cursor: pointer;">{{ row.travel_latter_no }}</label></small>
                       </a>
                     </td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
@@ -71,7 +71,11 @@
                     <td style="font-size: 13px;">{{ row.dimension_spec }}</td>
                     <td style="font-size: 13px;">{{row.information}}</td>
                     <td style="font-size: 13px;">{{row.created_at}}</td>
-                    <td style="font-size: 13px;">{{row.process_program}}</td>
+                    <td style="font-size: 13px;">
+                      <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK">
+                        <label class="badge badge-info" style="cursor: pointer;">{{row.process_program}}</label>
+                      </a>
+                    </td>
                     <td style="font-size: 13px;">{{row.process_date}}</td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
@@ -231,7 +235,12 @@
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
-                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="importData(), formImport.show = false">Import</button>
+                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="importData()" :disabled="onLoading">
+                    <span v-if="onLoading"><i class="fa fa-spinner fa-spin"></i> Please Wait...</span>
+                    <span v-else>
+                        <span>Import</span>
+                    </span>
+                </button>
              </template>
            </modal>
         </div>
@@ -347,6 +356,7 @@
         let api = null;
         let context = this;
         let formData = new FormData();
+        this.onLoading = true;
 
         if (this.dataImport != undefined) {
           formData.append('import_data', this.dataImport);
@@ -356,11 +366,13 @@
 
         api = Api(context, material.import(formData));
         api.onSuccess(function(response) {
+            context.onLoading = false;
             context.get();
             context.formImport.show = false;
             context.notifyVue('Data Berhasil di Import', 'top', 'right', 'info')
         }).onError(function(error) {                    
             context.notifyVue('Data Gagal di Import' , 'top', 'right', 'danger')
+            context.onLoading = false;
         }).onFinish(function() {  
         })
         .call();
@@ -430,8 +442,8 @@
               ribuan  = number_string.substr(sisa).match(/\d{3}/g);
 
           if(ribuan){
-            var separator = sisa ? ',' : '';
-            rupiah += separator + ribuan.join(',');
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
             return rupiah
           }else{
             return bilangan
@@ -460,10 +472,25 @@
   }
 </script>
 <style type="text/css">
-  .scroll{
-    height: 500px;
-    overflow-y: auto;
-    overflow-x: auto;
+  .scroll { 
+    overflow: auto; 
+    height: 500px; 
+  }
+  .scroll thead th { 
+    position: sticky; 
+    top: 0; 
+    z-index: 1; 
+  }
+
+  table  { 
+    border-collapse: collapse; 
+    width: 100%; 
+  }
+  th, td { 
+    padding: 8px 16px; 
+  }
+  th { 
+    background: #F0F8FF; 
   }
 </style>
 <style lang='scss' scoped>

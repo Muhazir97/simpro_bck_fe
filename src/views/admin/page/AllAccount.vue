@@ -17,7 +17,7 @@
                         class="input"
                         placeholder="Search"
                         v-model="search"
-                        v-on:keyup="filter" 
+                        v-on:keyup="filter"
                         size="40"
                         style="border-radius: 10px; border: 1px solid #DCDCDC; color: #808080;">
                   </input>

@@ -57,7 +57,6 @@
     </div>
 
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Dashboard</a>
       <button type="button"
               class="navbar-toggler navbar-toggler-right"
               :class="{toggled: $sidebar.showSidebar}"
@@ -91,9 +90,9 @@
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a href="#" @click="logout()" class="nav-link">
-              Log out
-            </a>
+            <button type="submit" class="btn btn-sm btn-danger btn-fill float-right" @click="logout()" style="margin-top: -15px; margin-bottom:-15px;">
+              <small>Logout</small>
+            </button>
           </li>
         </ul>
         

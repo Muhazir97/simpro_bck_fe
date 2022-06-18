@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&coil_no='+search.coil_no+'&owner='+search.owner+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -58,7 +58,7 @@
                     <td style="font-size: 13px;">{{row.po_no}}</td>
                     <td style="font-size: 13px;">
                       <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK">
-                        <small><label class="badge badge-info" style="cursor: pointer;">{{row.travel_latter_no}}</label></small>
+                        <small><label class="badge badge-primary" style="cursor: pointer;">{{row.travel_latter_no}}</label></small>
                       </a>
                     </td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
@@ -73,7 +73,7 @@
                     <td style="font-size: 13px;">{{row.description}}</td>
                     <td style="font-size: 13px;">
                       <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK">
-                        <label class="badge badge-primary" style="cursor: pointer;">{{row.process_program}}</label>
+                        <label class="badge badge-info" style="cursor: pointer;">{{row.process_program}}</label>
                       </a>
                     </td>
                     <td style="font-size: 13px;">{{row.created_at}}</td>
@@ -181,6 +181,11 @@
                     placeholder="Coil No"
                     v-model="search.coil_no">
               </base-input>
+              <base-input type="text"
+                    label="Process Program"
+                    placeholder="Process Program"
+                    v-model="search.process_program">
+              </base-input>
               <div class="form-group">
                 <label>Owner</label><br>
                 <autocomplete 
@@ -220,7 +225,12 @@
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
-                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="importData(), formImport.show = false">Import</button>
+                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="importData()" :disabled="onLoading">
+                    <span v-if="onLoading"><i class="fa fa-spinner fa-spin"></i> Please Wait...</span>
+                    <span v-else>
+                        <span>Import</span>
+                    </span>
+                </button>
              </template>
            </modal>
         </div>
@@ -277,6 +287,7 @@
           job_no: '',
           po_no: '',
           coil_no: '',
+          process_program: '',
           owner: '',
         },
         apiUrl :config.apiUrl,
@@ -291,7 +302,7 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, coil_no: context.search.coil_no, owner: context.search.owner, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
@@ -336,6 +347,7 @@
         let api      = null;
         let context  = this;
         let formData = new FormData();
+        this.onLoading = true;
 
         if (this.dataImport != undefined) {
           formData.append('import_data', this.dataImport);
@@ -345,11 +357,13 @@
 
         api = Api(context, slitCoil.import(formData));
         api.onSuccess(function(response) {
+            context.onLoading = false;
             context.get();
             context.formImport.show = false;
             context.notifyVue('Data Berhasil di Import', 'top', 'right', 'info')
-        }).onError(function(error) {                    
+        }).onError(function(error) {    
             context.notifyVue('Data Gagal di Import' , 'top', 'right', 'danger')
+            context.onLoading = false;                
         }).onFinish(function() {  
         })
         .call();
@@ -416,8 +430,8 @@
               ribuan  = number_string.substr(sisa).match(/\d{3}/g);
 
           if(ribuan){
-            var separator = sisa ? ',' : '';
-            rupiah += separator + ribuan.join(',');
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
             return rupiah
           }else{
             return bilangan
@@ -445,13 +459,6 @@
     }
   }
 </script>
-<style type="text/css">
-  .scroll{
-    height: 500px;
-    overflow-y: auto;
-    overflow-x: auto;
-  }
-</style>
 <style lang='scss' scoped>
   @import "@/assets/scss/light-bootstrap-dashboard.scss";
 </style>

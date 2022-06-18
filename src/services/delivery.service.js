@@ -25,4 +25,11 @@ export default {
     delete(id) {
         return Service().post('delivery/delete/'+id);
     },
+    import(params) {
+        return Service().post('import/delivery', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
 }

@@ -3,6 +3,10 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
+          <a :href="apiUrl+'report-excel/delivery?job_no='+search.job_no+'&po_no='+search.po_no+'&packing_list_no='+search.packing_list_no+'&packing_date='+search.packing_date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+
+          <!-- CARD -->
           <card class="strpied-tabled-with-hover shadow"
                 body-classes="table-full-width table-responsive"
           >
@@ -10,15 +14,8 @@
               <div class="row">
                 <div class="col-4">
                   <h4 class="card-title">Delivery</h4>
-                  <!-- <p class="card-category">Here is a subtitle for this table</p> -->
                 </div>
                 <div class="col-4">
-                  <!-- <base-input type="text"
-                            placeholder="Search"
-                            v-model="search"
-                            v-on:keyup="filter"
-                            size="small">
-                  </base-input> -->
                 </div>
                 <div class="col-4">
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
@@ -30,52 +27,63 @@
                 </div>
               </div>
             </template>
-            <table class="table">
-              <thead>
-                <slot name="columns">
-                  <tr style="background-color: #F0F8FF;">
-                    <th>JOB NO</th>
-                    <th>PROD CLASS</th>
-                    <th>PO NO</th>
-                    <th>CLIENT</th>
-                    <th>PACKING LIST NO</th>
-                    <th>PACKING DATE</th>
-                    <th>WEIGHT</th>
-                    <th>QTY</th>
-                    <th>SIZE</th>
-                    <th>Created At</th>
-                    <th>Created By</th>
-                    <th></th>
-                    <th></th>
+            <div class="scroll">
+              <table class="table">
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th>JOB NO</th>
+                      <th>PO NO</th>
+                      <th>CLIENT</th>
+                      <th>PROD CLASS</th>
+                      <th>PACKING LIST NO</th>
+                      <th>PACKING DATE</th>
+                      <th>WEIGHT</th>
+                      <th>QTY</th>
+                      <th>SIZE</th>
+                      <th>Created At</th>
+                      <th>Created By</th>
+                      <th></th>
+                      <th></th>
+                      <th style="display: none" ></th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in table.data" :key="i">
+                    <td style="font-size: 13px;">
+                      <label class="badge badge-success">{{row.job_no}}</label>
+                    </td>
+                    <td style="font-size: 13px;">{{row.po_no}}</td>
+                    <td style="font-size: 13px;">{{row.client_name}}</td>
+                    <td style="font-size: 13px;">{{row.prod_class}}</td>
+                    <td style="font-size: 13px;">
+                      <a :href="apiUrl+'print-delivery/'+row.packing_list_no" target="_BLANK">
+                        <label class="badge badge-info" style="cursor: pointer;">{{row.packing_list_no}}</label>
+                      </a>
+                    </td>
+                    <td style="font-size: 13px;">{{row.packing_date}}</td>
+                    <td style="font-size: 13px;">{{convertRp(row.weight)}}</td>
+                    <td style="font-size: 13px;">{{convertRp(row.qty)}}</td>
+                    <td style="font-size: 13px;">{{row.size}}</td>
+                    <td style="font-size: 13px;">{{row.created_at}}</td>
+                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <td>
+                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
+                    </td>
+                    <td>
+                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i>
+                    </td>
+                    <td style="display: none" ></td>
                   </tr>
-                </slot>
-              </thead>
-              <tbody>
-                <tr v-for="(row, i) in table.data" :key="i">
-                  <td style="font-size: 13px;">
-                    <label class="badge badge-success">{{row.job_no}}</label>
-                  </td>
-                  <td style="font-size: 13px;">{{row.prod_class}}</td>
-                  <td style="font-size: 13px;">{{row.po_no}}</td>
-                  <td style="font-size: 13px;">{{row.client_name}}</td>
-                  <td style="font-size: 13px;">
-                    <label class="badge badge-danger">{{row.packing_list_no}}</label>
-                  </td>
-                  <td style="font-size: 13px;">{{row.packing_date}}</td>
-                  <td style="font-size: 13px;">{{row.weight}}</td>
-                  <td style="font-size: 13px;">{{row.qty}}</td>
-                  <td style="font-size: 13px;">{{row.size}}</td>
-                  <td style="font-size: 13px;">{{row.created_at}}</td>
-                  <td style="font-size: 13px;">{{row.created_by}}</td>
-                  <td>
-                    <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
-                  </td>
-                  <td>
-                    <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
+            <template slot="footer">
+              <div class="float-right">
+                <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
+              </div>
+            </template>
           </card>
         </div>
 
@@ -122,7 +130,7 @@
                     placeholder="Qty"
                     v-model="deliveryData.qty">
               </base-input>
-              <base-input type="number"
+              <base-input type="text"
                     label="Size"
                     placeholder="Size"
                     v-model="deliveryData.size">
@@ -150,7 +158,7 @@
                   :customHeaders="{ Authorization: tokenApi }"
                   anchor="job_no"
                   label="job_name"
-                  :on-select="getData"
+                  :on-select="getDataFilter"
                   placeholder="Choose Job No"
                   :min="3"
                   :process="processJSON"
@@ -161,32 +169,42 @@
               <base-input type="text"
                     label="Packing List No"
                     placeholder="Packing List No"
-                    v-model="deliveryData.packing_list_no">
+                    v-model="search.packing_list_no">
               </base-input>
               <base-input type="date"
                     label="Packing Date"
                     placeholder="Packing Date"
-                    v-model="deliveryData.packing_date">
-              </base-input>
-              <base-input type="number"
-                    label="Weight"
-                    placeholder="Weight"
-                    v-model="deliveryData.weight">
-              </base-input>
-              <base-input type="number"
-                    label="Qty"
-                    placeholder="Qty"
-                    v-model="deliveryData.qty">
-              </base-input>
-              <base-input type="number"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="deliveryData.size">
+                    v-model="search.packing_date">
               </base-input>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilter.show = false">Close</button>
                  <button type="primary" class="btn btn-sm btn-info btn-fill" @click="get(), formFilter.show = false">Filter</button>
+             </template>
+           </modal>
+        </div>
+
+        <!-- MODAL IMPORT -->
+        <div>
+           <modal :show.sync="formImport.show">
+             <template slot="header">
+                <h5 class="modal-title" id="exampleModalLabel">{{formImport.title}}</h5>
+             </template>
+             <div>
+              <base-input type="file"
+                    label="Upload File"
+                    placeholder="Upload File"
+                    @change="filesChange">
+              </base-input>
+             </div>
+             <template slot="footer">
+                 <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
+                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="importData()" :disabled="onLoading">
+                    <span v-if="onLoading"><i class="fa fa-spinner fa-spin"></i> Please Wait...</span>
+                    <span v-else>
+                        <span>Import</span>
+                    </span>
+                </button>
              </template>
            </modal>
         </div>
@@ -212,6 +230,11 @@
     },
     data () {
       return {
+        pagination: {
+          page_count: '',
+          default: 1,
+          page: '',
+        },
         onLoading: false,
         table: {
           data: []
@@ -226,12 +249,22 @@
           title: "Filter",
           show: false
         },
+        formImport: {
+            add: true,
+            title: "Import Delivery",
+            show: false
+        },
         deliveryData: {}, 
         storageUrl : config.storageUrl,
         loadTimeout: null,
-        search: '',
-        apiUrl :config.apiUrl,
+        search: {
+          job_no: '',
+          po_no: '',
+          packing_list_no: '',
+          packing_date: '',
+        },        apiUrl :config.apiUrl,
         tokenApi : '',
+        dataImport: '',
       }
     },
     mounted(){
@@ -241,8 +274,9 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, delivery.index({search: this.search})).onSuccess(function(response) {    
-            context.table.data = response.data.data.data.data;
+        Api(context, delivery.index({job_no: context.search.job_no, po_no: context.search.po_no, packing_list_no: context.search.packing_list_no, packing_date: context.search.packing_date, page: context.pagination.page})).onSuccess(function(response) {    
+            context.table.data            = response.data.data.data.data;
+            context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -254,6 +288,7 @@
         this.formFilter.add   = true;
         this.formFilter.show  = true;
         this.formFilter.title = "Filter";
+        this.pagination.page  = 1 ;
       },
       create() {
           this.form.add     = true;
@@ -271,6 +306,39 @@
             context.$refs.autocomplete.setValue(response.data.data[0].job_no)                      
         })
         .call()        
+      },
+      modalImport(){
+        this.formImport.add   = true;
+        this.formImport.show  = true;
+        this.formImport.title = "Import Delivery";
+      },
+      filesChange(e) {
+          this.dataImport = e.target.files[0];
+      },
+      importData(){
+        let api = null;
+        let context = this;
+        let formData = new FormData();
+        this.onLoading = true;
+
+        if (this.dataImport != undefined) {
+          formData.append('import_data', this.dataImport);
+        }else{
+          return alert('File Import Not Found')
+        }
+
+        api = Api(context, delivery.import(formData));
+        api.onSuccess(function(response) {
+            context.onLoading = false;
+            context.get();
+            context.formImport.show = false;
+            context.notifyVue('Data Berhasil di Import', 'top', 'right', 'info')
+        }).onError(function(error) {                    
+            context.notifyVue('Data Gagal di Import' , 'top', 'right', 'danger')
+            context.onLoading = false;
+        }).onFinish(function() {  
+        })
+        .call();
       },
       save(){
         let api = null;
@@ -325,11 +393,35 @@
             type: type
         })
       },
+      convertRp(bilangan) {
+        if (bilangan) {
+          var number_string = bilangan.toString(),
+              sisa    = number_string.length % 3,
+              rupiah  = number_string.substr(0, sisa),
+              ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+
+          if(ribuan){
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+            return rupiah
+          }else{
+            return bilangan
+          }
+        }
+      },
+      changePage(page){
+        this.pagination.page = page;
+        this.get();
+      },
 
       // ================= Autocomplete ============
       // AMBIL DATA YANG DI PILIH AC
       getData(obj){
         this.deliveryData.job_no = obj.job_no;
+      },
+      // AMBIL DATA YANG DI PILIH AC FILTER
+      getDataFilter(obj){
+        this.search.job_no = obj.job_no;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

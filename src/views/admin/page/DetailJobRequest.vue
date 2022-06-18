@@ -342,18 +342,9 @@
               rupiah  = number_string.substr(0, sisa),
               ribuan  = number_string.substr(sisa).match(/\d{3}/g);
 
-          var number_string_2 = bilangan.toString(),
-              sisaRatus     = number_string_2.length % 2,
-              rupiahRatusan = number_string_2.substr(0, sisaRatus),
-              ratusan       = number_string_2.substr(sisa).match(/\d{2}/g);
-
-          if(number_string.length == 3) {
-            var separator = sisaRatus ? '.' : '';
-            rupiahRatusan += separator + ratusan.join('.');
-            return rupiahRatusan
-          }else if(ribuan){
-            var separator = sisa ? ',' : '';
-            rupiah += separator + ribuan.join(',');
+          if(ribuan){
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
             return rupiah
           }else{
             return bilangan

@@ -73,7 +73,7 @@
                 <i class="nc-icon nc-notes text-danger"></i>
               </div>
               <div slot="content">
-                <p class="card-category">Job Request</p>
+                <p class="card-category">Job Order</p>
                 <h4 class="card-title">{{ count_task.job_request }}</h4>
               </div>
               <div slot="footer">
