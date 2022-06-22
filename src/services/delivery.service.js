@@ -32,4 +32,13 @@ export default {
             }
         });
     },
+    showDelivery(packing_list_no) {
+        return Service().get('delivery/show-delivery/'+packing_list_no);
+    },
+    getDataSJ(packing_list_no) {
+        return Service().get('delivery/show-SJ/'+packing_list_no);
+    },
+    updateSJ(packing_list_no, params) {
+        return Service().post('delivery/update-delivery/'+packing_list_no, params);
+    },
 }

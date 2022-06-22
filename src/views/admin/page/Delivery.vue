@@ -58,9 +58,7 @@
                     <td style="font-size: 13px;">{{row.client_name}}</td>
                     <td style="font-size: 13px;">{{row.prod_class}}</td>
                     <td style="font-size: 13px;">
-                      <a :href="apiUrl+'print-delivery/'+row.packing_list_no" target="_BLANK">
-                        <label class="badge badge-info" style="cursor: pointer;">{{row.packing_list_no}}</label>
-                      </a>
+                      <label class="badge badge-info" style="cursor: pointer;" @click="detailDelivery(row.packing_list_no)">{{row.packing_list_no}}</label>
                     </td>
                     <td style="font-size: 13px;">{{row.packing_date}}</td>
                     <td style="font-size: 13px;">{{convertRp(row.weight)}}</td>
@@ -381,6 +379,9 @@
                 context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
             }).call();
           }
+      },
+      detailDelivery(packing_list_no){
+        this.$router.push('/detail-delivery/'+packing_list_no)
       },
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)

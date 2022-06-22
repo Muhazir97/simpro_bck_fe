@@ -3,16 +3,20 @@
     <card>
 
       <!-- ========================= JOB INFORMATION ===============================  -->
+      <div class="text-center display-4">
+        <span style="margin-bottom: -20px; font-weight: bold;">DETAIL JOB ORDER</span>
+        <a :href="apiUrl+'print-job-order/'+jobRequestData.job_no" target="_BLANK">
+          <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
+            <i class="fa fa-file-text"></i> Print
+          </button>
+        </a>
+        <hr style="margin-top: 50px;">
+      </div>
       <div class="row">
         <div class="col-6">
           <h4 slot="header" class="card-title">Job Information</h4>
         </div>
         <div class="col-6 mb-3">
-          <a :href="apiUrl+'print-job-order/'+jobRequestData.job_no" target="_BLANK">
-            <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
-              <i class="fa fa-file-text"></i> Print
-            </button>
-          </a>
         </div>
       </div>
       <div class="table-responsive">
@@ -79,17 +83,12 @@
                 <thead>
                   <slot name="columns">
                     <tr style="background-color: #F0F8FF;">
-                      <!-- <th>PO No</th> -->
                       <th>Coil No</th>
-                      <!-- <th>Owner</th> -->
-                      <!-- <th>Job Number</th> -->
                       <th>Thick</th>
                       <th>Width</th>
                       <th>Weight</th>
                       <th>Spec</th>
                       <th>Information</th>
-                      <th>Created At</th>
-                      <th>Created By</th>
                       <th></th>
                       <th style="display: none" ></th>
                     </tr>
@@ -97,19 +96,14 @@
                 </thead>
                 <tbody>
                   <tr v-for="(row, i) in tableMatReq.data" :key="i">
-                    <!-- <td style="font-size: 13px;">{{row.po_no}}</td> -->
                     <td style="font-size: 13px;">{{row.coil_no}}</td>
-                    <!-- <td style="font-size: 13px;">{{row.owner}}</td> -->
-                    <!-- <td style="font-size: 13px;">{{row.job_no}}</td> -->
-                    <td style="font-size: 13px;">{{row.dimension_thick}}</td>
-                    <td style="font-size: 13px;">{{row.dimension_width}}</td>
-                    <td style="font-size: 13px;">{{row.dimension_weight}}</td>
-                    <td style="font-size: 13px;">{{row.dimension_spec}}</td>
-                    <td style="font-size: 13px;">{{row.information}}</td>
-                    <td style="font-size: 13px;">{{row.created_at}}</td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <td style="font-size: 13px;">{{row.mc_thick}}</td>
+                    <td style="font-size: 13px;">{{row.mc_width}}</td>
+                    <td style="font-size: 13px;">{{row.mc_weight}}</td>
+                    <td style="font-size: 13px;">{{row.mc_spec}}</td>
+                    <td style="font-size: 13px;">{{row.mc_information}}</td>
                     <td>
-                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial(row.id, row.coil_no, 'delete')" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id, row.coil_no, row.mc_thick, row.mc_width, row.mc_weight, row.mc_spec, row.mc_information)" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -155,36 +149,26 @@
                 <thead>
                   <slot name="columns">
                     <tr style="background-color: #F0F8FF;">
-                      <!-- <th style="font-size: 13px;">No PO</th> -->
                       <th style="font-size: 13px;">Coil No</th>
-                      <!-- <th style="font-size: 13px;">Owner</th> -->
-                      <!-- <th style="font-size: 13px;">Job Number</th> -->
                       <th style="font-size: 13px;">Thick</th>
                       <th style="font-size: 13px;">Width</th>
                       <th style="font-size: 13px;">Weight</th>
                       <th style="font-size: 13px;">Spec</th>
-                      <!-- <th style="font-size: 13px;">Information</th> -->
-                      <!-- <th style="font-size: 13px;">Created At</th> -->
-                      <!-- <th style="font-size: 13px;">Created By</th> -->
                       <th></th>
                     </tr>
                   </slot>
                 </thead>
                 <tbody>
                   <tr v-for="(row, i) in tableMatMas.data" :key="i">
-                    <!-- <td style="font-size: 13px;">{{row.no_po}}</td> -->
                     <td style="font-size: 13px;">{{row.coil_no}}</td>
-                    <!-- <td style="font-size: 13px;">{{row.owner}}</td> -->
-                    <!-- <td style="font-size: 13px;">{{row.job_no}}</td> -->
                     <td style="font-size: 13px;">{{row.dimension_thick}}</td>
                     <td style="font-size: 13px;">{{row.dimension_width}}</td>
-                    <td style="font-size: 13px;">{{row.dimension_weight}}</td>
+                    <td style="font-size: 13px;">
+                      <input style="border: 1px solid white; text-align: center;" v-model="row.dimension_weight" size="7">
+                    </td>
                     <td style="font-size: 13px;">{{row.dimension_spec}}</td>
-                    <!-- <td style="font-size: 13px;">{{row.information}}</td> -->
-                    <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
-                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
-                      <i class="fa fa-check-square-o text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial(row.id, row.coil_no, 'add')" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-check-square-o text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                   </tr>
                 </tbody>
@@ -244,7 +228,6 @@
     mounted(){
       this.getHeader();
       this.getMaterialReq();
-      // this.getMatMas();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
@@ -254,20 +237,24 @@
             context.jobRequestData = response.data.data[0];
             context.update_job_note = response.data.data[0].job_note
         }).onFinish(function() {  
-            Api(context, jobRequest.getMatMas({client_name: context.jobRequestData.client_name})).onSuccess(function(response) {
-                context.tableMatMas.data = response.data.data;             
-            })
-            .onError(function(error) {                    
-                context.tableMatMas.data = []
-            })
-            .call()  
+            
         })
         .call()        
+      },
+      getMatMas(){
+        let context = this; 
+        Api(context, jobRequest.getMatMas({client_name: context.jobRequestData.client_name})).onSuccess(function(response) {
+            context.tableMatMas.data = response.data.data;             
+        })
+        .onError(function(error) {                    
+            context.tableMatMas.data = []
+        })
+        .call() 
       },
       getMaterialReq() {
         let context = this;               
         Api(context, jobRequest.getMaterialReq({job_no: context.$route.params.job_no})).onSuccess(function(response) {
-            context.tableMatReq.data = response.data.data.data.data;                   
+            context.tableMatReq.data = response.data.data;                   
         })
         .onError(function(error) {                    
             context.tableMatReq.data = []
@@ -278,8 +265,9 @@
           this.form.add   = true;
           this.form.show  = true;
           this.form.title = "Add Material";
+          this.getMatMas();
       },
-      saveMaterial(id, coil_no, type){
+      saveMaterial(type, id, coil_no, mc_thick, mc_width, mc_weight, mc_spec, mc_information){
         let api = null;
         let context = this;
         let formData = new FormData(); 
@@ -288,12 +276,15 @@
           if (type == 'add') {
             formData.append('job_no', this.jobRequestData.job_no);
             formData.append('po_no', this.jobRequestData.po_no);
-          }else{
-            formData.append('job_no', '');
-            formData.append('po_no', '');
+            formData.append('coil_no', (coil_no == null) ? '' : coil_no);
+            formData.append('mc_thick', (mc_thick == null) ? '' : mc_thick);
+            formData.append('mc_width', (mc_width == null) ? '' : mc_width);
+            formData.append('mc_weight', (mc_weight == null) ? '' : mc_weight);
+            formData.append('mc_spec', (mc_spec == null) ? '' : mc_spec);
+            formData.append('mc_information', (mc_information == null) ? '' : mc_information);
           }
+          formData.append('type', type);
           formData.append('id', id);
-          formData.append('coil_no', coil_no);
         }else{
           alert('Semua Field Wajib Di Isi')
         }
@@ -305,7 +296,7 @@
             context.notifyVue((context.formTitle === 'Add Material') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
         }).onFinish(function() {  
             context.getMaterialReq();
-            context.getHeader();
+            context.getMatMas();
         })
         .call();
       },

@@ -19,6 +19,7 @@ import SlitCoil from "./views/admin/page/SlitCoil";
 import JobRequest from "./views/admin/page/JobRequest";
 import DetailJobRequest from "./views/admin/page/DetailJobRequest";
 import Delivery from "./views/admin/page/Delivery";
+import DetailDelivery from "./views/admin/page/DetailDelivery";
 import News from "./views/admin/page/News";
 import Invoice from "./views/admin/page/Invoice";
 import Payment from "./views/admin/page/Payment";
@@ -92,6 +93,11 @@ const vurRouter = new Router({
         component: Delivery
       },
       {
+        path: 'detail-delivery/:packing_list_no',
+        name: 'DetailDelivery',
+        component: DetailDelivery
+      },
+      {
         path: 'news',
         name: 'News',
         component: News
@@ -146,7 +152,7 @@ const vurRouter = new Router({
 });
 
 vurRouter.beforeEach((to, from, next) => {
-  const publicPages = ['login', 'landing', 'register'];
+  const publicPages = ['login', 'landing', 'register','components'];
   const authRequired = !publicPages.includes(to.name);
   const authenticated = JSON.parse(localStorage.getItem('authenticated'));  
 

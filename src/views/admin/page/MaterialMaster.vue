@@ -53,9 +53,15 @@
                 <tbody>
                   <tr v-for="(row, i) in table.data" :key="i">
                     <td style="font-size: 13px;">
-                      <label class="badge badge-success">{{row.job_no}}</label>
+                      <span v-for="item in row.rel_jo_mc">
+                        <label class="badge badge-success">{{ item.job_no }}</label>
+                      </span>
                     </td>
-                    <td style="font-size: 13px;">{{row.po_no}}</td>
+                    <td style="font-size: 13px;">
+                      <span v-for="item in row.rel_jo_mc">
+                        <label class="badge badge-warning">{{ item.po_no }}</label>
+                      </span>
+                    </td>
                     <td style="font-size: 13px;">
                       <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK">
                         <small><label class="badge badge-info" style="cursor: pointer;">{{ row.travel_latter_no }}</label></small>
@@ -73,7 +79,7 @@
                     <td style="font-size: 13px;">{{row.created_at}}</td>
                     <td style="font-size: 13px;">
                       <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK">
-                        <label class="badge badge-info" style="cursor: pointer;">{{row.process_program}}</label>
+                        <label class="badge badge-primary" style="cursor: pointer;">{{row.process_program}}</label>
                       </a>
                     </td>
                     <td style="font-size: 13px;">{{row.process_date}}</td>

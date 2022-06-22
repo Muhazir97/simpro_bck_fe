@@ -275,7 +275,6 @@
         let context = this;               
         Api(context, dashboard.countTask()).onSuccess(function(response) {    
             context.count_task = response.data.data;
-            console.log(response.data.data)
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.count_job_request = [];
