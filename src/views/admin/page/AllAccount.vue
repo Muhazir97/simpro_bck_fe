@@ -131,7 +131,14 @@
             title: "Add Data",
             show: false
         },
-        dataAdmin: {}, 
+        dataAdmin: {
+          full_name: '',
+          employee_id: '',
+          username: '',
+          password: '',
+          role: '',
+          status: '',
+        }, 
         storageUrl : config.storageUrl,
         loadTimeout: null,
         search: '',
@@ -167,7 +174,12 @@
       edit(id) {
         let context = this;               
         Api(context, akun.show(id)).onSuccess(function(response) {
-            context.dataAdmin  = response.data.data;
+            context.dataAdmin.id          = response.data.data.id;
+            context.dataAdmin.full_name   = response.data.data.full_name;
+            context.dataAdmin.employee_id = response.data.data.employee_id;
+            context.dataAdmin.username    = response.data.data.username;
+            context.dataAdmin.role        = response.data.data.role;
+            context.dataAdmin.status      = response.data.data.status;
             context.form.show  = true;
             context.form.title = 'Edit Data';                
         })

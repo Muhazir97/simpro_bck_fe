@@ -16,11 +16,22 @@ import Overview from './views/admin/Overview.vue'
 import ClientMaster from "./views/admin/page/ClientMaster";
 import MaterialMaster from "./views/admin/page/MaterialMaster";
 import SlitCoil from "./views/admin/page/SlitCoil";
+import DetailSlitCoil from "./views/admin/page/DetailSlitCoil";
 import JobRequest from "./views/admin/page/JobRequest";
 import DetailJobRequest from "./views/admin/page/DetailJobRequest";
+import ProduksiSlitting from "./views/admin/page/ProduksiSlitting";
+import DetailProdSlitting from "./views/admin/page/DetailProdSlitting";
+import ReportSlitting from "./views/admin/page/ReportSlitting";
+import DetailLapProdSlit from "./views/admin/page/DetailLapProdSlit";
+import ProduksiTolling from "./views/admin/page/ProduksiTolling";
+import DetailProdTolling from "./views/admin/page/DetailProdTolling";
+import ReportTolling from "./views/admin/page/ReportTolling";
+import ProduksiShearing from "./views/admin/page/ProduksiShearing";
+import ReportShearing from "./views/admin/page/ReportShearing";
 import Delivery from "./views/admin/page/Delivery";
 import DetailDelivery from "./views/admin/page/DetailDelivery";
 import News from "./views/admin/page/News";
+import DetailNews from "./views/admin/page/DetailNews";
 import Invoice from "./views/admin/page/Invoice";
 import Payment from "./views/admin/page/Payment";
 import AllAccount from './views/admin/page/AllAccount.vue'
@@ -29,7 +40,7 @@ Vue.use(Router);
 
 const vurRouter = new Router({
   linkExactActiveClass: "active",
-  mode: 'history',
+  // mode: 'history',
   routes: [
   // =================== USER =====================
     {
@@ -78,6 +89,11 @@ const vurRouter = new Router({
         component: SlitCoil
       },
       {
+        path: 'detail-slit-coil/:process_program',
+        name: 'DetailSlitCoil',
+        component: DetailSlitCoil
+      },
+      {
         path: 'job-request',
         name: 'JobRequest',
         component: JobRequest
@@ -86,6 +102,51 @@ const vurRouter = new Router({
         path: 'detail-job-request/:job_no',
         name: 'DetailJobRequest',
         component: DetailJobRequest
+      },
+      {
+        path: 'produksi-slitting',
+        name: 'ProduksiSlitting',
+        component: ProduksiSlitting
+      },
+      {
+        path: 'detail-prod-slitting/:process_program',
+        name: 'DetailProdSlitting',
+        component: DetailProdSlitting
+      },
+      {
+        path: 'report-slitting',
+        name: 'ReportSlitting',
+        component: ReportSlitting
+      },
+      {
+        path: 'detail-lap-prod-slit/:process_program',
+        name: 'DetailLapProdSlit',
+        component: DetailLapProdSlit
+      },
+      {
+        path: 'produksi-tolling',
+        name: 'ProduksiTolling',
+        component: ProduksiTolling
+      },
+      {
+        path: 'detail-prod-tolling/:op_no',
+        name: 'DetailProdTolling',
+        component: DetailProdTolling
+      },
+      {
+        path: 'report-tolling',
+        name: 'ReportTolling',
+        component: ReportTolling
+      },
+      {
+        path: 'produksi-shearing',
+        name: 'ProduksiShearing',
+        component: ProduksiShearing
+      },
+      {
+        path: 'report-shearing',
+        name: 'ReportShearing',
+        component: ReportShearing
       },
       {
         path: 'delivery',
@@ -101,6 +162,11 @@ const vurRouter = new Router({
         path: 'news',
         name: 'News',
         component: News
+      },
+      {
+        path: 'detail-news/:news_no',
+        name: 'DetailNews',
+        component: DetailNews
       },
       {
         path: 'invoice',
@@ -157,6 +223,7 @@ vurRouter.beforeEach((to, from, next) => {
   const authenticated = JSON.parse(localStorage.getItem('authenticated'));  
 
   if (authRequired && !authenticated) {
+      alert('Session Kamu Habis Ayo Login Lagi !!!')
       return next({
           name: 'login',
           query: {redirect: to.fullPath}
@@ -172,11 +239,12 @@ vurRouter.beforeEach((to, from, next) => {
       }
       if (to.name != 'Relogin') {
           if (auth.expired) {
-              localStorage.removeItem('token');
-              localStorage.setItem('authenticated', false)  
-              return next({
-                  name: 'login'
-              });
+            alert('Session Kamu Habis Ayo Login Lagi !!!')
+            localStorage.removeItem('token');
+            localStorage.setItem('authenticated', false)  
+            return next({
+                name: 'login'
+            });
           }
       }
   }

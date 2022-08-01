@@ -25,4 +25,27 @@ export default {
     delete(id) {
         return Service().post('news/delete/'+id);
     },
+    import(params) {
+        return Service().post('import/news', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
+    showNews(news_no) {
+        return Service().get('news/show-news/'+news_no);
+    },
+    updateBA(news_no, params) {
+        return Service().post('news/update-news/'+news_no, params);
+    },
+    addSJ(params) {
+        return Service().post('news/add-sj', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
+    deleteSJ(id) {
+        return Service().post('news/delete-sj/'+id);
+    },
 }

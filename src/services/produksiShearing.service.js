@@ -3,36 +3,36 @@ import Service from '@/helpers/service'
 export default {
 
     index(params) {
-        return Service().get('slit-coil/index', {params});
+        return Service().get('produksi-shearing/index', {params});
     },
     show(id) {
-        return Service().get('slit-coil/show/'+id);
+        return Service().get('produksi-shearing/show/'+id);
     },
     create(params) {
-        return Service().post('slit-coil/create', params, {
+        return Service().post('produksi-shearing/create', params, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
         });
     },
     update(id, params) {
-        return Service().post('slit-coil/update/'+id, params, {
+        return Service().post('produksi-shearing/update/'+id, params, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
         });
     },
     delete(id) {
-        return Service().post('slit-coil/delete/'+id);
+        return Service().post('produksi-shearing/delete/'+id);
     },
     import(params) {
-        return Service().post('import/slit-coil', params, {
+        return Service().post('import/prod-shearing', params, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
         });
     },
-    showSlitCoil(process_program) {
-        return Service().get('slit-coil/show-slit-coil/'+process_program);
+    showProdshearing(process_program) {
+        return Service().get('produksi-shearing/show-prod-shearing/'+process_program);
     },
 }

@@ -22,13 +22,51 @@
         <i class="nc-icon nc-notes"></i>
         <p>Job Order</p>
       </sidebar-link>
+      <sidebar-link to="#" >
+        <base-dropdown tag="li">
+            <template slot="title">
+              <i class="nc-icon nc-settings-90"></i>
+              <p>Produksi <i class="fa fa-angle-right fa-xs" aria-hidden="true"></i></p>
+            </template>
+            <sidebar-link to="/produksi-slitting" v-if="role == 'Requester'">
+              <i class="nc-icon nc-scissors"></i>
+              <p>Slitting</p>
+            </sidebar-link>
+            <sidebar-link to="/produksi-tolling" v-if="role == 'Requester'">
+              <i class="nc-icon nc-chart"></i>
+              <p>Tolling</p>
+            </sidebar-link>
+            <sidebar-link to="/produksi-shearing" v-if="role == 'Requester'">
+              <i class="nc-icon nc-preferences-circle-rotate"></i>
+              <p>Shearing</p>
+            </sidebar-link>
+          </base-dropdown>
+      </sidebar-link>
+
+      <!-- <sidebar-link to="#">
+        <i class="nc-icon nc-settings-90"></i>
+        <p>Produksi</p>
+        <sidebar-link to="/produksi" v-if="role == 'Requester'">
+          <i class="nc-icon nc-scissors"></i>
+          <p>Slitting</p>
+        </sidebar-link>
+        <sidebar-link to="/produksi-tolling" v-if="role == 'Requester'">
+          <i class="nc-icon nc-chart"></i>
+          <p>Tolling</p>
+        </sidebar-link>
+        <sidebar-link to="/produksi-shearing" v-if="role == 'Requester'">
+          <i class="nc-icon nc-preferences-circle-rotate"></i>
+          <p>Shearing</p>
+        </sidebar-link>
+      </sidebar-link> -->
+
       <sidebar-link to="/delivery">
         <i class="nc-icon nc-delivery-fast"></i>
         <p>Delivery</p>
       </sidebar-link>
       <sidebar-link to="/news">
         <i class="nc-icon nc-paper-2"></i>
-        <p>News</p>
+        <p>News / BA</p>
       </sidebar-link>
       <sidebar-link to="/invoice">
         <i class="nc-icon nc-single-copy-04"></i>

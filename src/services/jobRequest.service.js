@@ -60,4 +60,11 @@ export default {
     updateJobNote(job_no, params) {
         return Service().post('job-request/update-job-note/'+job_no, params);
     },
+    import(params) {
+        return Service().post('import/job-order', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
 }

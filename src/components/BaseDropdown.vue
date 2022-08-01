@@ -15,7 +15,7 @@
                 <span class="no-icon">{{title}}</span>
             </a>
         </slot>
-        <ul class="dropdown-menu"
+        <ul class="dropdown-menu" style="background-color: #696969;" 
             :class="[{'dropdown-menu-right': position === 'right'}, {show: isOpen}, menuClasses]">
             <slot></slot>
         </ul>

@@ -3,17 +3,26 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/delivery?job_no='+search.job_no+'&po_no='+search.po_no+'&packing_list_no='+search.packing_list_no+'&packing_date='+search.packing_date+'&weight='+search.weight+'&qty='+search.qty+'&size='+search.size+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
-          <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+          <div class="row">
+            <!-- TOMBOL EXPORT IMPORT -->
+            <div class="col-6">
+              <a :href="apiUrl+'report-excel/prod-tolling?job_no='+search.job_no+'&client_name='+search.client_name+'&po_no='+search.po_no+'&op_no='+search.op_no+'&specification='+search.specification+'&line_machine='+search.line_machine+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+              <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+            </div>
+            <!-- TOMBOL REPORT -->
+            <div class="col-6">
+              <router-link to="/report-tolling">
+                <button class="btn btn-sm btn-warning mb-4 float-right" style="margin-left: 200px;"><i class="fa fa-files-o fa-sm"></i> Report</button>
+              </router-link>
+            </div>
+          </div>
 
           <!-- CARD -->
-          <card class="strpied-tabled-with-hover shadow"
-                body-classes="table-full-width table-responsive"
-          >
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">Delivery</h4>
+                  <h4 class="card-title">Prod Tolling</h4>
                 </div>
                 <div class="col-4">
                 </div>
@@ -35,12 +44,9 @@
                       <th>JOB NO</th>
                       <th>PO NO</th>
                       <th>CLIENT</th>
-                      <th>PROD CLASS</th>
-                      <th>PACKING LIST NO</th>
-                      <th>PACKING DATE</th>
-                      <th>WEIGHT</th>
-                      <th>QTY</th>
-                      <th>SIZE</th>
+                      <th>OP NO</th>
+                      <th>SPECIFICATION</th>
+                      <th>LINE MACHINE</th>
                       <th>Created At</th>
                       <th>Created By</th>
                       <th></th>
@@ -52,20 +58,17 @@
                 <tbody>
                   <tr v-for="(row, i) in table.data" :key="i">
                     <td style="font-size: 13px;">
-                      <label class="badge badge-success">{{row.job_no}}</label>
+                      <label class="badge badge-success">{{ row.job_no }}</label>
                     </td>
                     <td style="font-size: 13px;">
-                      <small><label class="badge badge-warning">{{row.po_no}}</label></small>
+                      <label class="badge badge-warning">{{ row.po_no }}</label>
                     </td>
                     <td style="font-size: 13px;">{{row.client_name}}</td>
-                    <td style="font-size: 13px;">{{row.prod_class}}</td>
                     <td style="font-size: 13px;">
-                      <label class="badge badge-info" style="cursor: pointer;" @click="detailDelivery(row.packing_list_no)">{{row.packing_list_no}}</label>
+                      <label class="badge badge-info" style="cursor: pointer;" @click="detailOP(row.op_no)">{{row.op_no}}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.packing_date}}</td>
-                    <td style="font-size: 13px;">{{convertRp(row.weight)}}</td>
-                    <td style="font-size: 13px;">{{convertRp(row.qty)}}</td>
-                    <td style="font-size: 13px;">{{row.size}}</td>
+                    <td style="font-size: 13px;">{{ row.specification }}</td>
+                    <td style="font-size: 13px;">{{row.line_machine}}</td>
                     <td style="font-size: 13px;">{{row.created_at}}</td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
@@ -111,30 +114,21 @@
                 </autocomplete>
               </div>
               <base-input type="text"
-                    label="Packing List No"
-                    placeholder="Packing List No"
-                    v-model="deliveryData.packing_list_no">
+                    label="OP No"
+                    placeholder="OP No"
+                    v-model="prodTollData.op_no">
               </base-input>
-              <base-input type="date"
-                    label="Packing Date"
-                    placeholder="Packing Date"
-                    v-model="deliveryData.packing_date">
-              </base-input>
-              <!-- <base-input type="number"
-                    label="Weight"
-                    placeholder="Weight"
-                    v-model="deliveryData.weight">
-              </base-input>
-              <base-input type="number"
-                    label="Qty"
-                    placeholder="Qty"
-                    v-model="deliveryData.qty">
-              </base-input> -->
               <base-input type="text"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="deliveryData.size">
+                    label="Specification"
+                    placeholder="Specification"
+                    v-model="prodTollData.specification">
               </base-input>
+              <base-input type="text"
+                    label="Line Machine"
+                    placeholder="Line Machine"
+                    v-model="prodTollData.line_machine">
+              </base-input>
+
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
@@ -167,29 +161,19 @@
                 </autocomplete>
               </div>
               <base-input type="text"
-                    label="Packing List No"
-                    placeholder="Packing List No"
-                    v-model="search.packing_list_no">
-              </base-input>
-              <base-input type="date"
-                    label="Packing Date"
-                    placeholder="Packing Date"
-                    v-model="search.packing_date">
-              </base-input>
-              <base-input type="number"
-                    label="Weight"
-                    placeholder="Weight"
-                    v-model="search.weight">
-              </base-input>
-              <base-input type="number"
-                    label="Qty"
-                    placeholder="Qty"
-                    v-model="search.qty">
+                    label="OP No"
+                    placeholder="OP No"
+                    v-model="search.op_no">
               </base-input>
               <base-input type="text"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="search.size">
+                    label="Specification"
+                    placeholder="Specification"
+                    v-model="search.specification">
+              </base-input>
+              <base-input type="text"
+                    label="Line Machine"
+                    placeholder="Line Machine"
+                    v-model="search.line_machine">
               </base-input>
               <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
               <div class="input-daterange datepicker row align-items-center">
@@ -226,7 +210,7 @@
                       placeholder="Upload File"
                       @change="filesChange">
                 </base-input>
-                <small>Download Template<a :href="storageUrl+'template_import/Template Import Delivery.xlsx'"> Import Delivery</a></small>
+                <small>Download Template<a :href="storageUrl+'template_import/Template Import Produksi Tolling.xlsx'"> Import Produksi Tolling</a></small>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
@@ -249,7 +233,7 @@
   import Modal from '@/components/Modal.vue'
   import config from '@/configs/config';
   import Api from '@/helpers/api';
-  import delivery from '@/services/delivery.service';
+  import produksiTolling from '@/services/produksiTolling.service';
   import Autocomplete from 'vue2-autocomplete-js'
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
@@ -279,28 +263,27 @@
             show: false
         },
         formFilter: {
-          add: true,
-          title: "Filter",
-          show: false
+            add: true,
+            title: "Filter",
+            show: false
         },
         formImport: {
             add: true,
-            title: "Import Delivery",
+            title: "Import Prod Tolling",
             show: false
         },
-        deliveryData: {}, 
+        prodTollData: {}, 
         storageUrl : config.storageUrl,
         loadTimeout: null,
         search: {
           job_no: '',
           po_no: '',
-          packing_list_no: '',
-          packing_date: '',
-          weight: '',
-          qty: '',
-          size: '',
+          client_name: '',
+          op_no: '',
+          specification: '',
+          line_machine: '',
           date: '',
-        },        
+        },
         apiUrl :config.apiUrl,
         tokenApi : '',
         dataImport: '',
@@ -313,7 +296,7 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, delivery.index({job_no: context.search.job_no, po_no: context.search.po_no, packing_list_no: context.search.packing_list_no, packing_date: context.search.packing_date, weight: context.search.weight, qty: context.search.qty, size: context.search.size, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, produksiTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, specification: context.search.specification, line_machine: context.search.line_machine, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
@@ -333,23 +316,23 @@
           this.form.add     = true;
           this.form.show    = true;
           this.form.title   = "Add Data";
-          this.deliveryData = {}
+          this.prodTollData = {}
           this.$refs.autocomplete.clearInput()
       },
       edit(id) {
         let context = this;               
-        Api(context, delivery.show(id)).onSuccess(function(response) {
-            context.deliveryData = response.data.data[0];
+        Api(context, produksiTolling.show(id)).onSuccess(function(response) {
+            context.prodTollData = response.data.data[0];
             context.form.show    = true;
-            context.form.title   = 'Edit Data';  
-            context.$refs.autocomplete.setValue(response.data.data[0].job_no)                      
+            context.form.title   = 'Edit Data';      
+            context.$refs.autocomplete.setValue(response.data.data[0].job_no)                  
         })
         .call()        
       },
       modalImport(){
         this.formImport.add   = true;
         this.formImport.show  = true;
-        this.formImport.title = "Import Delivery";
+        this.formImport.title = "Import Prod Tolling";
       },
       filesChange(e) {
           this.dataImport = e.target.files[0];
@@ -366,7 +349,7 @@
           return alert('File Import Not Found')
         }
 
-        api = Api(context, delivery.import(formData));
+        api = Api(context, produksiTolling.import(formData));
         api.onSuccess(function(response) {
             context.onLoading = false;
             context.get();
@@ -383,22 +366,20 @@
         let api = null;
         let context = this;
         let formData = new FormData();
-
-        if (this.deliveryData.job_no != undefined && this.deliveryData.packing_list_no != undefined && this.deliveryData.packing_date != undefined) {
-          formData.append('job_no', this.deliveryData.job_no);
-          formData.append('packing_list_no', this.deliveryData.packing_list_no);
-          formData.append('packing_date', this.deliveryData.packing_date);
-          formData.append('weight', (this.deliveryData.weight == undefined) ? '' : this.deliveryData.weight);
-          formData.append('qty', (this.deliveryData.qty == undefined) ? '' : this.deliveryData.qty);
-          formData.append('size', (this.deliveryData.size == undefined) ? '' : this.deliveryData.size);
+       
+        if (this.prodTollData.job_no != undefined && this.prodTollData.op_no != undefined && this.prodTollData.specification != undefined && this.prodTollData.line_machine != undefined) {
+          formData.append('job_no', this.prodTollData.job_no);
+          formData.append('op_no', this.prodTollData.op_no);
+          formData.append('specification', this.prodTollData.specification);
+          formData.append('line_machine', this.prodTollData.line_machine);
         }else{
-          return alert('JO, Packing NO & Packing Date Wajib Di Isi')
+          return alert('Semua field Wajib Di Isi')
         }
 
         if (context.form.title == 'Add Data') {
-            api = Api(context, delivery.create(formData));
+            api = Api(context, produksiTolling.create(formData));
         } else {
-            api = Api(context, delivery.update(this.deliveryData.id, formData));
+            api = Api(context, produksiTolling.update(this.prodTollData.id, formData));
         }
         api.onSuccess(function(response) {
             context.get();
@@ -411,18 +392,18 @@
         .call();
       },
       remove(id) {
-        var r = confirm("Anda yakin ingin menghapus data ini ?");
-        if (r == true) {
-          let context = this;
+          var r = confirm("Anda yakin ingin menghapus data ini ?");
+          if (r == true) {
+            let context = this;
 
-          Api(context, delivery.delete(id)).onSuccess(function(response) {
-              context.get();
-              context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
-          }).call();
-        }
+            Api(context, produksiTolling.delete(id)).onSuccess(function(response) {
+                context.get();
+                context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
+            }).call();
+          }
       },
-      detailDelivery(packing_list_no){
-        this.$router.push('/detail-delivery/'+packing_list_no)
+      detailOP(op_no){
+        this.$router.push('/detail-prod-tolling/'+op_no)
       },
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)
@@ -459,7 +440,7 @@
       // ================= Autocomplete ============
       // AMBIL DATA YANG DI PILIH AC
       getData(obj){
-        this.deliveryData.job_no = obj.job_no;
+        this.prodTollData.job_no = obj.job_no;
       },
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){

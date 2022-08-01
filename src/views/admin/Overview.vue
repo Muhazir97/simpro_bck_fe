@@ -168,69 +168,78 @@
                 </div>
               </div>
             </template>
-            <table class="table">
-              <thead>
-                <slot name="columns">
-                  <tr style="background-color: #F0F8FF;">
-                    <th>NO</th>
-                    <th>PO NO</th>
-                    <th>DATE</th>
-                    <th>CLIENT</th>
-                    <th>JOB NO</th>
-                    <th>PROD CLASS</th>
-                    <th>QTY</th>
-                    <th>UNIT</th>
-                    <th>RATE</th>
-                    <th>TOTAL</th>
-                    <th>DELIVERY QTY</th>
-                    <th>DELIVERY DATE</th>
-                    <th>DELIVERY TOTAL</th>
-                    <th>NEWS QTY</th>
-                    <th>NEWS DATE</th>
-                    <th>NEWS TOTAL</th>
-                    <th>INVOICE QTY</th>
-                    <th>INVOICE AMOUNT</th>
-                    <th>INVOICE OUT</th>
-                    <th>INVOICE TOTAL</th>
-                    <th>PAYMENT QTY</th>
-                    <th>PAYMENT DATE</th>
-                    <th>PAYMENT TOTAL</th>
-                    <th>Created At</th>
-                    <th>Created By</th>
-                    <th></th>
+            <div class="scroll">
+              <table class="table">
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <!-- <th>NO</th> -->
+                      <th>JOB NO</th>
+                      <th>PO NO</th>
+                      <th>CLIENT</th>
+                      <th>DATE</th>
+                      <th>PROD CLASS</th>
+                      <th>QTY</th>
+                      <th>UNIT</th>
+                      <th>RATE</th>
+                      <th>TOTAL</th>
+                      <th></th>
+                      <th>DELIVERY QTY</th>
+                      <th>DELIVERY OUT</th>
+                      <th>DELIVERY TOTAL</th>
+                      <th></th>
+                      <th>NEWS QTY</th>
+                      <th>NEWS OUT</th>
+                      <th>NEWS TOTAL</th>
+                      <th></th>
+                      <th>INVOICE QTY</th>
+                      <th>INVOICE OUT</th>
+                      <th>INVOICE AMOUNT</th>
+                      <th></th>
+                      <th>PAYMENT QTY</th>
+                      <th>PAYMENT DATE</th>
+                      <th>PAYMENT TOTAL</th>
+                      <th></th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in table.data" :key="i">
+                    <!-- <td> {{ i + 1 }}</td> -->
+                    <td style="font-size: 13px;">
+                      <label class="badge badge-success">{{row.job_no}}</label>
+                    </td>
+                    <td style="font-size: 13px;">{{row.po_no}}</td>
+                    <td style="font-size: 13px;">{{row.client_name}}</td>
+                    <td style="font-size: 13px;">{{row.created_at }}</td>
+                    <td style="font-size: 13px;">{{row.prod_class}}</td>
+                    <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
+                    <td style="font-size: 13px;"> Kg </td>
+                    <td style="font-size: 13px;">{{row.rate}}</td>
+                    <td style="font-size: 13px;">{{ convertRp(row.weight * row.rate) }}</td>
+                    <td></td>
+                    <!-- DELIVERY -->
+                    <td style="font-size: 13px;">{{ convertRp(row.delivery_qty) }}</td>
+                    <td style="font-size: 13px;" v-if="row.delivery_qty">{{ convertRp(row.weight - row.delivery_qty) }}</td>
+                    <td v-else></td>
+                    <td style="font-size: 13px;">{{ convertRp(row.delivery_qty * row.rate) }}</td>
+                    <td></td>
+                    <!-- NEWS -->
+                    <td style="font-size: 13px;">{{ convertRp(row.news_qty) }}</td>
+                    <td style="font-size: 13px;"  v-if="row.news_qty">{{ convertRp(row.weight - row.news_qty) }}</td>
+                    <td v-else></td>
+                    <td style="font-size: 13px;">{{ convertRp(row.news_qty * row.rate) }}</td>
+                    <td></td>
+                    <!-- INVOICE -->
+                    <td style="font-size: 13px;">{{ convertRp(row.invoice_qty) }}</td>
+                    <td style="font-size: 13px;"  v-if="row.invoice_qty">{{ convertRp(row.weight - row.invoice_qty) }}</td>
+                    <td v-else></td>
+                    <td style="font-size: 13px;">{{ convertRp(row.invoice_qty * row.rate) }}</td>
+                    <td></td>
                   </tr>
-                </slot>
-              </thead>
-              <tbody>
-                <!-- <tr v-for="(row, i) in table.data" :key="i">
-                  <td style="font-size: 13px;">
-                    <label class="badge badge-success">{{row.job_no}}</label>
-                  </td>
-                  <td style="font-size: 13px;">{{row.prod_class}}</td>
-                  <td style="font-size: 13px;">{{row.po_no}}</td>
-                  <td style="font-size: 13px;">{{row.client_name}}</td>
-                  <td style="font-size: 13px;">{{row.qty}}</td>
-                  <td style="font-size: 13px;">{{row.unit}}</td>
-                  <td style="font-size: 13px;">{{row.rate}}</td>
-                  <td style="font-size: 13px;">{{row.amount}}</td>
-                  <td style="font-size: 13px;">
-                    <label class="badge badge-danger">{{row.invoice_no}}</label>
-                  </td>
-                  <td style="font-size: 13px;">{{row.invoice_date}}</td>
-                  <td style="font-size: 13px;">{{row.invoice_qty}}</td>
-                  <td style="font-size: 13px;">{{row.invoice_amount}}</td>
-                  <td style="font-size: 13px;">{{row.invoice_balance}}</td>
-                  <td style="font-size: 13px;">{{row.created_at}}</td>
-                  <td style="font-size: 13px;">{{row.created_by}}</td>
-                  <td>
-                    <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
-                  </td>
-                  <td>
-                    <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i>
-                  </td>
-                </tr> -->
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </card>
       </div>
 
@@ -264,6 +273,9 @@
         count_task : [],
         apiUrl :config.apiUrl,
         role: '',
+        table: {
+          data: []
+        },
      }
     },
     mounted(){
@@ -275,12 +287,29 @@
         let context = this;               
         Api(context, dashboard.countTask()).onSuccess(function(response) {    
             context.count_task = response.data.data;
+            context.table.data = response.data.data.report;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.count_job_request = [];
             }
         })
         .call()
+      },
+      convertRp(bilangan) {
+        if (bilangan) {
+          var number_string = bilangan.toString(),
+              sisa    = number_string.length % 3,
+              rupiah  = number_string.substr(0, sisa),
+              ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+
+          if(ribuan){
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+            return rupiah
+          }else{
+            return bilangan
+          }
+        }
       },
     }
   }

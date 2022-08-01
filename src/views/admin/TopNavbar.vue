@@ -4,7 +4,7 @@
       <!-- MODAL MENU -->
       <modal :show.sync="modalMenu.show">
        <template slot="header">
-          <img src="img/brand/TaniKu.png" width="13%">
+          <img src="img/brand/bck.png" width="13%"><p style="margin-top: 10px; margin-bottom:-15px; margin-left: 10px;">SIMPRO BCK</p>
        </template>
        <div>
           <div style="margin-bottom: 20px">
@@ -69,26 +69,8 @@
         <span class="navbar-toggler-bar burger-lines"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end">
-        <ul class="nav navbar-nav mr-auto">
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#" data-toggle="dropdown">
-              <i class="nc-icon nc-palette"></i>
-            </a>
-          </li> -->
-          <!-- <base-dropdown tag="li">
-            <template slot="title">
-              <i class="nc-icon nc-planet"></i>
-              <b class="caret"></b>
-              <span class="notification">5</span>
-            </template>
-            <a class="dropdown-item" href="#">Notification 1</a>
-            <a class="dropdown-item" href="#">Notification 2</a>
-            <a class="dropdown-item" href="#">Notification 3</a>
-            <a class="dropdown-item" href="#">Notification 4</a>
-            <a class="dropdown-item" href="#">Another notification</a>
-          </base-dropdown> -->
-        </ul>
         <ul class="navbar-nav ml-auto">
+          <p style="margin-top: -15px; margin-bottom:-15px; margin-right: 30px;">Hi {{ username }}</p>
           <li class="nav-item">
             <button type="submit" class="btn btn-sm btn-danger btn-fill float-right" @click="logout()" style="margin-top: -15px; margin-bottom:-15px;">
               <small>Logout</small>
@@ -102,6 +84,8 @@
 </template>
 <script>
   import Modal from '@/components/Modal.vue'
+  import config from '@/configs/config';
+  import axios from 'axios';
 
   export default {
     components: {
@@ -119,7 +103,11 @@
         modalMenu: {
             show: false,
         },
+        username: '',
       }
+    },
+    mounted(){
+      this.username = localStorage.getItem('username');
     },
     methods: {
       capitalizeFirstLetter (string) {
@@ -139,9 +127,26 @@
         this.$sidebar.displaySidebar(false)
       },
       logout(){
-        localStorage.removeItem('token');
-        localStorage.setItem('authenticated', false)  
-        this.$router.push('/login')
+        axios.get(config.apiUrl +"auth/logout").then(response => {
+          this.notifyVue('Anda berhasil logout', 'top', 'right', 'info')
+          localStorage.removeItem('token');
+          localStorage.setItem('authenticated', false)
+          this.$router.push('/login')
+        })
+        .catch(err => {
+            this.notifyVue('Gagal Logout', 'top', 'right', 'danger')
+        })
+      },
+      notifyVue(message, verticalAlign, horizontalAlign, type) {
+        const color = Math.floor((Math.random() * 4) + 1)
+        this.$notifications.notify(
+        {
+            message: message,
+            icon: 'nc-icon nc-notification-70',
+            horizontalAlign: horizontalAlign,
+            verticalAlign: verticalAlign,
+            type: type
+        })
       }
     }
   }

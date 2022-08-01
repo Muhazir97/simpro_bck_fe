@@ -51,11 +51,11 @@
                   <td style="background-color: #F0F8FF; font-weight: bold;" width="150">Created At</td>
                   <td>{{ jobRequestData.created_at }}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                   <td style="background-color: #F0F8FF; font-weight: bold;" width="150">Job Description</td>
                   <td colspan="3">{{ jobRequestData.job_description }}</td>
                   <td style="display: none"></td>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
       </div><hr>
@@ -72,7 +72,7 @@
                 <div class="col-4">
                 </div>
                 <div class="col-4">
-                  <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()" v-if="jobRequestData.job_status == 'Draft'">
+                  <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()">
                     Add New
                   </button>
                 </div>
@@ -97,13 +97,13 @@
                 <tbody>
                   <tr v-for="(row, i) in tableMatReq.data" :key="i">
                     <td style="font-size: 13px;">{{row.coil_no}}</td>
-                    <td style="font-size: 13px;">{{row.mc_thick}}</td>
-                    <td style="font-size: 13px;">{{row.mc_width}}</td>
-                    <td style="font-size: 13px;">{{row.mc_weight}}</td>
-                    <td style="font-size: 13px;">{{row.mc_spec}}</td>
-                    <td style="font-size: 13px;">{{row.mc_information}}</td>
+                    <td style="font-size: 13px;">{{row.dimension_thick}}</td>
+                    <td style="font-size: 13px;">{{row.dimension_width}}</td>
+                    <td style="font-size: 13px;">{{row.dimension_weight}}</td>
+                    <td style="font-size: 13px;">{{row.dimension_spec}}</td>
+                    <td style="font-size: 13px;">{{row.information}}</td>
                     <td>
-                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id, row.coil_no, row.mc_thick, row.mc_width, row.mc_weight, row.mc_spec, row.mc_information)" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -144,7 +144,7 @@
               <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
            </template>
            <div>
-            <div class="table-responsive">
+            <div class="scroll">
               <table class="table">
                 <thead>
                   <slot name="columns">
@@ -164,7 +164,8 @@
                     <td style="font-size: 13px;">{{row.dimension_thick}}</td>
                     <td style="font-size: 13px;">{{row.dimension_width}}</td>
                     <td style="font-size: 13px;">
-                      <input style="border: 1px solid white; text-align: center;" v-model="row.dimension_weight" size="7">
+                      {{row.dimension_weight}}
+                      <!-- <input style="border: 1px solid white; text-align: center;" v-model="row.dimension_weight" size="7"> -->
                     </td>
                     <td style="font-size: 13px;">{{row.dimension_spec}}</td>
                     <td>
@@ -282,6 +283,9 @@
             formData.append('mc_weight', (mc_weight == null) ? '' : mc_weight);
             formData.append('mc_spec', (mc_spec == null) ? '' : mc_spec);
             formData.append('mc_information', (mc_information == null) ? '' : mc_information);
+          }else if (type == 'delete') {
+             formData.append('job_no', '');
+              formData.append('po_no', '');
           }
           formData.append('type', type);
           formData.append('id', id);

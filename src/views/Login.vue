@@ -1,5 +1,5 @@
 <template>
-    <section class="section section-lg my-0" style="background-image: url('img/brand/bg_login_bck.jpg'); background-repeat:no-repeat; background-size: 1450px 800px">
+    <section class="section section-lg my-0" style="background-image: url('img/brand/bg_login_bck.jpg'); background-repeat:no-repeat; background-size: 100% 100%">
         <div class="shape shape-style-1 bg-gradient-green">
             <span></span>
             <span></span>
@@ -92,7 +92,8 @@ export default {
             Api(context, akun.indexProfile()).onSuccess(function(response) {
                 var dataRole = response.data.data[0];
                 context.notifyVue('Selamat anda berhasil login '+dataRole.full_name, 'top', 'right', 'info')
-                localStorage.setItem('role', dataRole.role) 
+                localStorage.setItem('role', dataRole.role)
+                localStorage.setItem('username', dataRole.full_name)
                 // if (dataRole.role == 'Admin') {
                     context.$router.push('/dashboard')
                 // }else{

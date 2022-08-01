@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -34,6 +34,8 @@
                       <th>PO NO</th>
                       <th>Travel Latter NO</th>
                       <th>OWNER</th>
+                      <th>PROGRAM</th>
+                      <th>DATE ENTRY</th>
                       <th>COIL NO</th>
                       <th>PACK</th>
                       <th>THICK / mm</th>
@@ -41,8 +43,8 @@
                       <th>WEIGHT / kg</th>
                       <th>SIZE</th>
                       <th>DESCRIPTION</th>
-                      <th>PROCESS PROGRAM</th>
-                      <th>Created At</th>
+                      <th>STATUS</th>
+                      <th>SLIT FROM</th>
                       <th>Created By</th>
                       <th></th>
                       <th></th>
@@ -62,6 +64,15 @@
                       </a>
                     </td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
+                    <!-- <td style="font-size: 13px;">
+                      <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK">
+                        <label class="badge badge-info" style="cursor: pointer;">{{row.process_program}}</label>
+                      </a>
+                    </td> -->
+                    <td style="font-size: 13px;">
+                      <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
+                    </td>
+                    <td style="font-size: 13px;">{{row.slitting_date}}</td>
                     <td style="font-size: 13px;">
                       <label class="badge badge-danger">{{row.coil_no}}</label>
                     </td>
@@ -72,11 +83,14 @@
                     <td style="font-size: 13px;">{{row.size}}</td>
                     <td style="font-size: 13px;">{{row.description}}</td>
                     <td style="font-size: 13px;">
-                      <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK">
-                        <label class="badge badge-info" style="cursor: pointer;">{{row.process_program}}</label>
-                      </a>
+                      <small v-if="row.material_status == 'BLANK'"><label class="badge badge-light">{{ row.material_status }}</label></small>
+                      <small v-if="row.material_status == 'FINISH'"><label class="badge badge-success">{{ row.material_status }}</label></small>
+                      <small v-if="row.material_status == 'SCHEDULE'"><label class="badge badge-warning">{{ row.material_status }}</label></small>
+                      <small v-if="row.material_status == 'RETURN'"><label class="badge badge-danger">{{ row.material_status }}</label></small>
                     </td>
-                    <td style="font-size: 13px;">{{row.created_at}}</td>
+                    <td style="font-size: 13px;">
+                      <small><label class="badge badge-warning">{{ row.slit_from }}</label></small>
+                    </td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
@@ -90,6 +104,7 @@
               </table>
             </div>
             <template slot="footer">
+              <div class="float-left"> TOTAL MATERIAL WEIGHT : {{ convertRp(totalMaterialWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -104,27 +119,57 @@
                 <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
              </template>
              <div>
+              <base-input type="date"
+                    label="Date Entry"
+                    placeholder="Date Entry"
+                    v-model="slitCoilData.slitting_date">
+              </base-input>
               <div class="form-group">
-                <label>Coil No</label><br>
-                <autocomplete
-                  ref="autocomplete"
-                  :url="apiUrl+'material/find-coil-no'"
+                <label>Material Status</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="slitCoilData.material_status">
+                  <option selected>Select Status</option>
+                  <option value="BLANK">BLANK</option>
+                  <option value="FINISH">FINISH</option>
+                  <option value="SCHEDULE">SCHEDULE</option>
+                  <option value="RETURN">RETURN</option>
+                </select>
+              </div>
+              <base-input type="text"
+                    label="Travel Latter No"
+                    placeholder="Travel Latter No"
+                    v-model="slitCoilData.travel_latter_no">
+              </base-input>
+              <div class="form-group">
+                <label>Owner</label><br>
+                <autocomplete 
+                  ref="autocompleteAdd"
+                  :url="apiUrl+'client/find-client'"
                   :customHeaders="{ Authorization: tokenApi }"
-                  anchor="coil_no"
-                  label="travel_latter_no"
+                  anchor="client_name"
+                  label="client_code"
                   :on-select="getData"
-                  placeholder="Choose Coil No"
-                  :min="2"
+                  placeholder="Choose Owner"
+                  :min="3"
                   :process="processJSON"
                   :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
                   >
                 </autocomplete>
               </div>
               <base-input type="text"
+                    label="Entry No / Program No"
+                    placeholder="Entry No / Program No"
+                    v-model="slitCoilData.process_program">
+              </base-input>
+              <base-input type="text"
+                    label="Coil No"
+                    placeholder="Coil No"
+                    v-model="slitCoilData.coil_no">
+              </base-input>              
+              <!-- <base-input type="text"
                     label="Pack"
                     placeholder="Pack"
                     v-model="slitCoilData.pack">
-              </base-input>
+              </base-input> -->
               <base-input type="number"
                     label="Thick"
                     placeholder="Thick"
@@ -166,7 +211,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">{{formFilter.title}}</h5>
              </template>
              <div>
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="Job No"
                     placeholder="Job No"
                     v-model="search.job_no">
@@ -175,6 +220,43 @@
                     label="PO No"
                     placeholder="PO No"
                     v-model="search.po_no">
+              </base-input> -->
+              <small class="d-block text-uppercase font-weight-bold mb-3">Date Entry</small>
+              <div class="input-daterange datepicker row align-items-center">
+                  <div class="col">
+                      <base-input addon-left-icon="ni ni-calendar-grid-58">
+                          <flat-picker slot-scope="{focus, blur}"
+                                       @on-open="focus"
+                                       @on-close="blur"
+                                       :config="{allowInput: true, mode: 'range',}"
+                                       class="form-control datepicker"
+                                       v-model="search.slitting_date">
+                          </flat-picker>
+                      </base-input>
+                  </div>
+              </div>
+              <div class="form-group">
+                <label>Material Status</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.material_status">
+                  <option selected>Select Status</option>
+                  <option value="BLANK">BLANK</option>
+                  <option value="FINISH">FINISH</option>
+                  <option value="SCHEDULE">SCHEDULE</option>
+                  <option value="RETURN">RETURN</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Slit From</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.slit_from">
+                  <option selected>Select From</option>
+                  <option value="FROM OUTSIDE">FROM OUTSIDE</option>
+                  <option value="FROM PRODUCTION">FROM PRODUCTION</option>
+                </select>
+              </div>
+              <base-input type="text"
+                    label="Travel Latter No"
+                    placeholder="Travel Latter No"
+                    v-model="search.travel_latter_no">
               </base-input>
               <base-input type="text"
                     label="Coil No"
@@ -202,6 +284,31 @@
                   >
                 </autocomplete>
               </div>
+              <base-input type="text"
+                    label="Pack"
+                    placeholder="Pack"
+                    v-model="search.pack">
+              </base-input>
+              <base-input type="number"
+                    label="Thick"
+                    placeholder="Thick"
+                    v-model="search.thick">
+              </base-input>
+              <base-input type="number"
+                    label="Width"
+                    placeholder="Width"
+                    v-model="search.width">
+              </base-input>
+              <base-input type="number"
+                    label="Weight"
+                    placeholder="Weight"
+                    v-model="search.weight">
+              </base-input>
+              <base-input type="number"
+                    label="Size"
+                    placeholder="Size"
+                    v-model="search.size">
+              </base-input>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilter.show = false">Close</button>
@@ -217,11 +324,12 @@
                 <h5 class="modal-title" id="exampleModalLabel">{{formImport.title}}</h5>
              </template>
              <div>
-              <base-input type="file"
-                    label="Upload File"
-                    placeholder="Upload File"
-                    @change="filesChange">
-              </base-input>
+                <base-input type="file"
+                      label="Upload File"
+                      placeholder="Upload File"
+                      @change="filesChange">
+                </base-input>
+                <small>Download Template<a :href="storageUrl+'template_import/Template Import Slit Coil.xlsx'"> Import Slit Coil</a></small>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
@@ -247,12 +355,15 @@
   import slitCoil from '@/services/slitCoil.service';
   import Autocomplete from 'vue2-autocomplete-js'
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  import flatPicker from "vue-flatpickr-component";
+  import "flatpickr/dist/flatpickr.css";
   
   export default {
     components: {
       Card,
       Modal,
       Autocomplete,
+      flatPicker,
     },
     data () {
       return {
@@ -265,6 +376,7 @@
         table: {
           data: []
         },
+        totalMaterialWeight: '',
         form: {
             add: true,
             title: "Add Data",
@@ -286,9 +398,18 @@
         search: {
           job_no: '',
           po_no: '',
+          travel_latter_no: '',
           coil_no: '',
           process_program: '',
           owner: '',
+          pack: '',
+          thick: '',
+          width: '',
+          weight: '',
+          size: '',
+          slitting_date: '',
+          material_status: '',
+          slit_from: '',
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
@@ -302,8 +423,9 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, material_status: context.search.material_status, slit_from: context.search.slit_from, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
+            context.totalMaterialWeight   = response.data.data.totalWeight;
             context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
             if (error.response.status == 404) {
@@ -323,7 +445,7 @@
           this.form.show    = true;
           this.form.title   = "Add Data";
           this.slitCoilData = {}
-          this.$refs.autocomplete.clearInput()
+          this.$refs.autocompleteAdd.clearInput()
       },
       edit(id) {
         let context = this;               
@@ -373,16 +495,21 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.slitCoilData.coil_no != undefined) {
+        if (this.slitCoilData.travel_latter_no != undefined && this.slitCoilData.owner != undefined && this.slitCoilData.process_program != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.slitting_date != undefined && this.slitCoilData.material_status != undefined) {
+          formData.append('travel_latter_no', this.slitCoilData.travel_latter_no);
+          formData.append('owner', this.slitCoilData.owner);
+          formData.append('process_program', this.slitCoilData.process_program);
+          formData.append('material_status', this.slitCoilData.material_status);
+          formData.append('slitting_date', this.slitCoilData.slitting_date);
           formData.append('coil_no', this.slitCoilData.coil_no);
-          formData.append('pack', (this.slitCoilData.pack == undefined) ? '' : this.slitCoilData.pack);
+          // formData.append('pack', (this.slitCoilData.pack == undefined) ? '' : this.slitCoilData.pack);
           formData.append('thick', (this.slitCoilData.thick == undefined) ? '' : this.slitCoilData.thick);
           formData.append('width', (this.slitCoilData.width == undefined) ? '' : this.slitCoilData.width);
           formData.append('weight', (this.slitCoilData.weight == undefined) ? '' : this.slitCoilData.weight);
           formData.append('size', (this.slitCoilData.size == undefined) ? '' : this.slitCoilData.size);
           formData.append('description', (this.slitCoilData.description == undefined) ? '' : this.slitCoilData.description);
         }else{
-          return alert('Coil NO Wajib Di Isi')
+          return alert('Travel Latter No, Owner, Entry No, Coil NO, Entry Date, Material Status Wajib Di Isi')
         }
 
         if (context.form.title == 'Add Data') {
@@ -410,6 +537,9 @@
                 context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
             }).call();
           }
+      },
+      detail(process_program){
+        this.$router.push('/detail-slit-coil/'+process_program)
       },
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)
@@ -446,7 +576,7 @@
       // ================= Autocomplete ============
       // AMBIL DATA YANG DI PILIH AC
       getData(obj){
-        this.slitCoilData.coil_no = obj.coil_no;
+        this.slitCoilData.owner = obj.client_name;
       },
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){
