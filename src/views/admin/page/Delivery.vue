@@ -36,11 +36,11 @@
                       <th>PO NO</th>
                       <th>CLIENT</th>
                       <th>PROD CLASS</th>
-                      <th>PACKING LIST NO</th>
-                      <th>PACKING DATE</th>
+                      <th>SURAT JALAN NO</th>
+                      <th>DATE</th>
                       <th>WEIGHT</th>
                       <th>QTY</th>
-                      <th>SIZE</th>
+                      <!-- <th>SIZE</th> -->
                       <th>Created At</th>
                       <th>Created By</th>
                       <th></th>
@@ -65,7 +65,7 @@
                     <td style="font-size: 13px;">{{row.packing_date}}</td>
                     <td style="font-size: 13px;">{{convertRp(row.weight)}}</td>
                     <td style="font-size: 13px;">{{convertRp(row.qty)}}</td>
-                    <td style="font-size: 13px;">{{row.size}}</td>
+                    <!-- <td style="font-size: 13px;">{{row.size}}</td> -->
                     <td style="font-size: 13px;">{{row.created_at}}</td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
@@ -80,6 +80,7 @@
               </table>
             </div>
             <template slot="footer">
+              <div class="float-left">TOTAL : {{table.data.length}}</div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -97,7 +98,7 @@
               <div class="form-group">
                 <label>Job No</label><br>
                 <autocomplete
-                  ref="autocomplete"
+                  ref="autocompleteJO"
                   :url="apiUrl+'job-request/find-job-no'"
                   :customHeaders="{ Authorization: tokenApi }"
                   anchor="job_no"
@@ -111,13 +112,13 @@
                 </autocomplete>
               </div>
               <base-input type="text"
-                    label="Packing List No"
-                    placeholder="Packing List No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="deliveryData.packing_list_no">
               </base-input>
               <base-input type="date"
-                    label="Packing Date"
-                    placeholder="Packing Date"
+                    label="Date"
+                    placeholder="Date"
                     v-model="deliveryData.packing_date">
               </base-input>
               <!-- <base-input type="number"
@@ -130,11 +131,11 @@
                     placeholder="Qty"
                     v-model="deliveryData.qty">
               </base-input> -->
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="Size"
                     placeholder="Size"
                     v-model="deliveryData.size">
-              </base-input>
+              </base-input> -->
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
@@ -167,13 +168,13 @@
                 </autocomplete>
               </div>
               <base-input type="text"
-                    label="Packing List No"
-                    placeholder="Packing List No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="search.packing_list_no">
               </base-input>
               <base-input type="date"
-                    label="Packing Date"
-                    placeholder="Packing Date"
+                    label="Date"
+                    placeholder="Date"
                     v-model="search.packing_date">
               </base-input>
               <base-input type="number"
@@ -186,11 +187,11 @@
                     placeholder="Qty"
                     v-model="search.qty">
               </base-input>
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="Size"
                     placeholder="Size"
                     v-model="search.size">
-              </base-input>
+              </base-input> -->
               <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
               <div class="input-daterange datepicker row align-items-center">
                   <div class="col">
@@ -334,7 +335,7 @@
           this.form.show    = true;
           this.form.title   = "Add Data";
           this.deliveryData = {}
-          this.$refs.autocomplete.clearInput()
+          this.$refs.autocompleteJO.clearInput()
       },
       edit(id) {
         let context = this;               
@@ -342,7 +343,7 @@
             context.deliveryData = response.data.data[0];
             context.form.show    = true;
             context.form.title   = 'Edit Data';  
-            context.$refs.autocomplete.setValue(response.data.data[0].job_no)                      
+            context.$refs.autocompleteJO.setValue(response.data.data[0].job_no)                      
         })
         .call()        
       },

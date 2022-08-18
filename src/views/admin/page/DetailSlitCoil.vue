@@ -16,21 +16,21 @@
         <table class="table table-sm">
             <tbody>
                 <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="100">JOB NO</td>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">JOB NO</td>
                     <td width="300">  {{ detailProdSlittingData.job_no }} </td>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">PO NO</td>
                     <td> {{ detailProdSlittingData.po_no }} </td>
                 </tr>
                 <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="100">TRAVEL LATTER NO</td>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">PROGRAM NO</td>
                     <td> {{ detailProdSlittingData.process_program }} </td>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CLIENT</td>
-                    <td> {{ detailProdSlittingData.client_name }} </td>
+                    <td> {{ detailProdSlittingData.owner }} </td>
                 </tr>
                 <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="100">START TANGGAL</td>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CREATED BY</td>
                     <td> {{ detailProdSlittingData.created_by }} </td>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">FINISH TANGGAL</td>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CREATED AT</td>
                     <td> {{ detailProdSlittingData.created_at }} </td>
                     <td style="display: none"></td>
                 </tr>
@@ -201,8 +201,13 @@
             <tr>
               <td colspan="5">TOTAL INPUT</td>
               <td>{{ convertRp(totalWeightInput) }}</td>
-              <!-- <td></td>
-              <td colspan="5">TOTAL OUTPUT</td> -->
+              <td></td>
+              <td colspan="4">TOTAL OUTPUT</td>
+              <td>{{ convertRp(totalWeightOutput) }}</td>
+              <td style="display: none"></td>
+            </tr>
+            <tr>
+              <td colspan="15">YIELD : {{ convertRp(yieldSlit) }} %</td>
               <td style="display: none"></td>
             </tr>
           </tbody>
@@ -235,6 +240,8 @@
           data: [],
         },
         totalWeightInput : '',
+        totalWeightOutput : '',
+        yieldSlit : '',
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
         tokenApi : '',
@@ -251,6 +258,8 @@
             context.detailProdSlittingData = response.data.data.data[0];
             context.table.data             = response.data.data.data;
             context.totalWeightInput       = response.data.data.totalWeightInput;
+            context.totalWeightOutput      = response.data.data.totalWeightOutput;
+            context.yieldSlit              = response.data.data.yield;
         }).onFinish(function() {  
              
         })

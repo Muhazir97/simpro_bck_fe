@@ -3,8 +3,71 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
-          <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+          <div class="row">
+            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'DELIVERY', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-settings-gear-64 text-success"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Delivery</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightDel) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT YET DELIVERY', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-bullet-list-67 text-warning"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Not Yet Delivery</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightNotDel) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+<!-- 
+            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'RETURN', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-refresh-02 text-danger"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Production</p>
+                  <h4 class="card-title"></h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-app text-info"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">All Coil</p>
+                  <h4 class="card-title"></h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div> -->
+          </div>
+
+          <div v-if="role != 'Visitor'">
+            <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+
+            <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+
+            <a :href="apiUrl+'report-pdf/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+''" target="_BLANK" class="btn btn-sm btn-warning mb-4"><i class="fa fa-file-text fa-sm"></i> PRINT</a>
+          </div>
 
           <!-- CARD -->
           <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
@@ -19,7 +82,7 @@
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
                     Filter
                   </button>
-                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()">
+                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()" v-if="role != 'Visitor'">
                     Add New
                   </button>
                 </div>
@@ -32,20 +95,20 @@
                     <tr style="background-color: #F0F8FF;">
                       <th>JOB NO</th>
                       <th>PO NO</th>
-                      <th>Travel Latter NO</th>
+                      <th>Surat Jalan NO</th>
+                      <th>DATE</th>
                       <th>OWNER</th>
                       <th>PROGRAM</th>
-                      <th>DATE ENTRY</th>
                       <th>COIL NO</th>
                       <th>PACK</th>
                       <th>THICK / mm</th>
                       <th>WIDTH / mm</th>
                       <th>WEIGHT / kg</th>
-                      <th>SIZE</th>
+                      <!-- <th>SIZE</th> -->
                       <th>DESCRIPTION</th>
                       <th>STATUS</th>
                       <th>SLIT FROM</th>
-                      <th>Created By</th>
+                      <!-- <th>Created By</th> -->
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -63,16 +126,11 @@
                         <small><label class="badge badge-primary" style="cursor: pointer;">{{row.travel_latter_no}}</label></small>
                       </a>
                     </td>
+                    <td style="font-size: 13px;">{{row.slitting_date}}</td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
-                    <!-- <td style="font-size: 13px;">
-                      <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK">
-                        <label class="badge badge-info" style="cursor: pointer;">{{row.process_program}}</label>
-                      </a>
-                    </td> -->
                     <td style="font-size: 13px;">
                       <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.slitting_date}}</td>
                     <td style="font-size: 13px;">
                       <label class="badge badge-danger">{{row.coil_no}}</label>
                     </td>
@@ -80,23 +138,20 @@
                     <td style="font-size: 13px;">{{row.thick}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-                    <td style="font-size: 13px;">{{row.size}}</td>
+                    <!-- <td style="font-size: 13px;">{{row.size}}</td> -->
                     <td style="font-size: 13px;">{{row.description}}</td>
                     <td style="font-size: 13px;">
-                      <small v-if="row.material_status == 'BLANK'"><label class="badge badge-light">{{ row.material_status }}</label></small>
-                      <small v-if="row.material_status == 'FINISH'"><label class="badge badge-success">{{ row.material_status }}</label></small>
-                      <small v-if="row.material_status == 'SCHEDULE'"><label class="badge badge-warning">{{ row.material_status }}</label></small>
-                      <small v-if="row.material_status == 'RETURN'"><label class="badge badge-danger">{{ row.material_status }}</label></small>
+                      <small><label class="badge badge-light">{{ row.material_status }}</label></small>
                     </td>
                     <td style="font-size: 13px;">
                       <small><label class="badge badge-warning">{{ row.slit_from }}</label></small>
                     </td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
-                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
+                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="role != 'Visitor'"></i>
                     </td>
                     <td>
-                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i>
+                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)" v-if="role != 'Visitor'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -104,7 +159,7 @@
               </table>
             </div>
             <template slot="footer">
-              <div class="float-left"> TOTAL MATERIAL WEIGHT : {{ convertRp(totalMaterialWeight) }} </div>
+              <div class="float-left">TOTAL COIL : {{table.data.length}} , TOTAL MATERIAL WEIGHT : {{ convertRp(totalMaterialWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -128,18 +183,16 @@
                 <label>Material Status</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="slitCoilData.material_status">
                   <option selected>Select Status</option>
-                  <option value="BLANK">BLANK</option>
-                  <option value="FINISH">FINISH</option>
-                  <option value="SCHEDULE">SCHEDULE</option>
-                  <option value="RETURN">RETURN</option>
+                  <option value="DELIVERY">DELIVERY</option>
+                  <option value="NOT YET DELIVERY">NOT YET DELIVERY</option>
                 </select>
               </div>
               <base-input type="text"
-                    label="Travel Latter No"
-                    placeholder="Travel Latter No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="slitCoilData.travel_latter_no">
               </base-input>
-              <div class="form-group">
+              <div class="form-group" v-if="role != 'Visitor'">
                 <label>Owner</label><br>
                 <autocomplete 
                   ref="autocompleteAdd"
@@ -239,10 +292,8 @@
                 <label>Material Status</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="search.material_status">
                   <option selected>Select Status</option>
-                  <option value="BLANK">BLANK</option>
-                  <option value="FINISH">FINISH</option>
-                  <option value="SCHEDULE">SCHEDULE</option>
-                  <option value="RETURN">RETURN</option>
+                  <option value="DELIVERY">DELIVERY</option>
+                  <option value="NOT YET DELIVERY">NOT YET DELIVERY</option>
                 </select>
               </div>
               <div class="form-group">
@@ -254,8 +305,8 @@
                 </select>
               </div>
               <base-input type="text"
-                    label="Travel Latter No"
-                    placeholder="Travel Latter No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="search.travel_latter_no">
               </base-input>
               <base-input type="text"
@@ -264,8 +315,8 @@
                     v-model="search.coil_no">
               </base-input>
               <base-input type="text"
-                    label="Process Program"
-                    placeholder="Process Program"
+                    label="Program No"
+                    placeholder="Program No"
                     v-model="search.process_program">
               </base-input>
               <div class="form-group">
@@ -357,6 +408,8 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  import ChartCard from '@/components/Cards/ChartCard.vue'
+  import StatsCard from '@/components/Cards/StatsCard.vue'
   
   export default {
     components: {
@@ -364,6 +417,8 @@
       Modal,
       Autocomplete,
       flatPicker,
+      ChartCard,
+      StatsCard,
     },
     data () {
       return {
@@ -377,6 +432,8 @@
           data: []
         },
         totalMaterialWeight: '',
+        totalWeightDel: '',
+        totalWeightNotDel: '',
         form: {
             add: true,
             title: "Add Data",
@@ -413,20 +470,24 @@
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
+        role : '',
         dataImport: '',
       }
     },
     mounted(){
       this.get();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
+      this.role = localStorage.getItem('role');
     },
     methods: {
       get(param){
         let context = this;               
         Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, material_status: context.search.material_status, slit_from: context.search.slit_from, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
+            context.pagination.page_count = response.data.data.data.last_page;
             context.totalMaterialWeight   = response.data.data.totalWeight;
-            context.pagination.page_count = response.data.data.data.last_page
+            context.totalWeightDel        = response.data.data.totalWeightDel;
+            context.totalWeightNotDel     = response.data.data.totalWeightNotDel;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -495,7 +556,7 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.slitCoilData.travel_latter_no != undefined && this.slitCoilData.owner != undefined && this.slitCoilData.process_program != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.slitting_date != undefined && this.slitCoilData.material_status != undefined) {
+        if (this.slitCoilData.owner != undefined && this.slitCoilData.process_program != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.slitting_date != undefined && this.slitCoilData.material_status != undefined) {
           formData.append('travel_latter_no', this.slitCoilData.travel_latter_no);
           formData.append('owner', this.slitCoilData.owner);
           formData.append('process_program', this.slitCoilData.process_program);
@@ -509,7 +570,7 @@
           formData.append('size', (this.slitCoilData.size == undefined) ? '' : this.slitCoilData.size);
           formData.append('description', (this.slitCoilData.description == undefined) ? '' : this.slitCoilData.description);
         }else{
-          return alert('Travel Latter No, Owner, Entry No, Coil NO, Entry Date, Material Status Wajib Di Isi')
+          return alert('Owner, Entry No, Coil NO, Entry Date, Material Status Wajib Di Isi')
         }
 
         if (context.form.title == 'Add Data') {

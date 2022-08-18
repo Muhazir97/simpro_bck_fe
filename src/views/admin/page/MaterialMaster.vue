@@ -3,8 +3,69 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
-          <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+          <div class="row">
+            <div class="col-xl-3 col-md-6">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-app text-info"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">All Coil</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightAll) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PROD', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-settings-gear-64 text-success"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Production</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightProd) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT IN PROD', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-bullet-list-67 text-warning"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Not Yet Prod</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightNotProd) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'RETURN', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-refresh-02 text-danger"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Return</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightReturn) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+          </div>
+
+          <a v-if="role != 'Visitor'" :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+
+          <button v-if="role != 'Visitor'" class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+
+          <a :href="apiUrl+'report-pdf/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+''" target="_BLANK" class="btn btn-sm btn-warning mb-4"><i class="fa fa-file-text fa-sm"></i> PRINT</a>
 
           <!-- CARD -->
           <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
@@ -19,7 +80,7 @@
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
                     Filter
                   </button>
-                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()">
+                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()" v-if="role != 'Visitor'">
                     Add New
                   </button>
                 </div>
@@ -32,20 +93,20 @@
                     <tr style="background-color: #F0F8FF;">
                       <th>JOB NO</th>
                       <th>PO NO</th>
-                      <th>DATE ENTRY</th>
-                      <th>Travel Latter NO</th>
+                      <th>DATE</th>
+                      <th>SURAT JALAN NO</th>
                       <th>OWNER</th>
                       <th>COIL NO</th>
                       <th>SPEC</th>
                       <th>THICK / mm</th>
                       <th>WIDTH / mm</th>
                       <th>WEIGHT / kg</th>
+                      <th>STATUS</th>
                       <th>Description</th>
                       <!-- <th>Created At</th> -->
-                      <th>STATUS</th>
-                      <th>PROCESS PROGRAM</th>
-                      <th>PROCESS DATE</th>
-                      <th>Created By</th>
+                      <!-- <th>PROCESS PROGRAM</th> -->
+                      <!-- <th>PROCESS DATE</th> -->
+                      <!-- <th>Created By</th> -->
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -80,26 +141,21 @@
                     <td style="font-size: 13px;">{{ row.dimension_thick }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.dimension_width) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.dimension_weight) }}</td>
+                    <td style="font-size: 13px;">
+                      <small><label class="badge badge-warning">{{ row.material_status }}</label></small>
+                    </td>
                     <td style="font-size: 13px;">{{row.information}}</td>
                     <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
-                    <td style="font-size: 13px;">
-                      <small v-if="row.material_status == 'BLANK'"><label class="badge badge-light">{{ row.material_status }}</label></small>
-                      <small v-if="row.material_status == 'FINISH'"><label class="badge badge-success">{{ row.material_status }}</label></small>
-                      <small v-if="row.material_status == 'SCHEDULE'"><label class="badge badge-warning">{{ row.material_status }}</label></small>
-                      <small v-if="row.material_status == 'RETURN'"><label class="badge badge-danger">{{ row.material_status }}</label></small>
-                    </td>
-                    <td style="font-size: 13px;">
-                      <!-- <a :href="apiUrl+'report-excel/lap-prod-slit?process_program='+row.process_program" target="_BLANK"> -->
-                        <label class="badge badge-primary">{{row.process_program}}</label>
-                      <!-- </a> -->
-                    </td>
-                    <td style="font-size: 13px;">{{row.process_date}}</td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <!-- <td style="font-size: 13px;">
+                      <label class="badge badge-primary">{{row.process_program}}</label>
+                    </td> -->
+                    <!-- <td style="font-size: 13px;">{{row.process_date}}</td> -->
+                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
-                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
+                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="role != 'Visitor'"></i>
                     </td>
                     <td>
-                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i>
+                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)" v-if="role != 'Visitor'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -107,7 +163,7 @@
               </table>
             </div>
             <template slot="footer">
-              <div class="float-left"> TOTAL MATERIAL WEIGHT : {{ convertRp(totalMaterialWeight) }} </div>
+              <div class="float-left">TOTAL COIL : {{table.data.length}} , TOTAL MATERIAL WEIGHT : {{ convertRp(totalMaterialWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -131,15 +187,14 @@
                 <label>Status Material</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="material.material_status">
                   <option selected>Select Status</option>
-                  <option value="BLANK">BLANK</option>
-                  <option value="FINISH">FINISH</option>
-                  <option value="SCHEDULE">SCHEDULE</option>
+                  <option value="NOT IN PROD">NOT YET PROD</option>
+                  <option value="PROD">PROD</option>
                   <option value="RETURN">RETURN</option>
                 </select>
               </div>
               <base-input type="text"
-                    label="Travel Latter No"
-                    placeholder="Travel Latter No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="material.travel_latter_no">
               </base-input>
               <base-input type="text"
@@ -183,7 +238,7 @@
                     placeholder="Dimension Spec"
                     v-model="material.dimension_spec">
               </base-input>
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="Process Program"
                     placeholder="Process Program"
                     v-model="material.process_program">
@@ -192,10 +247,10 @@
                     label="Process Date"
                     placeholder="Process Date"
                     v-model="material.process_date">
-              </base-input>
+              </base-input> -->
               <base-input type="text"
-                    label="Information"
-                    placeholder="Information"
+                    label="Description"
+                    placeholder="Description"
                     v-model="material.information">
               </base-input>
 
@@ -232,9 +287,8 @@
                 <label>Status Material</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="search.material_status">
                   <option selected>Select Status</option>
-                  <option value="BLANK">BLANK</option>
-                  <option value="FINISH">FINISH</option>
-                  <option value="SCHEDULE">SCHEDULE</option>
+                  <option value="NOT IN PROD">NOT YET PROD</option>
+                  <option value="PROD">PROD</option>
                   <option value="RETURN">RETURN</option>
                 </select>
               </div>
@@ -249,8 +303,8 @@
                     v-model="search.po_no">
               </base-input>
               <base-input type="text"
-                    label="Travel Latter No"
-                    placeholder="Travel Latter No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="search.travel_latter_no">
               </base-input>
               <base-input type="text"
@@ -258,7 +312,7 @@
                     placeholder="Coil No"
                     v-model="search.coil_no">
               </base-input>
-              <div class="form-group">
+              <div class="form-group" v-if="role != 'Visitor'">
                 <label>Owner</label><br>
                 <autocomplete 
                   ref="autocomplete"
@@ -294,11 +348,11 @@
                     placeholder="Dimension Spec"
                     v-model="search.spec">
               </base-input>
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="Process Program"
                     placeholder="Process Program"
                     v-model="search.process_program">
-              </base-input>
+              </base-input> -->
 
              </div>
              <template slot="footer">
@@ -348,6 +402,8 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  import ChartCard from '@/components/Cards/ChartCard.vue'
+  import StatsCard from '@/components/Cards/StatsCard.vue'
   
   export default {
     components: {
@@ -355,6 +411,8 @@
       Modal,
       Autocomplete,
       flatPicker,
+      ChartCard,
+      StatsCard,
     },
     data () {
       return {
@@ -368,6 +426,10 @@
           data: []
         },
         totalMaterialWeight: '',
+        totalWeightAll: '',
+        totalWeightProd: '',
+        totalWeightNotProd: '',
+        totalWeightReturn: '',
         form: {
             add: true,
             title: "Add Data",
@@ -402,20 +464,26 @@
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
+        role : '',
         dataImport: '',
       }
     },
     mounted(){
       this.get();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
+      this.role = localStorage.getItem('role');
     },
     methods: {
       get(param){
         let context = this;               
         Api(context, material.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, owner: context.search.owner, thick: context.search.thick, width: context.search.width, weight: context.search.weight, spec: context.search.spec, process_program: context.search.process_program, date: context.search.date, material_status: context.search.material_status, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
-            context.totalMaterialWeight   = response.data.data.totalWeight;
             context.pagination.page_count = response.data.data.data.last_page
+            context.totalMaterialWeight   = response.data.data.totalWeight;
+            context.totalWeightAll        = response.data.data.totalWeightAll;
+            context.totalWeightProd       = response.data.data.totalWeightProd;
+            context.totalWeightNotProd    = response.data.data.totalWeightNotProd;
+            context.totalWeightReturn     = response.data.data.totalWeightReturn;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -484,11 +552,11 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.material.date_entry != undefined && this.material.material_status != undefined && this.material.travel_latter_no != undefined && this.material.owner != undefined && this.material.dimension_weight != undefined) {
+        if (this.material.date_entry != undefined && this.material.travel_latter_no != undefined && this.material.owner != undefined) {
           formData.append('date_entry', this.material.date_entry);
-          formData.append('material_status', this.material.material_status);
           formData.append('travel_latter_no', this.material.travel_latter_no);
           formData.append('owner', this.material.owner);
+          formData.append('material_status', (this.material.material_status == undefined) ? '' : this.material.material_status);
           formData.append('coil_no',(this.material.coil_no == undefined) ? '' : this.material.coil_no);
           formData.append('dimension_thick', (this.material.dimension_thick == undefined) ? '' : this.material.dimension_thick);
           formData.append('dimension_width', (this.material.dimension_width == undefined) ? '' : this.material.dimension_width);
@@ -498,7 +566,7 @@
           formData.append('process_date', (this.material.process_date == undefined) ? '' : this.material.process_date);
           formData.append('information', (this.material.information == undefined) ? '' : this.material.information);
         }else{
-          return alert('Entry Date, Status, Travel Latter No, Owner & Weight Wajib Di Isi')
+          return alert('Entry Date, Status, Surat Jalan No, Owner & Weight Wajib Di Isi')
         }
 
         if (context.form.title == 'Add Data') {
@@ -578,7 +646,7 @@
 <style type="text/css">
   .scroll { 
     overflow: auto; 
-    height: 500px; 
+    height: 700px; 
   }
   .scroll thead th { 
     position: sticky; 

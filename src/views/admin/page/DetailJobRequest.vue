@@ -169,7 +169,7 @@
                     </td>
                     <td style="font-size: 13px;">{{row.dimension_spec}}</td>
                     <td>
-                      <i class="fa fa-check-square-o text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa ffa-plus-square text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)" v-if="jobRequestData.job_status == 'Draft'"></i>
                     </td>
                   </tr>
                 </tbody>

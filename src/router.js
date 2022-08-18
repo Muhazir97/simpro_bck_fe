@@ -40,7 +40,7 @@ Vue.use(Router);
 
 const vurRouter = new Router({
   linkExactActiveClass: "active",
-  // mode: 'history',
+  mode: 'history',
   routes: [
   // =================== USER =====================
     {

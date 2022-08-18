@@ -11,7 +11,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">Report Produksi Slitting</h4>
+                  <h4 class="card-title">Laporan Produksi Slitting</h4>
                 </div>
                 <div class="col-4">
                 </div>
@@ -32,7 +32,7 @@
                     <tr style="background-color: #F0F8FF;">
                       <th>JOB NO</th>
                       <th>PO NO</th>
-                      <th>Travel Latter NO</th>
+                      <th>Surat Jalan NO</th>
                       <th>OWNER</th>
                       <th>SLITTING DATE</th>
                       <th>PROGRAM</th>
@@ -103,22 +103,6 @@
              </template>
              <div>
               <div class="form-group">
-                <label>Program No</label><br>
-                <autocomplete 
-                  ref="autocomplete"
-                  :url="apiUrl+'produksi-slitting/find-process-program'"
-                  :customHeaders="{ Authorization: tokenApi }"
-                  anchor="process_program"
-                  label="coil_no"
-                  :on-select="getDataPN"
-                  placeholder="Choose Program No"
-                  :min="3"
-                  :process="processJSON"
-                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
-                  >
-                </autocomplete>
-              </div> 
-              <div class="form-group">
                 <label>Coil No</label><br>
                 <autocomplete 
                   ref="autocomplete"
@@ -133,7 +117,28 @@
                   :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
                   >
                 </autocomplete>
-              </div>             
+              </div>
+              <div class="form-group">
+                <label>Job No</label><br>
+                <autocomplete
+                  ref="autocompleteJO"
+                  :url="apiUrl+'job-request/find-job-no'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="job_no"
+                  label="po_no"
+                  :on-select="getDataJO"
+                  placeholder="Choose Job No / PO No"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
+              <base-input type="text"
+                    label="Program No"
+                    placeholder="Program No"
+                    v-model="reportSlittingData.process_program">
+              </base-input>           
               <base-input type="text"
                     label="Pack"
                     placeholder="Pack"
@@ -205,8 +210,8 @@
                     v-model="search.po_no">
               </base-input> -->
               <base-input type="text"
-                    label="Travel Latter No"
-                    placeholder="Travel Latter No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="search.travel_latter_no">
               </base-input>
               <base-input type="text"
@@ -215,8 +220,8 @@
                     v-model="search.coil_no">
               </base-input>
               <base-input type="text"
-                    label="Process Program"
-                    placeholder="Process Program"
+                    label="Program No"
+                    placeholder="Program No"
                     v-model="search.process_program">
               </base-input>
               <div class="form-group">
@@ -260,7 +265,7 @@
                     placeholder="Size"
                     v-model="search.size">
               </base-input> -->
-              <small class="d-block text-uppercase font-weight-bold mb-3">Slitting Date / Entry Date</small>
+              <small class="d-block text-uppercase font-weight-bold mb-3">Slitting Date</small>
               <div class="input-daterange datepicker row align-items-center">
                   <div class="col">
                       <base-input addon-left-icon="ni ni-calendar-grid-58">
@@ -415,7 +420,7 @@
             context.reportSlittingData = response.data.data[0];
             context.form.show    = true;
             context.form.title   = 'Edit Data';      
-            context.$refs.autocomplete.setValue(response.data.data[0].owner)                  
+            context.$refs.autocompleteJO.setValue(response.data.data[0].job_no)                  
         })
         .call()        
       },
@@ -457,9 +462,10 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.reportSlittingData.coil_no != undefined && this.reportSlittingData.process_program != undefined && this.reportSlittingData.slitting_date != undefined) {
+        if (this.reportSlittingData.job_no != undefined && this.reportSlittingData.coil_no != undefined && this.reportSlittingData.process_program != undefined && this.reportSlittingData.slitting_date != undefined) {
           // formData.append('travel_latter_no', this.reportSlittingData.travel_latter_no);
           // formData.append('owner', this.reportSlittingData.owner);
+          formData.append('job_no', this.reportSlittingData.job_no);
           formData.append('process_program', this.reportSlittingData.process_program);
           formData.append('slitting_date', this.reportSlittingData.slitting_date);
           formData.append('coil_no', this.reportSlittingData.coil_no);
@@ -504,6 +510,18 @@
       detail(process_program){
         this.$router.push('/detail-lap-prod-slit/'+process_program)
       },
+      getLapProdSlit(coil_no){
+        let context = this;               
+        Api(context, reportSlitting.getLapProdSlit({coil_no: coil_no})).onSuccess(function(response) {    
+            context.reportSlittingData = response.data.data;
+            context.$refs.autocompleteJO.setValue( response.data.data.job_no)
+        }).onError(function(error) {                    
+            if (error.response.status == 404) {
+                // context.reportSlittingData = {};
+            }
+        })
+        .call()
+      },
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)
         this.$notifications.notify(
@@ -540,9 +558,10 @@
       // AMBIL DATA YANG DI PILIH AC
       getData(obj){
         this.reportSlittingData.coil_no = obj.coil_no;
+        this.getLapProdSlit(obj.coil_no)
       },
-      getDataPN(obj){
-        this.reportSlittingData.process_program = obj.process_program;
+      getDataJO(obj){
+        this.reportSlittingData.job_no = obj.job_no;
       },
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){

@@ -9,45 +9,73 @@
        <div>
           <div style="margin-bottom: 20px">
             <router-link  to="/dashboard" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-chart-pie-35 text-dark"></i> <span class="text-dark"> Dashboard </span>
+              <i class="nc-icon nc-chart-bar-32 text-dark"></i> <span class="text-dark"> Dashboard </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
-            <router-link  to="/approve-invoice" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-notes text-dark"></i> <span class="text-dark"> Approve Invoice </span>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery' || role == 'Accounting'">
+            <router-link  to="/client-master" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-badge text-dark"></i> <span class="text-dark"> Client Master </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
-            <router-link  to="/all-invoice" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-paper-2 text-dark"></i> <span class="text-dark"> All Invoice</span>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Reception' ||  role == 'Visitor'">
+            <router-link  to="/material-master" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-app text-dark"></i> <span class="text-dark"> Mother Coil </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
-            <router-link  to="/pembayaran-mitra" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-chart-bar-32 text-dark"></i> <span class="text-dark"> Pembayaran Mitra</span>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Reception' || role == 'Visitor'">
+            <router-link  to="/slit-coil" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-support-17 text-dark"></i> <span class="text-dark"> Slit Coil </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
-            <router-link  to="/app-mitra" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-app text-dark"></i> <span class="text-dark"> Approve Mitra</span>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception'">
+            <router-link  to="/job-request" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-notes text-dark"></i> <span class="text-dark"> Job Order </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
-            <router-link  to="/blog" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-atom text-dark"></i> <span class="text-dark"> Blog</span>
+
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
+            <base-dropdown tag="li">
+              <template slot="title">
+                <i class="nc-icon nc-settings-90 text-dark"></i> <span class="text-dark"> Produksi </span> <i class="fa fa-angle-right fa-xs text-dark" aria-hidden="true"></i>
+              </template>
+              <sidebar-link to="/report-slitting" @click.native="modalMenu.show = false" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
+                <i class="nc-icon nc-scissors text-white"></i> <span class="text-white"> Slitting </span>
+              </sidebar-link>
+              <sidebar-link to="/produksi-tolling" @click.native="modalMenu.show = false" v-if="role == 'Admin'">
+                <i class="nc-icon nc-chart text-white"></i> <span class="text-white"> Tolling </span>
+              </sidebar-link>
+              <sidebar-link to="/produksi-shearing" @click.native="modalMenu.show = false" v-if="role == 'Admin'">
+                <i class="nc-icon nc-preferences-circle-rotate text-white"></i> <span class="text-white"> Shearing </span>
+              </sidebar-link>
+            </base-dropdown>
+          </div>
+
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
+            <router-link  to="/delivery" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-delivery-fast text-dark"></i> <span class="text-dark"> Delivery </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
+            <router-link  to="/news" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-paper-2 text-dark"></i> <span class="text-dark"> News / BA </span>
+            </router-link><br>
+          </div>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
+            <router-link  to="/invoice" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-single-copy-04 text-dark"></i> <span class="text-dark"> Invoice </span>
+            </router-link><br>
+          </div>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
+            <router-link  to="/payment" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-credit-card text-dark"></i> <span class="text-dark"> Payment </span>
+            </router-link><br>
+          </div>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin'">
             <router-link  to="/all-account" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-single-02 text-dark"></i> <span class="text-dark"> Akun</span>
+              <i class="nc-icon nc-single-02 text-dark"></i> <span class="text-dark"> Account </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px">
-            <router-link  to="/setting" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-settings-gear-64 text-dark"></i> <span class="text-dark"> Setting</span>
-            </router-link><br>
-          </div>
-          <div style="margin-bottom: 20px">
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
             <router-link  to="#" @click.native="modalMenu.show = false, logout()">
               <i class="fa fa-sign-out text-dark"></i> <span class="text-dark"> Logout</span>
             </router-link><br>
@@ -104,10 +132,12 @@
             show: false,
         },
         username: '',
+        role: '',
       }
     },
     mounted(){
       this.username = localStorage.getItem('username');
+      this.role = localStorage.getItem('role');
     },
     methods: {
       capitalizeFirstLetter (string) {

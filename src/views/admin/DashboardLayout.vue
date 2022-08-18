@@ -6,85 +6,62 @@
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Dashboard</p>
       </sidebar-link>
-      <sidebar-link to="/client-master" v-if="role == 'Requester'">
+      <sidebar-link to="/client-master" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery' || role == 'Accounting'">
         <i class="nc-icon nc-badge"></i>
         <p>Client Master</p>
       </sidebar-link>
-      <sidebar-link to="/material-master" v-if="role == 'Requester'">
+      <sidebar-link to="/material-master" v-if="role == 'Admin' || role == 'Reception' ||  role == 'Visitor'">
         <i class="nc-icon nc-app"></i>
         <p>Mother Coil</p>
       </sidebar-link>
-      <sidebar-link to="/slit-coil" v-if="role == 'Requester'">
+      <sidebar-link to="/slit-coil" v-if="role == 'Admin' || role == 'Reception' || role == 'Visitor'">
         <i class="nc-icon nc-support-17"></i>
         <p>Slit Coil</p>
       </sidebar-link>
-      <sidebar-link to="/job-request" v-if="role == 'Requester'">
+      <sidebar-link to="/job-request" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception'">
         <i class="nc-icon nc-notes"></i>
         <p>Job Order</p>
       </sidebar-link>
-      <sidebar-link to="#" >
+      <sidebar-link to="#" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
         <base-dropdown tag="li">
             <template slot="title">
               <i class="nc-icon nc-settings-90"></i>
               <p>Produksi <i class="fa fa-angle-right fa-xs" aria-hidden="true"></i></p>
             </template>
-            <sidebar-link to="/produksi-slitting" v-if="role == 'Requester'">
+            <sidebar-link to="/report-slitting" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
               <i class="nc-icon nc-scissors"></i>
               <p>Slitting</p>
             </sidebar-link>
-            <sidebar-link to="/produksi-tolling" v-if="role == 'Requester'">
+            <sidebar-link to="/produksi-tolling" v-if="role == 'Admin'">
               <i class="nc-icon nc-chart"></i>
               <p>Tolling</p>
             </sidebar-link>
-            <sidebar-link to="/produksi-shearing" v-if="role == 'Requester'">
+            <sidebar-link to="/produksi-shearing" v-if="role == 'Admin'">
               <i class="nc-icon nc-preferences-circle-rotate"></i>
               <p>Shearing</p>
             </sidebar-link>
           </base-dropdown>
       </sidebar-link>
-
-      <!-- <sidebar-link to="#">
-        <i class="nc-icon nc-settings-90"></i>
-        <p>Produksi</p>
-        <sidebar-link to="/produksi" v-if="role == 'Requester'">
-          <i class="nc-icon nc-scissors"></i>
-          <p>Slitting</p>
-        </sidebar-link>
-        <sidebar-link to="/produksi-tolling" v-if="role == 'Requester'">
-          <i class="nc-icon nc-chart"></i>
-          <p>Tolling</p>
-        </sidebar-link>
-        <sidebar-link to="/produksi-shearing" v-if="role == 'Requester'">
-          <i class="nc-icon nc-preferences-circle-rotate"></i>
-          <p>Shearing</p>
-        </sidebar-link>
-      </sidebar-link> -->
-
-      <sidebar-link to="/delivery">
+      <sidebar-link to="/delivery" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-delivery-fast"></i>
         <p>Delivery</p>
       </sidebar-link>
-      <sidebar-link to="/news">
+      <sidebar-link to="/news" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-paper-2"></i>
         <p>News / BA</p>
       </sidebar-link>
-      <sidebar-link to="/invoice">
+      <sidebar-link to="/invoice" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-single-copy-04"></i>
         <p>Invoice</p>
       </sidebar-link>
-      <sidebar-link to="/payment">
+      <sidebar-link to="/payment" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-credit-card"></i>
         <p>Payment</p>
       </sidebar-link>
-      <sidebar-link to="/all-account">
+      <sidebar-link to="/all-account" v-if="role == 'Admin'">
         <i class="nc-icon nc-single-02"></i>
         <p>Account</p>
       </sidebar-link>
-      <!-- <sidebar-link to="/logout">
-        <i class="nc-icon nc-sun-fog-29"></i>
-        <p>Logout</p>
-      </sidebar-link> -->
-
     </side-bar>
     <div class="main-panel">
       <top-navbar></top-navbar>

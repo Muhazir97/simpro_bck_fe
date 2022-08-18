@@ -38,8 +38,8 @@ export default {
     updatePT(op_no, params) {
         return Service().post('produksi-tolling/update-prod-tolling/'+op_no, params);
     },
-    getDataDBB(process_program, params) {
-        return Service().get('produksi-tolling/show-dbb/'+process_program, {params});
+    getDataDBB(params) {
+        return Service().get('produksi-tolling/show-dbb', {params});
     },
     addMaterial(params) {
         return Service().post('produksi-tolling/add-material', params, {

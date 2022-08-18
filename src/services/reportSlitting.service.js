@@ -35,4 +35,7 @@ export default {
     showreportSlitting(process_program) {
         return Service().get('report-slitting/show-lap-prod-slit/'+process_program);
     },
+    getLapProdSlit(params) {
+        return Service().get('report-slitting/get-lap-prod-slit', {params});
+    },
 }

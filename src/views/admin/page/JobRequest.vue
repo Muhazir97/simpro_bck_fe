@@ -19,7 +19,7 @@
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
                     Filter
                   </button>
-                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()" v-if="role == 'Requester'">
+                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()">
                     Add New
                   </button>
                 </div>

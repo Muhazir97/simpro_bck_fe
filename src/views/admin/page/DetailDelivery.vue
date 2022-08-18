@@ -75,24 +75,86 @@
       </div> 
 
       <!-- ========================= ADDRES ===============================  -->
-      CUSTOMER :
-      <div class="row">
-        <div class="col-6">
-          <div class="card">
-            <textarea style="border: 1px solid white; font-size: 15px; resize: none;" rows="5" cols="40" disabled> Kpd YTH : &#10; {{ detailDeliveryData.client_name }} &#10; {{ detailDeliveryData.client_addres }}</textarea>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="card">
-            <textarea style="border: 1px solid white; font-size: 15px; resize: none;" rows="5" cols="40" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.alamat_kirim"></textarea> 
-          </div>
+      <div width="10" v-if="detailDeliveryData.prod_class == 'Slitting'">
+        <div class="form-group" width="10">
+          <select class="form-select form-control" aria-label="Default select example" v-model="dataSJ.type_pengiriman" @change="updateSJ(detailDeliveryData.packing_list_no)">
+            <option value="INTERNAL">INTERNAL</option>
+            <option value="EXTERNAL">EXTERNAL</option>
+          </select>
         </div>
       </div>
-      <p style="margin-bottom: -25px;">Sesuai dengan Pesanan tersebut di atas, maka harap diterima dengan baik barang-barang sbb.</p>
-      <hr>
+      <div>
+        CUSTOMER :
+        <div class="row">
+          <div class="col-6">
+            <div class="card">
+              <textarea style="border: 1px solid white; font-size: 15px; resize: none;" rows="5" cols="40" disabled> Kpd YTH : &#10; {{ detailDeliveryData.client_name }} &#10; {{ detailDeliveryData.client_addres }}</textarea>
+            </div>
+          </div>
+          <div class="col-6" v-if="dataSJ.type_pengiriman == 'INTERNAL'">
+            <div class="card" style="height:120px;">
+               Alamat Kirim :<br>  LOCO PT. Buana Centra Karya <br>Jl. Raya Merak KM.115 Cilegon 
+            </div>
+          </div>
+          <div class="col-6" v-if="dataSJ.type_pengiriman == 'EXTERNAL'">
+            <div class="card">
+              <textarea style="border: 1px solid white; font-size: 15px; resize: none;" rows="5" cols="40" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.alamat_kirim"></textarea> 
+            </div>
+          </div>
+          <div class="col-6" v-if="detailDeliveryData.prod_class == 'Tolling'">
+            <div class="card">
+              <textarea style="border: 1px solid white; font-size: 15px; resize: none;" rows="5" cols="40" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.alamat_kirim"></textarea> 
+            </div>
+          </div>
+        </div>
+        <p style="margin-bottom: -25px;">Sesuai dengan Pesanan tersebut di atas, maka harap diterima dengan baik barang-barang sbb.</p>
+        <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()">
+          Add Material
+        </button>
+        <hr style="margin-top:40px;">
+      </div>
 
       <!-- ========================= MATERIAL ===============================  -->
-      <div class="" >
+      <div class="table-responsive mb-4" v-if="detailDeliveryData.prod_class == 'Slitting'">
+        <table border='1'>
+          <thead>
+            <tr style="background-color: #F0F8FF;">
+              <th  style="font-size: 13px; text-align: center;">NO</th>
+              <th colspan="2" style="font-size: 13px; text-align: center;">COIL NO</th>
+              <th colspan="2"  style="font-size: 13px; text-align: center;">DIMENSI</th>
+              <th style="font-size: 13px; text-align: center;">JUMLAH</th>
+              <th style="font-size: 13px; text-align: center;">BERAT</th>
+              <th style="font-size: 13px; text-align: center;">SPECIFICATION</th>
+              <th style="font-size: 13px; text-align: center;"></th>
+              <th style="display: none" ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, i) in tableMatTbl.data" :key="i">
+              <td style="font-size: 13px; text-align: center;">{{i + 1}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.coil_no}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.pack}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.thick}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.width}}</td>
+              <td style="font-size: 13px; text-align: center;">1</td>
+              <td style="font-size: 13px; text-align: center;">{{convertRp(row.weight)}}</td>
+              <td style="font-size: 13px;">{{row.dimension_spec}}</td>
+              <td style="text-align:center;">
+                <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id)"></i>
+              </td>
+              <td style="display: none" ></td>
+            </tr>
+            <tr>
+              <td colspan="5" style="font-size: 13px; text-align: center; font-weight: bold; ">TOTAL</td>
+              <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{convertRp(totalQty)}}</td>
+              <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{convertRp(totalWeight)}}</td>
+              <td style="display: none" ></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mb-4" v-if="detailDeliveryData.prod_class == 'Tolling'" >
         <table class="table table-bordered">
           <thead>
             <slot name="columns">
@@ -189,6 +251,48 @@
         <p style="margin-left: 5px; font-size: 13px; margin-top: 15px;" class="text-center">Barang-barang yang telah di terima dengan benar oleh pihak pembeli tidak dapat dikembalikan kecuali bila ada pembicaraan lebih dahulu.</p>
       </div>
 
+      <!-- MODAL CREATE MATERIAL-->
+      <div>
+         <modal :show.sync="form.show">
+           <template slot="header">
+              <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
+           </template>
+           <div>
+            <div class="scroll">
+              <table class="table">
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th style="font-size: 13px;">Coil No</th>
+                      <th style="font-size: 13px;">Pack</th>
+                      <th style="font-size: 13px;">Thick</th>
+                      <th style="font-size: 13px;">Width</th>
+                      <th style="font-size: 13px;">Weight</th>
+                      <!-- <th style="font-size: 13px;">Spec</th> -->
+                      <th></th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableMatMdl.data" :key="i">
+                    <td style="font-size: 13px;">{{row.coil_no}}</td>
+                    <td style="font-size: 13px;">{{row.pack}}</td>
+                    <td style="font-size: 13px;">{{row.thick}}</td>
+                    <td style="font-size: 13px;">{{row.width}}</td>
+                    <td style="font-size: 13px;">{{row.weight}}</td>
+                    <td>
+                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id)"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+           </div>
+           <template slot="footer">
+           </template>
+         </modal>
+      </div>
+
     </card>
   </div>
 </template>
@@ -214,19 +318,15 @@
             title: "Add Material",
             show: false
         },
-        formAttach: {
-            add: true,
-            title: "Add Material",
-            show: false
-        },
         detailDeliveryData: {},
-        tableMatReq: {
+        tableMatTbl: {
           data: []
         },
-        tableMatMas: {
+        tableMatMdl: {
           data: []
         },
-        attachRequest: {},
+        totalQty: '',
+        totalWeight: '',
         update_job_note: '',
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
@@ -249,6 +349,7 @@
           jumlah: '',
           tonase: '',
           coil_no_all: '',
+          type_pengiriman: '',
 
         },
         dataCoil : {},
@@ -257,6 +358,7 @@
     mounted(){
       this.get();
       this.getDataSJ();
+      
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
@@ -265,10 +367,11 @@
         Api(context, delivery.showDelivery(context.$route.params.packing_list_no)).onSuccess(function(response) {
             context.detailDeliveryData = response.data.data;
         }).onFinish(function() {  
-             
+             context.getMaterialTbl();
         })
         .call()        
       },
+      // ============================== KONSEP LAMA =================================
       getDataSJ() {
         let context = this;               
         Api(context, delivery.getDataSJ(context.$route.params.packing_list_no)).onSuccess(function(response) {
@@ -277,7 +380,7 @@
             context.$refs.autocomplete.setValue(response.data.data.data.lpp_no)       
         })
         .onError(function(error) {                    
-            context.tableMatReq.data = []
+            context.dataSJ = []
         })
         .call()        
       },
@@ -301,10 +404,10 @@
             jumlah : context.dataSJ.jumlah,
             tonase : context.dataSJ.tonase,
             coil_no_all : context.dataSJ.coil_no_all,
+            type_pengiriman : context.dataSJ.type_pengiriman,
 
             total_qty : context.detailDeliveryData.qty,
-            total_weight : context.detailDeliveryData.weight
-
+            total_weight : context.detailDeliveryData.weight,
           }));
         api.onSuccess(function(response) {
             context.notifyVue(response.data.message, 'top', 'right', 'info')
@@ -357,6 +460,70 @@
         this.detailDeliveryData.weight = totalWeight
         this.updateSJ(this.detailDeliveryData.packing_list_no)
       },
+      // ========================== END ===============================
+
+
+      // ========================== KONSEP BARU ===============================
+      getMaterialMdl() {
+        let context = this;               
+        Api(context, delivery.getMaterialMdl({job_no: context.detailDeliveryData.job_no})).onSuccess(function(response) {
+            context.tableMatMdl.data = response.data.data;                   
+        })
+        .onError(function(error) {                    
+            context.tableMatMdl.data = []
+        })
+        .call()        
+      },
+      getMaterialTbl() {
+        let context = this;               
+        Api(context, delivery.getMaterialTbl({job_no: context.detailDeliveryData.job_no, surat_jalan_no: context.detailDeliveryData.packing_list_no})).onSuccess(function(response) {
+            context.tableMatTbl.data = response.data.data.data;                   
+            context.totalQty         = response.data.data.totalQty;                   
+            context.totalWeight      = response.data.data.totalWeight;                   
+        })
+        .onError(function(error) {                    
+            context.tableMatTbl.data = []
+        })
+        .call()        
+      },
+      addMaterial() {
+        this.form.add   = true;
+        this.form.show  = true;
+        this.form.title = "Add Material";
+        this.getMaterialMdl()
+      },
+      saveMaterial(type, id){
+        let api = null;
+        let context = this;
+        let formData = new FormData(); 
+
+        if (this.detailDeliveryData.packing_list_no != undefined) {
+          // if (type == 'add') {
+            formData.append('packing_list_no', this.detailDeliveryData.packing_list_no);
+            formData.append('packing_date', this.detailDeliveryData.packing_date);
+          // }else if (type == 'delete') {
+          //    formData.append('packing_list_no', '');
+          //     formData.append('packing_date', '');
+          // }
+          formData.append('type', type);
+          formData.append('id', id);
+          formData.append('job_no', this.detailDeliveryData.job_no);
+        }else{
+          alert('Semua Field Wajib Di Isi')
+        }
+
+        api = Api(context, delivery.addMaterial(formData));
+        api.onSuccess(function(response) {
+            context.notifyVue((context.formTitle === 'Add Material') ? 'Data Berhasil di Simpan' : 'Data Berhasil di Update', 'top', 'right', 'info')
+        }).onError(function(error) {                    
+            context.notifyVue((context.formTitle === 'Add Material') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
+        }).onFinish(function() {  
+            context.getMaterialMdl();
+            context.getMaterialTbl();
+        })
+        .call();
+      },
+      // ========================== END ===============================
 
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)

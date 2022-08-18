@@ -38,6 +38,7 @@
                     <th>Username</th>
                     <th>Role</th>
                     <th>Status</th>
+                    <th>Company</th>
                     <th>Created At</th>
                     <th></th>
                     <th></th>
@@ -51,6 +52,7 @@
                   <td style="font-size: 13px;">{{row.username}}</td>
                   <td style="font-size: 13px;">{{row.role}}</td>
                   <td style="font-size: 13px;">{{row.status}}</td>
+                  <td style="font-size: 13px;">{{row.company}}</td>
                   <td style="font-size: 13px;">{{row.created_at}}</td>
                   <td>
                     <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
@@ -91,10 +93,21 @@
                     placeholder="Password"
                     v-model="dataAdmin.password">
               </base-input>
+              <div class="form-group">
+                <label>Role</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="dataAdmin.role">
+                  <option selected>Select Status</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Accounting">Accounting</option>
+                  <option value="Delivery">Delivery</option>
+                  <option value="Reception">Reception</option>
+                  <option value="Visitor">Visitor</option>
+                </select>
+              </div>
               <base-input type="text"
-                    label="Role"
-                    placeholder="Role"
-                    v-model="dataAdmin.role">
+                    label="Company"
+                    placeholder="Company"
+                    v-model="dataAdmin.company">
               </base-input>
              </div>
              <template slot="footer">
@@ -138,6 +151,7 @@
           password: '',
           role: '',
           status: '',
+          company: '',
         }, 
         storageUrl : config.storageUrl,
         loadTimeout: null,
@@ -180,6 +194,7 @@
             context.dataAdmin.username    = response.data.data.username;
             context.dataAdmin.role        = response.data.data.role;
             context.dataAdmin.status      = response.data.data.status;
+            context.dataAdmin.company     = response.data.data.company;
             context.form.show  = true;
             context.form.title = 'Edit Data';                
         })
@@ -192,11 +207,12 @@
 
         if (this.dataAdmin.full_name != undefined && this.dataAdmin.username != undefined && this.dataAdmin.password != undefined && this.dataAdmin.role != undefined) {
           formData.append('full_name', this.dataAdmin.full_name);
-          formData.append('employee_id', this.dataAdmin.employee_id);
+          formData.append('employee_id', (this.dataAdmin.employee_id == undefined) ? '' : this.dataAdmin.employee_id);
           formData.append('username', this.dataAdmin.username);
           formData.append('password', this.dataAdmin.password);
           formData.append('role', this.dataAdmin.role);
           formData.append('status', this.dataAdmin.status);
+          formData.append('company', (this.dataAdmin.company == undefined) ? '' : this.dataAdmin.company);
         }else{
           return alert('Field Berbintang Merah Wajib Di Isi')
         }

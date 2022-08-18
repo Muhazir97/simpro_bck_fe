@@ -196,8 +196,8 @@
                     v-model="search.po_no">
               </base-input> -->
               <base-input type="text"
-                    label="Travel Latter No"
-                    placeholder="Travel Latter No"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
                     v-model="search.travel_latter_no">
               </base-input>
               <base-input type="text"

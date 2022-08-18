@@ -48,12 +48,12 @@
         <table class="table table-bordered">
           <thead class="text-center">
               <tr style="background-color: #F0F8FF;">
-                <th class="text-center">SPESIFIKASI</th>
-                <th>LEBAR (mm)</th>
-                <th>TEBAL (mm)</th>
-                <th>JUMLAH SKELP</th>
-                <th>BERAT TOTAL (Kg)</th>
-                <th>KETERANGAN</th>
+                <th style="text-align: center;">SPESIFIKASI</th>
+                <th style="text-align: center;">LEBAR (mm)</th>
+                <th style="text-align: center;">TEBAL (mm)</th>
+                <th style="text-align: center;">JUMLAH SKELP</th>
+                <th style="text-align: center;">BERAT TOTAL (Kg)</th>
+                <th style="text-align: center;">KETERANGAN</th>
                 <th style="display: none"></th>
               </tr>
           </thead>
@@ -71,8 +71,8 @@
               <td style="font-size: 13px;">
                 <input style="border: 1px solid white; text-align: center; margin-right: -100px;" size="9" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.material_jumlah_skelp"></input>  
               </td>
-              <td style="font-size: 13px;">
-                ±<input style="border: 1px solid white; text-align: center; margin-right: -100px;" size="9" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.material_berat_total"></input>   
+              <td style="font-size: 13px; text-align: center;">
+                ± {{ convertRp(dataOP.material_berat_total) }}   
               </td>
               <td style="font-size: 13px;">
                 <input style="border: 1px solid white; text-align: center; margin-right: -100px;" size="9" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.material_keterangan"></input>  
@@ -90,9 +90,9 @@
           <thead class="text-center">
               <tr style="background-color: #F0F8FF;">
                 <th>ND (inchi)</th>
-                <th>O Dia (mm)</th>
-                <th>TEBAL (mm)</th>
-                <th>PANJANG (mm)</th>
+                <th colspan="2" class="text-center">O Dia (mm)</th>
+                <th colspan="2">TEBAL (mm)</th>
+                <th colspan="2">PANJANG (mm)</th>
                 <th>JUMLAH (btg)</th>
                 <th>BERAT TOTAL (Kg)</th>
                 <th>KETERANGAN</th>
@@ -101,6 +101,66 @@
           </thead>
           <tbody>
             <tr>
+                <td rowspan="2" style="font-size: 13px;">
+                  <div class="form-group">
+                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_nd">
+                      <option selected>Select</option>
+                      <option value='1 "'>1 "</option>
+                      <option value='1½ "'>1½ "</option>
+                      <option value='1¼ "'>1¼ "</option>
+                      <option value='2 "'>2 "</option>
+                      <option value='2½ "'>2½ "</option>
+                      <option value='3 "'>3 "</option>
+                      <option value='4 "'>4 "</option>
+                      <option value='5 "'>5 "</option>
+                    </select>
+                  </div>
+                </td>
+                <td rowspan="2" style="font-size: 13px;">
+                  <div class="form-group">
+                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_odia">
+                      <option selected>Select</option>
+                      <option value='76.30'>76.30</option>
+                      <option value='75.50'>75.50</option>
+                      <option value='74.20'>74.20</option>
+                    </select>
+                  </div>
+                </td>
+                <td style="font-size: 13px;">+ 77.10</td>
+                <td rowspan="2" style="font-size: 13px;">
+                  <div class="form-group">
+                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_tebal">
+                      <option selected>Select</option>
+                      <option value='2.80'>2.80</option>
+                      <option value='6.20'>6.20</option>
+                      <option value='2.40'>2.40</option>
+                    </select>
+                  </div>
+                </td>
+                <td style="font-size: 13px;">+ 3,40</td>
+                <td style="font-size: 13px;" rowspan="3">
+                  <textarea style="border: 1px solid white; resize: none;" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_panjang"></textarea>  
+                </td>
+                <td style="font-size: 13px;">- 0</td>
+                <td style="font-size: 13px;" rowspan="3">
+                  <textarea style="border: 1px solid white; resize: none;" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_panjang"></textarea>  
+                </td>
+                <td style="font-size: 13px;" rowspan="3">
+                  <textarea style="border: 1px solid white; resize: none;" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_jumlah"></textarea>   
+                </td>
+                <td style="font-size: 13px;" rowspan="3">
+                  <textarea style="border: 1px solid white; resize: none;" rows="5" cols="20" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_keterangan"></textarea>
+                </td>
+                <td style="display: none"></td>
+            </tr>
+            <tr>
+                <td style="font-size: 13px;">- 75,5</td>
+                <td style="font-size: 13px;">- 2,30</td>
+                <td style="font-size: 13px;">+ 10</td>
+                <td style="display: none"></td>
+            </tr>
+            
+            <!-- <tr>
               <td style="font-size: 13px;">
                 <textarea style="border: 1px solid white; resize: none;" rows="5" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_nd"></textarea> 
               </td>
@@ -123,7 +183,7 @@
                 <textarea style="border: 1px solid white; resize: none;" rows="5" cols="20" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_keterangan"></textarea>
               </td>
               <td style="display: none"></td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -165,17 +225,20 @@
       </div>
     </card>
 
-<!-- ======================================================= DATA BAHAN BAKU UNTUK PRODUKSI PIPA =========================================================================== -->
+<!-- ============================================= DATA BAHAN BAKU UNTUK PRODUKSI PIPA ================================================================ -->
     <card>
       <!-- ========================= INFORMATION ===============================  -->
       <div class="table-responsive mb-2">
         <div class="text-center display-6 mb-4">
           <span style="margin-bottom: 10px; font-weight: bold;"><u>DATA BAHAN BAKU UNTUK PRODUKSI PIPA</u></span>
         </div>
+        <button type="submit" class="btn btn-sm btn-dark btn-fill float-right mb-2" @click="addMaterial()">
+          Add Material
+        </button>
         <table class="table table-sm table-bordered">
             <tbody>
-                <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="200">PROGRAM CODE</td>
+                <!-- <tr>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="200">SOURCE MATERIAL</td>
                     <td colspan="3">
                       <autocomplete
                         ref="autocomplete"
@@ -192,7 +255,7 @@
                       </autocomplete>
                     </td>
                     <td style="display: none"></td>
-                </tr>
+                </tr> -->
                 <tr>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="200">Reff. NO. OP</td>
                     <td colspan="3"> {{ detailProdTollingData.op_no }} </td>
@@ -217,31 +280,38 @@
         <table class="table">
           <thead class="text-center">
               <tr style="background-color: #F0F8FF;">
-                <th>NO</th>
-                <th>NO URUT COIL</th>
-                <th>NO COIL</th>
-                <th>SPEC. & GRADE</th>
-                <th>THICK (mm)</th>
-                <th>WIDTH (mm)</th>
-                <th>WEIGHT (mm)</th>
-                <th>KETERANGAN</th>
+                <th style="text-align: center;">NO</th>
+                <th style="text-align: center;">NO URUT COIL</th>
+                <th style="text-align: center;">NO COIL</th>
+                <th style="text-align: center;">SPEC. & GRADE</th>
+                <th style="text-align: center;">THICK (mm)</th>
+                <th style="text-align: center;">WIDTH (mm)</th>
+                <th style="text-align: center;">WEIGHT (mm)</th>
+                <th style="text-align: center;">PROGRAM NO</th>
                 <th></th>
                 <th style="display: none"></th>
               </tr>
           </thead>
           <tbody>
             <tr v-for="(row, i) in tableDBB.data" :key="i">
-              <td style="font-size: 13px;">{{ i + 1 }}</td>
-              <td style="font-size: 13px;">{{ row.pack }}</td>
-              <td style="font-size: 13px;">{{ row.coil_no }}</td>
-              <td style="font-size: 13px;">{{ row.spec }}</td>
-              <td style="font-size: 13px;">{{ row.thick}}</td>
-              <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
-              <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-              <td style="font-size: 13px;">{{ row.job_no }}</td>
-              <td>
+              <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.pack }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.coil_no }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
+              <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ convertRp(row.weight) }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.process_program }}</td>
+              <td style="text-align: center;">
                 <i class="fa fa-times-circle fa-lg" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id)"></i>
               </td>
+              <td style="display: none"></td>
+            </tr>
+            <tr>
+              <td colspan="6" style="font-size: 13px; font-weight: bold; text-align: center;" >TOTAL</td>
+              <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{ convertRp(dataOP.material_berat_total) }}</td>
+              <td></td>
+              <td></td>
               <td style="display: none"></td>
             </tr>
             <tr>
@@ -249,14 +319,14 @@
               <td style="display: none"></td>
             </tr>
             <tr v-for="(row, j) in tableDBB.dataAvailable" class="strikethrough">
-              <td style="font-size: 13px;">{{ j + 1 }}</td>
-              <td style="font-size: 13px;">{{ row.pack }}</td>
-              <td style="font-size: 13px;">{{ row.coil_no }}</td>
-              <td style="font-size: 13px;">{{ row.spec }}</td>
-              <td style="font-size: 13px;">{{ row.thick}}</td>
-              <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
-              <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-              <td style="font-size: 13px;">{{ row.job_no }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ j + 1 }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.pack }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.coil_no }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
+              <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ convertRp(row.weight) }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.process_program }}</td>
               <td>
                 <i class="fa fa-check-square-o fa-lg text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.idavilable)"></i>
               </td>
@@ -265,6 +335,104 @@
           </tbody>
         </table>
       </div>
+
+      <!-- MODAL FILTER -->
+        <div>
+           <modal :show.sync="formFilter.show">
+             <template slot="header">
+                <h5 class="modal-title" id="exampleModalLabel">{{formFilter.title}}</h5>
+             </template>
+             <div>
+              <!-- <base-input type="text"
+                    label="Job No"
+                    placeholder="Job No"
+                    v-model="search.job_no">
+              </base-input>
+              <base-input type="text"
+                    label="PO No"
+                    placeholder="PO No"
+                    v-model="search.po_no">
+              </base-input> -->
+              <small class="d-block text-uppercase font-weight-bold mb-3">Date Entry</small>
+              <div class="input-daterange datepicker row align-items-center">
+                  <div class="col">
+                      <base-input addon-left-icon="ni ni-calendar-grid-58">
+                          <flat-picker slot-scope="{focus, blur}"
+                                       @on-open="focus"
+                                       @on-close="blur"
+                                       :config="{allowInput: true, mode: 'range',}"
+                                       class="form-control datepicker"
+                                       v-model="search.slitting_date">
+                          </flat-picker>
+                      </base-input>
+                  </div>
+              </div>
+              <div class="form-group">
+                <label>Slit From</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.slit_from">
+                  <option selected>Select From</option>
+                  <option value="FROM OUTSIDE">FROM OUTSIDE</option>
+                  <option value="FROM PRODUCTION">FROM PRODUCTION</option>
+                </select>
+              </div>
+              <base-input type="text"
+                    label="Surat Jalan No"
+                    placeholder="Surat Jalan No"
+                    v-model="search.travel_latter_no">
+              </base-input>
+              <base-input type="text"
+                    label="Coil No"
+                    placeholder="Coil No"
+                    v-model="search.coil_no">
+              </base-input>
+              <base-input type="text"
+                    label="Program No"
+                    placeholder="Program No"
+                    v-model="search.process_program">
+              </base-input>
+              <div class="form-group">
+                <label>Owner</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilter"
+                  placeholder="Choose Owner"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
+              <base-input type="text"
+                    label="Pack"
+                    placeholder="Pack"
+                    v-model="search.pack">
+              </base-input>
+              <base-input type="number"
+                    label="Thick"
+                    placeholder="Thick"
+                    v-model="search.thick">
+              </base-input>
+              <base-input type="number"
+                    label="Width"
+                    placeholder="Width"
+                    v-model="search.width">
+              </base-input>
+              <base-input type="number"
+                    label="Weight"
+                    placeholder="Weight"
+                    v-model="search.weight">
+              </base-input>
+             </div>
+             <template slot="footer">
+                 <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilter.show = false">Close</button>
+                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="getDataDBB(), formFilter.show = false">Filter</button>
+             </template>
+           </modal>
+        </div>
 
     </card>
   </div>
@@ -277,12 +445,15 @@
   import Api from '@/helpers/api';
   import Autocomplete from 'vue2-autocomplete-js'
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  import flatPicker from "vue-flatpickr-component";
+  import "flatpickr/dist/flatpickr.css";
 
   export default {
     components: {
       Card,
       Modal,
-      Autocomplete
+      Autocomplete,
+      flatPicker,
     },
     data () {
       return {
@@ -291,6 +462,11 @@
           data: [],
           dataAvailable: [],
 
+        },
+        formFilter: {
+            add: true,
+            title: "Filter",
+            show: false
         },
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
@@ -328,7 +504,21 @@
 
           dbb_program_code : '',
           dbb_no_dbb : '',
-        }
+        },
+        search: {
+          job_no: '',
+          po_no: '',
+          travel_latter_no: '',
+          coil_no: '',
+          process_program: '',
+          owner: '',
+          pack: '',
+          thick: '',
+          width: '',
+          weight: '',
+          slitting_date: '',
+          slit_from: '',
+        },
       }
     },
     mounted(){
@@ -371,23 +561,42 @@
             context.dataOP.sudut                 = response.data.data.sudut
             context.dataOP.dbb_program_code      = response.data.data.dbb_program_code
 
-            context.$refs.autocomplete.setValue(response.data.data.dbb_program_code)
             context.getDataDBB();
         }).onFinish(function() {  
              
         })
         .call()        
       },
-      getDataDBB() {
+      // getDataDBB() {
+      //   let context = this;               
+      //   Api(context, produksiTolling.getDataDBB(context.dataOP.dbb_program_code, {job_no : context.detailProdTollingData.job_no})).onSuccess(function(response) {
+      //       context.tableDBB.data          = response.data.data.data;
+      //       context.tableDBB.dataAvailable = response.data.data.dataAvailable;
+      //   })
+      //   .onError(function(error) {                    
+      //       context.tableDBB.data = []
+      //   })
+      //   .call()        
+      // },
+      getDataDBB(param){
         let context = this;               
-        Api(context, produksiTolling.getDataDBB(context.dataOP.dbb_program_code, {job_no : context.detailProdTollingData.job_no})).onSuccess(function(response) {
+        Api(context, produksiTolling.getDataDBB({job_no: context.detailProdTollingData.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, slitting_date: context.search.slitting_date, slit_from: context.search.slit_from})).onSuccess(function(response) {    
             context.tableDBB.data          = response.data.data.data;
             context.tableDBB.dataAvailable = response.data.data.dataAvailable;
+
+            context.dataOP.material_spesifikasi  = response.data.data.data[0].spec
+            context.dataOP.material_lebar        = response.data.data.data[0].width
+            context.dataOP.material_tebal        = response.data.data.data[0].thick
+            context.dataOP.material_jumlah_skelp = response.data.data.data.length
+            context.dataOP.material_berat_total  = response.data.data.allWeight
+
+            this.updatePT(this.detailProdTollingData.op_no)
+        }).onError(function(error) {                    
+            if (error.response.status == 404) {
+                context.tableDBB.data = [];
+            }
         })
-        .onError(function(error) {                    
-            context.tableDBB.data = []
-        })
-        .call()        
+        .call()
       },
       saveMaterial(type, id){
         let api = null;
@@ -461,6 +670,11 @@
         })
         .call();
       },
+      addMaterial() {
+          this.formFilter.add   = true;
+          this.formFilter.show  = true;
+          this.formFilter.title = "Add Material";
+      },
       convertRp(bilangan) {
         if (bilangan) {
           var number_string = bilangan.toString(),
@@ -494,6 +708,10 @@
       getData(obj){
         this.dataOP.dbb_program_code = obj.process_program;
         this.updatePT(this.detailProdTollingData.op_no)
+      },
+      // AMBIL DATA YANG DI PILIH AC FILTER
+      getDataFilter(obj){
+        this.search.owner = obj.client_name;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

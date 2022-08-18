@@ -41,4 +41,17 @@ export default {
     updateSJ(packing_list_no, params) {
         return Service().post('delivery/update-delivery/'+packing_list_no, params);
     },
+    getMaterialMdl(params) {
+        return Service().get('delivery/material-modal', {params});
+    },
+    getMaterialTbl(params) {
+        return Service().get('delivery/material-table', {params});
+    },
+    addMaterial(params) {
+        return Service().post('delivery/add-material', params, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        });
+    },
 }
