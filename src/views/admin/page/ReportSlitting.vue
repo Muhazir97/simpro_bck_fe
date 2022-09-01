@@ -88,6 +88,7 @@
               </table>
             </div>
             <template slot="footer">
+              <div class="float-left">TOTAL : {{table.data.length}}</div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -161,12 +162,12 @@
               </base-input><base-input type="number"
                     label="Scrap All"
                     placeholder="Scrap All"
-                    v-model="reportSlittingData.scrap">
+                    v-model="reportSlittingData.scrap_all">
               </base-input>
               <base-input type="text"
                     label="Remark All"
                     placeholder="Remark All"
-                    v-model="reportSlittingData.remark">
+                    v-model="reportSlittingData.remark_all">
               </base-input>
               <!-- <base-input type="text"
                     label="Size"
@@ -473,8 +474,8 @@
           formData.append('thick', (this.reportSlittingData.thick == undefined) ? '' : this.reportSlittingData.thick);
           formData.append('width', (this.reportSlittingData.width == undefined) ? '' : this.reportSlittingData.width);
           formData.append('weight', (this.reportSlittingData.weight == undefined) ? '' : this.reportSlittingData.weight);
-          formData.append('scrap', (this.reportSlittingData.scrap == undefined) ? '' : this.reportSlittingData.scrap);
-          formData.append('remark', (this.reportSlittingData.remark == undefined) ? '' : this.reportSlittingData.remark);
+          formData.append('scrap', (this.reportSlittingData.scrap_all == undefined) ? '' : this.reportSlittingData.scrap_all);
+          formData.append('remark', (this.reportSlittingData.remark_all == undefined) ? '' : this.reportSlittingData.remark_all);
           formData.append('size', (this.reportSlittingData.size == undefined) ? '' : this.reportSlittingData.size);
           formData.append('description', (this.reportSlittingData.description == undefined) ? '' : this.reportSlittingData.description);
         }else{

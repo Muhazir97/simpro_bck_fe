@@ -61,11 +61,11 @@
             </div>
           </div>
 
-          <a v-if="role != 'Visitor'" :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a v-if="role != 'Visitor'" :href="apiUrl+'report-excel/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+'&po_has_not_prod='+search.po_has_not_prod+'&age='+search.age+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
 
           <button v-if="role != 'Visitor'" class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
-          <a :href="apiUrl+'report-pdf/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+''" target="_BLANK" class="btn btn-sm btn-warning mb-4"><i class="fa fa-file-text fa-sm"></i> PRINT</a>
+          <a :href="apiUrl+'report-pdf/material-master?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+'&po_has_not_prod='+search.po_has_not_prod+'&age='+search.age+''" target="_BLANK" class="btn btn-sm btn-warning mb-4"><i class="fa fa-file-text fa-sm"></i> PRINT</a>
 
           <!-- CARD -->
           <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
@@ -103,7 +103,7 @@
                       <th>WEIGHT / kg</th>
                       <th>STATUS</th>
                       <th>Description</th>
-                      <!-- <th>Created At</th> -->
+                      <th>Age</th>
                       <!-- <th>PROCESS PROGRAM</th> -->
                       <!-- <th>PROCESS DATE</th> -->
                       <!-- <th>Created By</th> -->
@@ -127,7 +127,7 @@
                         <label class="badge badge-warning">{{ item.po_no }}</label>
                       </span> -->
                     </td>
-                    <td style="font-size: 13px;">{{ row.date_entry }}</td>
+                    <td style="font-size: 13px;">{{ moment(row.date_entry).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">
                       <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK">
                         <small><label class="badge badge-info" style="cursor: pointer;">{{ row.travel_latter_no }}</label></small>
@@ -145,7 +145,7 @@
                       <small><label class="badge badge-warning">{{ row.material_status }}</label></small>
                     </td>
                     <td style="font-size: 13px;">{{row.information}}</td>
-                    <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
+                    <td style="font-size: 13px;">{{ moment().diff(row.date_entry, "days")+' Days' }}</td>
                     <!-- <td style="font-size: 13px;">
                       <label class="badge badge-primary">{{row.process_program}}</label>
                     </td> -->
@@ -191,6 +191,27 @@
                   <option value="PROD">PROD</option>
                   <option value="RETURN">RETURN</option>
                 </select>
+              </div>
+              <base-input type="text"
+                    label="PO No"
+                    placeholder="PO No"
+                    v-model="material.po_no">
+              </base-input>
+              <div class="form-group">
+                <label>Job No</label><br>
+                <autocomplete
+                  ref="autocompleteJO"
+                  :url="apiUrl+'job-request/find-job-no'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="job_no"
+                  label="job_name"
+                  :on-select="getDataJO"
+                  placeholder="Choose Job No"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
               </div>
               <base-input type="text"
                     label="Surat Jalan No"
@@ -348,12 +369,18 @@
                     placeholder="Dimension Spec"
                     v-model="search.spec">
               </base-input>
-              <!-- <base-input type="text"
-                    label="Process Program"
-                    placeholder="Process Program"
-                    v-model="search.process_program">
-              </base-input> -->
-
+              <div class="form-group">
+                <label>PO Has Not Prod</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.po_has_not_prod">
+                  <option selected>Select Status</option>
+                  <option value="Yes">YES</option>
+                </select>
+              </div>
+              <base-input type="number"
+                    label="Age"
+                    placeholder="Days"
+                    v-model="search.age">
+              </base-input>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilter.show = false">Close</button>
@@ -404,6 +431,7 @@
   import "flatpickr/dist/flatpickr.css";
   import ChartCard from '@/components/Cards/ChartCard.vue'
   import StatsCard from '@/components/Cards/StatsCard.vue'
+  var moment = require('moment');
   
   export default {
     components: {
@@ -416,6 +444,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,
@@ -461,6 +490,8 @@
           process_program: '',
           date: '',
           material_status: '',
+          po_has_not_prod: '',
+          age: '',
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
@@ -476,7 +507,7 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, material.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, owner: context.search.owner, thick: context.search.thick, width: context.search.width, weight: context.search.weight, spec: context.search.spec, process_program: context.search.process_program, date: context.search.date, material_status: context.search.material_status, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, material.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, owner: context.search.owner, thick: context.search.thick, width: context.search.width, weight: context.search.weight, spec: context.search.spec, process_program: context.search.process_program, date: context.search.date, material_status: context.search.material_status, po_has_not_prod: context.search.po_has_not_prod, age: context.search.age, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
             context.totalMaterialWeight   = response.data.data.totalWeight;
@@ -556,6 +587,12 @@
           formData.append('date_entry', this.material.date_entry);
           formData.append('travel_latter_no', this.material.travel_latter_no);
           formData.append('owner', this.material.owner);
+          formData.append('po_no', (this.material.po_no == undefined) ? '' : this.material.po_no);
+          if (this.material.po_no == undefined || this.material.po_no == null ) {
+            formData.append('job_no', '');
+          }else{
+            formData.append('job_no', (this.material.job_no == undefined) ? '' : this.material.job_no);
+          }
           formData.append('material_status', (this.material.material_status == undefined) ? '' : this.material.material_status);
           formData.append('coil_no',(this.material.coil_no == undefined) ? '' : this.material.coil_no);
           formData.append('dimension_thick', (this.material.dimension_thick == undefined) ? '' : this.material.dimension_thick);
@@ -632,6 +669,10 @@
       getData(obj){
         this.material.owner = obj.client_name;
       },
+      // AMBIL DATA JO YANG DI PILIH AC
+      getDataJO(obj){
+        this.material.job_no = obj.job_no;
+      },
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){
         this.search.owner = obj.client_name;
@@ -646,7 +687,7 @@
 <style type="text/css">
   .scroll { 
     overflow: auto; 
-    height: 700px; 
+    height: 800px; 
   }
   .scroll thead th { 
     position: sticky; 

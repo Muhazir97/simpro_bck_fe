@@ -25,6 +25,7 @@ import ReportSlitting from "./views/admin/page/ReportSlitting";
 import DetailLapProdSlit from "./views/admin/page/DetailLapProdSlit";
 import ProduksiTolling from "./views/admin/page/ProduksiTolling";
 import DetailProdTolling from "./views/admin/page/DetailProdTolling";
+import KonfigOp from "./views/admin/page/KonfigOp";
 import ReportTolling from "./views/admin/page/ReportTolling";
 import ProduksiShearing from "./views/admin/page/ProduksiShearing";
 import ReportShearing from "./views/admin/page/ReportShearing";
@@ -132,6 +133,11 @@ const vurRouter = new Router({
         path: 'detail-prod-tolling/:op_no',
         name: 'DetailProdTolling',
         component: DetailProdTolling
+      },
+      {
+        path: 'konfig-op',
+        name: 'KonfigOp',
+        component: KonfigOp
       },
       {
         path: 'report-tolling',

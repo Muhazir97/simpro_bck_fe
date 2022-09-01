@@ -46,8 +46,8 @@
                       <th>PROD WEIGHT</th>
                       <th>REMARK B</th>
                       <th>REMARK C</th>
-                      <th>Created At</th>
-                      <th>Created By</th>
+                      <!-- <th>Created At</th> -->
+                      <!-- <th>Created By</th> -->
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -78,8 +78,8 @@
                     <td style="font-size: 13px;">{{ convertRp(row.prod_weight) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.remark_b) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.remark_c) }}</td>
-                    <td style="font-size: 13px;">{{row.created_at}}</td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
+                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>

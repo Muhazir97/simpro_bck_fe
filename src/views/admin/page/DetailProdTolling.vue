@@ -3,8 +3,12 @@
     <card>
 
       <!-- ========================= INFORMATION ===============================  -->
-      <div class="table-responsive mb-2">
         <div class="text-center display-4">
+          <router-link to="/konfig-op">
+            <button type="submit" class="btn btn-sm btn-secondary btn-fill float-left mt-3">
+              <i class="fa fa-cogs" aria-hidden="true"></i> Konfig
+            </button>
+          </router-link>
           <span style="margin-bottom: -20px; font-weight: bold;">DETAIL PROD TOLLING</span>
           <a :href="apiUrl+'print-prod-tolling/'+detailProdTollingData.op_no" target="_BLANK">
             <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
@@ -13,11 +17,12 @@
           </a>
           <hr style="margin-top: 50px;">
         </div>
-        <table class="table table-sm table-bordered">
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered">
             <tbody>
                 <tr>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">JOB NO</td>
-                    <td width="300">  {{ detailProdTollingData.job_no }} </td>
+                    <td style="width: 30%">  {{ detailProdTollingData.job_no }} </td>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">PO NO</td>
                     <td> {{ detailProdTollingData.po_no }} </td>
                 </tr>
@@ -35,12 +40,22 @@
                 </tr>
                 <tr>
                   <td style="background-color: #F0F8FF; font-weight: bold;" width="150">SPECIFICATION</td>
-                  <td colspan="3">{{ detailProdTollingData.specification }}</td>
+                  <td colspan="3">
+                    <div class="input-group" style="margin-bottom: -13px;">
+                      <div class="form-group col-4">
+                        <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="detailProdTollingData.specification">
+                          <option selected>Select</option>
+                          <option v-for="(row, i) in tableSpec.data" :key="i" :value='row.spec'>{{ row.spec }}</option>
+                        </select>
+                      </div>
+                      <span style="font-weight: bold; font-size: 15px; margin-top: 9px;">&nbsp;&nbsp;&nbsp; {{ dataOP.produksi_nd }} &nbsp;&nbsp;&nbsp;X &nbsp;&nbsp;&nbsp; {{ dataOP.material_tebal }} mm &nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp; {{ dataOP.produksi_panjang }} mm </span>
+                    </div>
+                  </td>
                   <td style="display: none"></td>
                 </tr>
             </tbody>
-        </table>
-      </div> 
+          </table>
+        </div>
 
       <!-- ========================= MATERIAL ===============================  -->
       <span style="font-weight:bold;">MATERIAL</span>
@@ -103,7 +118,7 @@
             <tr>
                 <td rowspan="2" style="font-size: 13px;">
                   <div class="form-group">
-                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_nd">
+                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no), getOdOp()" v-model="dataOP.produksi_nd">
                       <option selected>Select</option>
                       <option value='1 "'>1 "</option>
                       <option value='1½ "'>1½ "</option>
@@ -116,74 +131,68 @@
                     </select>
                   </div>
                 </td>
+                <!-- OD -->
                 <td rowspan="2" style="font-size: 13px;">
                   <div class="form-group">
-                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_odia">
+                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no), getTebal()" v-model="dataOP.produksi_odia">
                       <option selected>Select</option>
-                      <option value='76.30'>76.30</option>
-                      <option value='75.50'>75.50</option>
-                      <option value='74.20'>74.20</option>
+                      <option v-for="(row, i) in tableOd.data" :key="i" :value='row.od'>{{ row.od }}</option>
                     </select>
                   </div>
                 </td>
-                <td style="font-size: 13px;">+ 77.10</td>
+                <!-- TOLERANSI OD PLUS -->
+                <td style="font-size: 13px;">+ {{ tolOdPlus }} </td>
+
+                <!-- TEBAL -->
                 <td rowspan="2" style="font-size: 13px;">
                   <div class="form-group">
-                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_tebal">
+                    <select class="form-select form-control" aria-label="Default select example" @change="updatePT(detailProdTollingData.op_no), getTolTebal()" v-model="dataOP.produksi_tebal">
                       <option selected>Select</option>
-                      <option value='2.80'>2.80</option>
-                      <option value='6.20'>6.20</option>
-                      <option value='2.40'>2.40</option>
+                      <option v-for="(row, i) in tableTebal.data" :key="i" :value='row.tebal'>{{ row.tebal }}</option>
                     </select>
                   </div>
                 </td>
-                <td style="font-size: 13px;">+ 3,40</td>
+                <!-- TOLERANSI TEBAL PLUS -->
+                <td style="font-size: 13px;">+ {{ tolTebalPlus }}</td>
+
+                <!-- PANJANG -->
                 <td style="font-size: 13px;" rowspan="3">
-                  <textarea style="border: 1px solid white; resize: none;" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_panjang"></textarea>  
+                  <input style="border: 1px solid white;" size="2" placeholder="input 1" @change="updatePT(detailProdTollingData.op_no), calculateJumlah1(), calculateBeratTotal1()" v-model="dataOP.produksi_panjang1"> 
+                  <input style="border: 1px solid white;" size="2" placeholder="input 2" @change="updatePT(detailProdTollingData.op_no), calculateJumlah(), calculateBeratTotal()" v-model="dataOP.produksi_panjang"> 
+                  <input style="border: 1px solid white;" size="2" placeholder="input 3" @change="updatePT(detailProdTollingData.op_no), calculateJumlah2(), calculateBeratTotal2()" v-model="dataOP.produksi_panjang2"> 
                 </td>
+                <!-- TOLERANSI PANJANG MUNUS -->
                 <td style="font-size: 13px;">- 0</td>
-                <td style="font-size: 13px;" rowspan="3">
-                  <textarea style="border: 1px solid white; resize: none;" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_panjang"></textarea>  
+
+                <!-- JUMLAH BTG -->
+                <td style="font-size: 13px;" rowspan="3"> 
+                  <input style="border: 1px solid white; margin-right: 20px;" size="2" readonly v-model="dataOP.produksi_jumlah1"> 
+                  <div class="input-group">± <input style="border: 1px solid white;" size="2" readonly v-model="dataOP.produksi_jumlah"></div>
+                  <input style="border: 1px solid white; margin-right: 20px;" size="2" readonly v-model="dataOP.produksi_jumlah2">
                 </td>
-                <td style="font-size: 13px;" rowspan="3">
-                  <textarea style="border: 1px solid white; resize: none;" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_jumlah"></textarea>   
+
+                <!-- BERAT TOTAL -->
+                <td style="font-size: 13px;" rowspan="3"> 
+                  <input style="border: 1px solid white; margin-right: 5px;" size="4" readonly v-model="dataOP.produksi_berat_total1"> 
+                  <div class="input-group">± <input style="border: 1px solid white;" size="4" readonly v-model="dataOP.produksi_berat_total"></div>
+                  <input style="border: 1px solid white; margin-right: 5px;" size="4" readonly v-model="dataOP.produksi_berat_total2">
                 </td>
+
+                <!-- KETERANGAN -->
                 <td style="font-size: 13px;" rowspan="3">
                   <textarea style="border: 1px solid white; resize: none;" rows="5" cols="20" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_keterangan"></textarea>
                 </td>
                 <td style="display: none"></td>
             </tr>
             <tr>
-                <td style="font-size: 13px;">- 75,5</td>
-                <td style="font-size: 13px;">- 2,30</td>
+              <!-- TOLERANSI OD MINUS -->
+                <td style="font-size: 13px;">-  {{ tolOdMin }}</td>
+                <!-- TOLERANSI TEBAL MINUS -->
+                <td style="font-size: 13px;">- {{ tolTebalMin }}</td>
+                <!-- TOLERANSI PANJANG MUNUS -->
                 <td style="font-size: 13px;">+ 10</td>
                 <td style="display: none"></td>
             </tr>
-            
-            <!-- <tr>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_nd"></textarea> 
-              </td>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="15" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_odia"></textarea>
-              </td>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_tebal"></textarea> 
-              </td>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_panjang"></textarea>  
-              </td>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_jumlah"></textarea>   
-              </td>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="10" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_berat_total"></textarea>  
-              </td>
-              <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="5" cols="20" @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.produksi_keterangan"></textarea>
-              </td>
-              <td style="display: none"></td>
-            </tr> -->
           </tbody>
         </table>
       </div>
@@ -230,7 +239,7 @@
       <!-- ========================= INFORMATION ===============================  -->
       <div class="table-responsive mb-2">
         <div class="text-center display-6 mb-4">
-          <span style="margin-bottom: 10px; font-weight: bold;"><u>DATA BAHAN BAKU UNTUK PRODUKSI PIPA</u></span>
+          <span style="margin-bottom: 10px; font-weight: bold;"><u>DATA BAHAN BAKU UNTUK PRODUKSI PIPA <br>DBB</u></span>
         </div>
         <button type="submit" class="btn btn-sm btn-dark btn-fill float-right mb-2" @click="addMaterial()">
           Add Material
@@ -277,16 +286,16 @@
 
       <!-- ========================= MATERIAL ===============================  -->
       <div class="" >
-        <table class="table">
+        <table class="table table-bordered">
           <thead class="text-center">
               <tr style="background-color: #F0F8FF;">
                 <th style="text-align: center;">NO</th>
                 <th style="text-align: center;">NO URUT COIL</th>
-                <th style="text-align: center;">NO COIL</th>
+                <th style="text-align: center;" colspan="2"><span tyle="text-align: center;">NO COIL</span></th>
                 <th style="text-align: center;">SPEC. & GRADE</th>
                 <th style="text-align: center;">THICK (mm)</th>
                 <th style="text-align: center;">WIDTH (mm)</th>
-                <th style="text-align: center;">WEIGHT (mm)</th>
+                <th style="text-align: center;">WEIGHT (Kg)</th>
                 <th style="text-align: center;">PROGRAM NO</th>
                 <th></th>
                 <th style="display: none"></th>
@@ -295,8 +304,9 @@
           <tbody>
             <tr v-for="(row, i) in tableDBB.data" :key="i">
               <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-              <td style="font-size: 13px; text-align: center;">{{ row.pack }}</td>
-              <td style="font-size: 13px; text-align: center;">{{ row.coil_no }}</td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;">{{ row.coil_no}}</td>
+              <td style="font-size: 13px; text-align: left;">{{ row.pack}}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
@@ -433,8 +443,97 @@
              </template>
            </modal>
         </div>
-
     </card>
+
+    <!-- ============================================= DATA PEMAKAIAN BAHAN BAKU (PBB) ================================================================ -->
+    <card>
+      <!-- ========================= INFORMATION ===============================  -->
+      <div class="table-responsive mb-2">
+        <div class="text-center display-6 mb-4">
+          <span style="margin-bottom: 10px; font-weight: bold;"><u>DATA PEMAKAIAN BAHAN BAKU (PBB) <br>PBB</u></span>
+        </div>
+        <a :href="apiUrl+'print-prod-tolling-pbb/'+detailProdTollingData.op_no" target="_BLANK">
+          <button type="submit" class="btn btn-sm btn-success btn-fill float-right mb-2">
+            <i class="fa fa-file-text"></i> Print PBB
+          </button>
+        </a>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="200">Reff. NO. OP</td>
+                    <td colspan="3"> {{ detailProdTollingData.op_no }} </td>
+                    <td style="display: none"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: #F0F8FF; font-weight: bold;" width="200">SHIFT</td>
+                    <td colspan="3"> <input style="border: 1px solid white;"  @change="updatePT(detailProdTollingData.op_no)" v-model="dataOP.shift"> </td>
+                    <td style="display: none"></td>
+                </tr>
+                <tr>
+                  <td style="background-color: #F0F8FF; font-weight: bold;" width="200">LINE MESIN</td>
+                  <td colspan="3">{{ detailProdTollingData.line_machine }}</td>
+                  <td style="display: none"></td>
+                </tr>
+            </tbody>
+        </table>
+      </div> 
+
+      <!-- ========================= MATERIAL ===============================  -->
+      <div class="" >
+        <table class="table table-bordered">
+          <thead>
+              <tr style="background-color: #F0F8FF;">
+                <th rowspan="2" style="text-align: center;">NO</th>
+                <th rowspan="2"style="text-align: center;">NO URUT COIL</th>
+                <th rowspan="2"style="text-align: center;">Tanggal Entry</th>
+                <th rowspan="2"style="text-align: center;">Material Entry</th>
+                <th rowspan="2"style="text-align: center;" colspan="2"><span tyle="text-align: center;">NO COIL</span></th>
+                <th rowspan="2"style="text-align: center;">GRADE</th>
+                <th rowspan="2"style="text-align: center;">TEBAL (mm)</th>
+                <th rowspan="2"style="text-align: center;">LEBAR (mm)</th>
+                <th rowspan="2" style="text-align: center;">BERAT (Kg)</th>
+                <th rowspan="2" style="text-align: center;">PROGRAM NO</th>
+                <th style="text-align: center;" colspan="6">PARAMETER HASIL WELDING</th>
+                <th rowspan="2" style="text-align: center;">Ket</th>
+                <th style="display: none"></th>
+              </tr>
+              <tr>
+                <th>Amp </th>
+                <th>Volt </th>
+                <th>Speed </th>
+                <th>CO2 </th>
+                <th>ØKawat </th>
+                <th>Hasil </th>
+                <th style="display: none"></th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, i) in tableDBB.data" :key="i">
+              <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;">{{ row.coil_no}}</td>
+              <td style="font-size: 13px; text-align: left;">{{ row.pack}}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
+              <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ convertRp(row.weight) }}</td>
+              <td style="font-size: 13px; text-align: center;">{{ row.process_program }}</td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="display: none"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </card>
+
   </div>
 </template>
 <script>
@@ -463,6 +562,19 @@
           dataAvailable: [],
 
         },
+        tableSpec: {
+          data: [],
+        },
+        tableOd: {
+          data: [],
+        },
+        tolOdPlus: '',
+        tolOdMin: '',
+        tableTebal: {
+          data: [],
+        },
+        tolTebalPlus: '',
+        tolTebalMin: '',
         formFilter: {
             add: true,
             title: "Filter",
@@ -484,8 +596,14 @@
           produksi_odia : '',
           produksi_tebal : '',
           produksi_panjang : '',
+          produksi_panjang1 : '',
+          produksi_panjang2 : '',
           produksi_jumlah : '',
+          produksi_jumlah1 : '',
+          produksi_jumlah2 : '',
           produksi_berat_total : '',
+          produksi_berat_total1 : '',
+          produksi_berat_total2: '',
           produksi_keterangan : '',
 
           check_plainend: false,
@@ -504,6 +622,7 @@
 
           dbb_program_code : '',
           dbb_no_dbb : '',
+          shift : '',
         },
         search: {
           job_no: '',
@@ -523,6 +642,7 @@
     },
     mounted(){
       this.get();
+      this.getSpecOp();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
@@ -542,8 +662,14 @@
             context.dataOP.produksi_odia         = response.data.data.produksi_odia
             context.dataOP.produksi_tebal        = response.data.data.produksi_tebal
             context.dataOP.produksi_panjang      = response.data.data.produksi_panjang
+            context.dataOP.produksi_panjang1     = response.data.data.produksi_panjang1
+            context.dataOP.produksi_panjang2     = response.data.data.produksi_panjang2
             context.dataOP.produksi_jumlah       = response.data.data.produksi_jumlah
+            context.dataOP.produksi_jumlah1      = response.data.data.produksi_jumlah1
+            context.dataOP.produksi_jumlah2      = response.data.data.produksi_jumlah2
             context.dataOP.produksi_berat_total  = response.data.data.produksi_berat_total
+            context.dataOP.produksi_berat_total1 = response.data.data.produksi_berat_total1
+            context.dataOP.produksi_berat_total2 = response.data.data.produksi_berat_total2
             context.dataOP.produksi_keterangan   = response.data.data.produksi_keterangan
 
             context.dataOP.check_plainend       = (response.data.data.check_plainend == 1) ? true : false
@@ -560,24 +686,62 @@
             context.dataOP.catatan               = response.data.data.catatan
             context.dataOP.sudut                 = response.data.data.sudut
             context.dataOP.dbb_program_code      = response.data.data.dbb_program_code
+            context.dataOP.shift                 = response.data.data.shift
 
             context.getDataDBB();
+            context.getOdOp();
         }).onFinish(function() {  
              
         })
         .call()        
       },
-      // getDataDBB() {
-      //   let context = this;               
-      //   Api(context, produksiTolling.getDataDBB(context.dataOP.dbb_program_code, {job_no : context.detailProdTollingData.job_no})).onSuccess(function(response) {
-      //       context.tableDBB.data          = response.data.data.data;
-      //       context.tableDBB.dataAvailable = response.data.data.dataAvailable;
-      //   })
-      //   .onError(function(error) {                    
-      //       context.tableDBB.data = []
-      //   })
-      //   .call()        
-      // },
+      getSpecOp() {
+        let context = this;               
+        Api(context, produksiTolling.getSpecOp()).onSuccess(function(response) {
+            context.tableSpec.data = response.data.data;
+        })
+        .onError(function(error) {                    
+            context.tableSpec.data = []
+        })
+        .call()        
+      },
+      getOdOp() {
+        let context = this;               
+        Api(context, produksiTolling.getOd({specification: context.detailProdTollingData.specification, nd: context.dataOP.produksi_nd})).onSuccess(function(response) {
+            context.tableOd.data = response.data.data;
+
+            context.getTebal();
+        })
+        .onError(function(error) {                    
+            context.tableOd.data = []
+        })
+        .call()        
+      },
+      getTebal() {
+        let context = this;               
+        Api(context, produksiTolling.getTebal({specification: context.detailProdTollingData.specification, nd: context.dataOP.produksi_nd, od: context.dataOP.produksi_odia })).onSuccess(function(response) {
+            context.tableTebal.data = response.data.data;
+            context.tolOdPlus = response.data.data[0].tol_od_plus
+            context.tolOdMin  = response.data.data[0].tol_od_min
+
+            context.getTolTebal();
+        })
+        .onError(function(error) {                    
+            context.tableTebal.data = []
+        })
+        .call()        
+      },
+      getTolTebal() {
+        let context = this;               
+        Api(context, produksiTolling.getTolTebal({specification: context.detailProdTollingData.specification, nd: context.dataOP.produksi_nd, od: context.dataOP.produksi_odia, tebal: context.dataOP.produksi_tebal })).onSuccess(function(response) {
+            context.tolTebalPlus = response.data.data[0].tol_tebal_plus
+            context.tolTebalMin  = response.data.data[0].tol_tebal_min
+        })
+        .onError(function(error) {                    
+            context.tableTebal.data = []
+        })
+        .call()        
+      },
       getDataDBB(param){
         let context = this;               
         Api(context, produksiTolling.getDataDBB({job_no: context.detailProdTollingData.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, slitting_date: context.search.slitting_date, slit_from: context.search.slit_from})).onSuccess(function(response) {    
@@ -642,8 +806,14 @@
             produksi_odia : context.dataOP.produksi_odia,
             produksi_tebal : context.dataOP.produksi_tebal,
             produksi_panjang : context.dataOP.produksi_panjang,
+            produksi_panjang1 : context.dataOP.produksi_panjang1,
+            produksi_panjang2 : context.dataOP.produksi_panjang2,
             produksi_jumlah : context.dataOP.produksi_jumlah,
+            produksi_jumlah1 : context.dataOP.produksi_jumlah1,
+            produksi_jumlah2 : context.dataOP.produksi_jumlah2,
             produksi_berat_total : context.dataOP.produksi_berat_total,
+            produksi_berat_total1 : context.dataOP.produksi_berat_total1,
+            produksi_berat_total2 : context.dataOP.produksi_berat_total2,
             produksi_keterangan : context.dataOP.produksi_keterangan,
 
             check_plainend: context.dataOP.check_plainend,
@@ -660,6 +830,9 @@
             catatan: context.dataOP.catatan,
             sudut: context.dataOP.sudut,
             dbb_program_code: context.dataOP.dbb_program_code,
+            shift: context.dataOP.shift,
+
+            specification: context.detailProdTollingData.specification,
           }));
         api.onSuccess(function(response) {
             context.notifyVue(response.data.message, 'top', 'right', 'info')
@@ -690,6 +863,81 @@
             return bilangan
           }
         }
+      },
+      calculateJumlah(){
+        let yiel               = 0.94
+        let beratTotalMaterial = this.dataOP.material_berat_total
+        let rumus              = 0.02466
+        let tebalMaterial      = this.dataOP.material_tebal
+        let od                 = this.dataOP.produksi_odia
+        let panjangProduksi    = this.dataOP.produksi_panjang
+
+        let total = (yiel * beratTotalMaterial / (rumus * tebalMaterial * (od - tebalMaterial) * (panjangProduksi / 1000))) * 1
+
+        this.dataOP.produksi_jumlah = total
+        this.updatePT(this.detailProdTollingData.op_no)
+      },
+      calculateJumlah1(){
+        let yiel               = 0.94
+        let beratTotalMaterial = this.dataOP.material_berat_total
+        let rumus              = 0.02466
+        let tebalMaterial      = this.dataOP.material_tebal
+        let od                 = this.dataOP.produksi_odia
+        let panjangProduksi    = this.dataOP.produksi_panjang1
+
+        let total = (yiel * beratTotalMaterial / (rumus * tebalMaterial * (od - tebalMaterial) * (panjangProduksi / 1000))) * 1
+
+        this.dataOP.produksi_jumlah1 = total
+        this.updatePT(this.detailProdTollingData.op_no)
+      },
+      calculateJumlah2(){
+        let yiel               = 0.94
+        let beratTotalMaterial = this.dataOP.material_berat_total
+        let rumus              = 0.02466
+        let tebalMaterial      = this.dataOP.material_tebal
+        let od                 = this.dataOP.produksi_odia
+        let panjangProduksi    = this.dataOP.produksi_panjang2
+
+        let total = (yiel * beratTotalMaterial / (rumus * tebalMaterial * (od - tebalMaterial) * (panjangProduksi / 1000))) * 1
+
+        this.dataOP.produksi_jumlah2 = total
+        this.updatePT(this.detailProdTollingData.op_no)
+      },
+      calculateBeratTotal(){
+        let rumus           = 0.02466
+        let tebalMaterial   = this.dataOP.material_tebal
+        let od              = this.dataOP.produksi_odia
+        let panjangProduksi = this.dataOP.produksi_panjang
+        let jumlahBtg       = this.dataOP.produksi_jumlah
+
+        let totalBt = rumus * tebalMaterial * (od - tebalMaterial) * (panjangProduksi / 1000) * jumlahBtg
+
+        this.dataOP.produksi_berat_total = totalBt
+        this.updatePT(this.detailProdTollingData.op_no)
+      },
+      calculateBeratTotal1(){
+        let rumus           = 0.02466
+        let tebalMaterial   = this.dataOP.material_tebal
+        let od              = this.dataOP.produksi_odia
+        let panjangProduksi = this.dataOP.produksi_panjang1
+        let jumlahBtg       = this.dataOP.produksi_jumlah1
+
+        let totalBt = rumus * tebalMaterial * (od - tebalMaterial) * (panjangProduksi / 1000) * jumlahBtg
+
+        this.dataOP.produksi_berat_total1 = totalBt
+        this.updatePT(this.detailProdTollingData.op_no)
+      },
+      calculateBeratTotal2(){
+        let rumus           = 0.02466
+        let tebalMaterial   = this.dataOP.material_tebal
+        let od              = this.dataOP.produksi_odia
+        let panjangProduksi = this.dataOP.produksi_panjang2
+        let jumlahBtg       = this.dataOP.produksi_jumlah2
+
+        let totalBt = rumus * tebalMaterial * (od - tebalMaterial) * (panjangProduksi / 1000) * jumlahBtg
+
+        this.dataOP.produksi_berat_total2 = totalBt
+        this.updatePT(this.detailProdTollingData.op_no)
       },
 
       notifyVue(message, verticalAlign, horizontalAlign, type) {

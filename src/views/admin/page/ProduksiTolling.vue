@@ -45,8 +45,8 @@
                       <th>PO NO</th>
                       <th>CLIENT</th>
                       <th>OP NO</th>
-                      <th>SPECIFICATION</th>
                       <th>LINE MACHINE</th>
+                      <th>SPECIFICATION</th>
                       <th>Created At</th>
                       <th>Created By</th>
                       <th></th>
@@ -67,8 +67,8 @@
                     <td style="font-size: 13px;">
                       <label class="badge badge-info" style="cursor: pointer;" @click="detailOP(row.op_no)">{{row.op_no}}</label>
                     </td>
-                    <td style="font-size: 13px;">{{ row.specification }}</td>
                     <td style="font-size: 13px;">{{row.line_machine}}</td>
+                    <td style="font-size: 13px;">{{ row.specification }}</td>
                     <td style="font-size: 13px;">{{row.created_at}}</td>
                     <td style="font-size: 13px;">{{row.created_by}}</td>
                     <td>
@@ -119,15 +119,15 @@
                     v-model="prodTollData.op_no">
               </base-input>
               <base-input type="text"
-                    label="Specification"
-                    placeholder="Specification"
-                    v-model="prodTollData.specification">
-              </base-input>
-              <base-input type="text"
                     label="Line Machine"
                     placeholder="Line Machine"
                     v-model="prodTollData.line_machine">
               </base-input>
+              <!-- <base-input type="text"
+                    label="Specification"
+                    placeholder="Specification"
+                    v-model="prodTollData.specification">
+              </base-input> -->
 
              </div>
              <template slot="footer">
@@ -166,14 +166,14 @@
                     v-model="search.op_no">
               </base-input>
               <base-input type="text"
-                    label="Specification"
-                    placeholder="Specification"
-                    v-model="search.specification">
-              </base-input>
-              <base-input type="text"
                     label="Line Machine"
                     placeholder="Line Machine"
                     v-model="search.line_machine">
+              </base-input>
+              <base-input type="text"
+                    label="Specification"
+                    placeholder="Specification"
+                    v-model="search.specification">
               </base-input>
               <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
               <div class="input-daterange datepicker row align-items-center">
@@ -367,10 +367,10 @@
         let context = this;
         let formData = new FormData();
        
-        if (this.prodTollData.job_no != undefined && this.prodTollData.op_no != undefined && this.prodTollData.specification != undefined && this.prodTollData.line_machine != undefined) {
+        if (this.prodTollData.job_no != undefined && this.prodTollData.op_no != undefined && this.prodTollData.line_machine != undefined) {
           formData.append('job_no', this.prodTollData.job_no);
           formData.append('op_no', this.prodTollData.op_no);
-          formData.append('specification', this.prodTollData.specification);
+          // formData.append('specification', this.prodTollData.specification);
           formData.append('line_machine', this.prodTollData.line_machine);
         }else{
           return alert('Semua field Wajib Di Isi')

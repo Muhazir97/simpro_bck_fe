@@ -37,7 +37,8 @@
                 <tr>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">LP No</td>
                     <!-- JIKA SLITTING -->
-                    <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> 
+                    <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> {{ lp_no }} </td>
+                    <!-- <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> 
                       <autocomplete
                         ref="autocomplete"
                         :url="apiUrl+'slit-coil/find-program'"
@@ -51,7 +52,7 @@
                         :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
                         >
                       </autocomplete>  
-                    </td>
+                    </td> -->
                     <!-- JIKA TOLLING -->
                     <td colspan="3" v-if="detailDeliveryData.prod_class == 'Tolling'"> 
                       <autocomplete
@@ -332,6 +333,7 @@
         storageUrl : config.storageUrl,
         tokenApi : '',
         material_code: '',
+        lp_no: '',
 
         dataSJ : {
           alamat_kirim: '',
@@ -466,7 +468,7 @@
       // ========================== KONSEP BARU ===============================
       getMaterialMdl() {
         let context = this;               
-        Api(context, delivery.getMaterialMdl({job_no: context.detailDeliveryData.job_no})).onSuccess(function(response) {
+        Api(context, delivery.getMaterialMdl({job_no: context.detailDeliveryData.job_no, type_pengiriman: context.dataSJ.type_pengiriman})).onSuccess(function(response) {
             context.tableMatMdl.data = response.data.data;                   
         })
         .onError(function(error) {                    
@@ -480,6 +482,7 @@
             context.tableMatTbl.data = response.data.data.data;                   
             context.totalQty         = response.data.data.totalQty;                   
             context.totalWeight      = response.data.data.totalWeight;                   
+            context.lp_no            = response.data.data.lp_no;                 
         })
         .onError(function(error) {                    
             context.tableMatTbl.data = []

@@ -99,7 +99,7 @@
                     <td style="font-size: 13px;">{{row.coil_no}}</td>
                     <td style="font-size: 13px;">{{row.dimension_thick}}</td>
                     <td style="font-size: 13px;">{{row.dimension_width}}</td>
-                    <td style="font-size: 13px;">{{row.dimension_weight}}</td>
+                    <td style="font-size: 13px;">{{ convertRp(row.dimension_weight) }}</td>
                     <td style="font-size: 13px;">{{row.dimension_spec}}</td>
                     <td style="font-size: 13px;">{{row.information}}</td>
                     <td>
@@ -107,13 +107,11 @@
                     </td>
                     <td style="display: none" ></td>
                   </tr>
-                  <!-- <tr>
-                    <td style="font-size: 13px; font-weight: bold;">TOTAL</td>
-                    <td style="font-size: 13px; font-weight: bold;">0.000</td>
-                    <td style="font-size: 13px; font-weight: bold;">0.000</td>
-                    <td style="font-size: 13px; font-weight: bold;" colspan="5">0.000</td>
+                  <tr>
+                    <td colspan="3" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                    <td style="font-size: 13px; font-weight: bold;" colspan="5">{{ convertRp(totalWeight) }}</td>
                     <td style="display: none" ></td>
-                  </tr> -->
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -169,7 +167,7 @@
                     </td>
                     <td style="font-size: 13px;">{{row.dimension_spec}}</td>
                     <td>
-                      <i class="fa ffa-plus-square text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)" v-if="jobRequestData.job_status == 'Draft'"></i>
+                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)"></i>
                     </td>
                   </tr>
                 </tbody>
@@ -224,6 +222,7 @@
         storageUrl : config.storageUrl,
         tokenApi : '',
         material_code: '',
+        totalWeight: '',
       }
     },
     mounted(){
@@ -255,7 +254,8 @@
       getMaterialReq() {
         let context = this;               
         Api(context, jobRequest.getMaterialReq({job_no: context.$route.params.job_no})).onSuccess(function(response) {
-            context.tableMatReq.data = response.data.data;                   
+            context.tableMatReq.data = response.data.data.data;
+            context.totalWeight      = response.data.data.totalWeight;
         })
         .onError(function(error) {                    
             context.tableMatReq.data = []

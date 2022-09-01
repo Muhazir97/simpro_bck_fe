@@ -48,4 +48,16 @@ export default {
             }
         });
     },
+    getSpecOp() {
+        return Service().get('produksi-tolling/get-spec-op');
+    },
+    getOd(params) {
+        return Service().get('produksi-tolling/get-od', {params});
+    },
+    getTebal(params) {
+        return Service().get('produksi-tolling/get-tebal', {params});
+    },
+    getTolTebal(params) {
+        return Service().get('produksi-tolling/get-tol-tebal', {params});
+    },
 }
