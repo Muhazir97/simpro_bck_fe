@@ -7,12 +7,12 @@
         <div class="text-center display-4">
           <span style="margin-bottom: -20px; font-weight: bold;">DETAIL DELIVERY</span>
 
-          <a :href="apiUrl+'print-delivery/'+detailDeliveryData.packing_list_no" target="_BLANK">
+          <a :href="apiUrl+'print-delivery/'+detailDeliveryData.packing_list_no+'?page='+pagination.page" target="_BLANK">
             <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
               <i class="fa fa-file-text"></i> Print
             </button>
           </a>
-          <a :href="apiUrl+'report-word/delivery/'+detailDeliveryData.packing_list_no" target="_BLANK">
+          <a :href="apiUrl+'report-word/delivery/'+detailDeliveryData.packing_list_no+'?page='+pagination.page" target="_BLANK">
             <button type="submit" class="btn btn-sm btn-primary btn-fill float-right">
               <i class="fa fa-file-text"></i> Word
             </button>
@@ -37,22 +37,22 @@
                 <tr>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">LP No</td>
                     <!-- JIKA SLITTING -->
-                    <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> {{ lp_no }} </td>
-                    <!-- <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> 
+                    <!-- <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> {{ lp_no }} </td> -->
+                    <td colspan="3" v-if="detailDeliveryData.prod_class == 'Slitting'"> 
                       <autocomplete
-                        ref="autocomplete"
+                        ref="autocompleteLP"
                         :url="apiUrl+'slit-coil/find-program'"
                         :customHeaders="{ Authorization: tokenApi }"
                         anchor="process_program"
                         label="coil_no"
-                        :on-select="getData"
+                        :on-select="getDataSLT"
                         placeholder="Choose Program No"
                         :min="2"
                         :process="processJSON"
                         :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
                         >
                       </autocomplete>  
-                    </td> -->
+                    </td>
                     <!-- JIKA TOLLING -->
                     <td colspan="3" v-if="detailDeliveryData.prod_class == 'Tolling'"> 
                       <autocomplete
@@ -109,7 +109,7 @@
           </div>
         </div>
         <p style="margin-bottom: -25px;">Sesuai dengan Pesanan tersebut di atas, maka harap diterima dengan baik barang-barang sbb.</p>
-        <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()">
+        <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()" v-if="detailDeliveryData.prod_class == 'Slitting'">
           Add Material
         </button>
         <hr style="margin-top:40px;">
@@ -122,7 +122,7 @@
             <tr style="background-color: #F0F8FF;">
               <th  style="font-size: 13px; text-align: center;">NO</th>
               <th colspan="2" style="font-size: 13px; text-align: center;">COIL NO</th>
-              <th colspan="2"  style="font-size: 13px; text-align: center;">DIMENSI</th>
+              <th style="font-size: 13px; text-align: center;">DIMENSI</th>
               <th style="font-size: 13px; text-align: center;">JUMLAH</th>
               <th style="font-size: 13px; text-align: center;">BERAT</th>
               <th style="font-size: 13px; text-align: center;">SPECIFICATION</th>
@@ -135,37 +135,81 @@
               <td style="font-size: 13px; text-align: center;">{{i + 1}}</td>
               <td style="font-size: 13px; text-align: center;">{{row.coil_no}}</td>
               <td style="font-size: 13px; text-align: center;">{{row.pack}}</td>
-              <td style="font-size: 13px; text-align: center;">{{row.thick}}</td>
-              <td style="font-size: 13px; text-align: center;">{{row.width}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.thick}} x {{row.width}} x S</td>
               <td style="font-size: 13px; text-align: center;">1</td>
               <td style="font-size: 13px; text-align: center;">{{convertRp(row.weight)}}</td>
-              <td style="font-size: 13px;">{{row.dimension_spec}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.dimension_spec}}</td>
               <td style="text-align:center;">
                 <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id)"></i>
               </td>
               <td style="display: none" ></td>
             </tr>
             <tr>
-              <td colspan="5" style="font-size: 13px; text-align: center; font-weight: bold; ">TOTAL</td>
+              <td colspan="4" style="font-size: 13px; text-align: center; font-weight: bold; ">TOTAL</td>
               <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{convertRp(totalQty)}}</td>
               <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{convertRp(totalWeight)}}</td>
               <td style="display: none" ></td>
             </tr>
           </tbody>
         </table>
+        <div class="mt-2">
+          <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
+        </div>
       </div>
 
+      <!-- TABLE FOR PIPA -->
       <div class="mb-4" v-if="detailDeliveryData.prod_class == 'Tolling'" >
-        <table class="table table-bordered">
+        <table border='1'>
+          <thead>
+            <tr style="background-color: #F0F8FF;">
+              <th style="font-size: 13px; text-align: center;">NO</th>
+              <th style="font-size: 13px; text-align: center;">DESKRIPSI</th>
+              <th style="font-size: 13px; text-align: center;">SPESIFIKASI</th>
+              <th style="font-size: 13px; text-align: center;">JUMLAH</th>
+              <th style="font-size: 13px; text-align: center;">TONASE (Kg)</th>
+              <th style="font-size: 13px; text-align: center;" width="20%">COIL NO</th>
+              <th style="font-size: 13px; text-align: center;">OP NO</th>
+              <th style="font-size: 13px; text-align: center;"></th>
+              <th style="display: none" ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, i) in tableMatTbl.data" :key="i">
+              <td style="font-size: 13px; text-align: center;">{{i + 1}}</td>
+              <td style="font-size: 13px; text-align: center;">
+                {{row.type_pipa }} {{ row.nd }} x {{ row.material_tebal }} x <input style="border: 1px solid white; text-align: center;" @change="countQty(row.id, row.qty, row.material_tebal, row.od, row.panjang)" v-model="row.panjang" size="2" >
+              </td>
+              <td style="font-size: 13px; text-align: center;">{{ row.spesifikasi }}</td>
+              <td style="font-size: 13px; text-align: center;">
+                <input style="border: 1px solid white; text-align: center;" @change="countQty(row.id, row.qty, row.material_tebal, row.od, row.panjang)" v-model="row.qty" size="5" >
+              </td>
+              <td style="font-size: 13px; text-align: center;">{{ row.tonase }}</td>
+              <td style="font-size: 13px;">{{row.coil_no}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.op_no}}</td>
+              <td style="text-align:center;">
+                <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="deleteMatToll(row.id)"></i>
+              </td>
+              <td style="display: none" ></td>
+            </tr>
+            <tr>
+              <td colspan="3" style="font-size: 13px; text-align: center; font-weight: bold; ">TOTAL</td>
+              <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{convertRp(totalQty)}}</td>
+              <td style="font-size: 13px; font-weight: bold; text-align: center;" >{{totalWeight}}</td>
+              <td style="display: none" ></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- <table border="1">
           <thead>
             <slot name="columns">
               <tr style="background-color: #F0F8FF;">
-                <th>NO</th>
-                <th>DESKRIPSI</th>
-                <th>SPESIFIKASI</th>
-                <th>JUMLAH</th>
-                <th>TONASE (Kg)</th>
-                <th>NO. COIL</th>
+                <th style="font-size: 13px; text-align: center;">NO</th>
+                <th style="font-size: 13px; text-align: center;">DESKRIPSI</th>
+                <th style="font-size: 13px; text-align: center;">SPESIFIKASI</th>
+                <th style="font-size: 13px; text-align: center;">JUMLAH</th>
+                <th style="font-size: 13px; text-align: center;">TONASE (Kg)</th>
+                <th style="font-size: 13px; text-align: center;">COIL NO</th>
                 <th style="display: none;"></th>
               </tr>
             </slot>
@@ -177,10 +221,10 @@
                 <textarea style="border: 1px solid white; resize: none;" rows="10" cols="1"  @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.no_seq"></textarea>   
               </td>
               <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="10" cols="35" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.deskripsi"></textarea> 
+                <textarea style="border: 1px solid white; resize: none;" rows="10" cols="30" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.deskripsi"></textarea> 
               </td>
               <td style="font-size: 13px;">
-                <textarea style="border: 1px solid white; resize: none;" rows="10" cols="25" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.spesifikasi"></textarea> 
+                <textarea style="border: 1px solid white; resize: none;" rows="10" cols="20" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.spesifikasi"></textarea> 
               </td>
               <td style="font-size: 13px;">
                 <textarea inputmode="numeric" style="border: 1px solid white; resize: none;" rows="10" cols="10" @change="countQty()" v-model="dataSJ.jumlah"></textarea> 
@@ -189,7 +233,7 @@
                 <textarea style="border: 1px solid white; resize: none;" rows="10" cols="10"  @change="countWeight()" v-model="dataSJ.tonase"></textarea>  
               </td>
               <td style="font-size: 13px; border-bottom: none;">
-                <textarea style="border: 1px solid white; resize: none;" rows="10" cols="30"  @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.coil_no_all"></textarea>
+                <textarea style="border: 1px solid white; resize: none;" rows="10" cols="25"  @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.coil_no_all"></textarea>
               </td>
               <td style="display: none;"></td>
             </tr>
@@ -197,12 +241,12 @@
             <tr>
               <td style="font-weight: bold" colspan="3">Total</td>
               <td style="font-weight: bold">{{ convertRp(detailDeliveryData.qty) }}</td>
-              <td style="font-weight: bold">{{ convertRp(detailDeliveryData.weight) }}</td>
+              <td style="font-weight: bold">{{ detailDeliveryData.weight }}</td>
               <td colspan="2"></td>
               <td style="display: none;"></td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
       </div>
 
       <!-- ========================= FOOTER ===============================  -->
@@ -259,6 +303,10 @@
               <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
            </template>
            <div>
+
+            TOTAL : {{tableMatMdl.data.length}}
+            <i class="fa fa-check-circle text-primary fa-lg ml-2" style="cursor: pointer;" aria-hidden="true" title="Add Material All" @click="saveMaterial('all')"></i>
+
             <div class="scroll">
               <table class="table">
                 <thead>
@@ -314,6 +362,11 @@
     },
     data () {
       return {
+        pagination: {
+          page_count: '',
+          default: 1,
+          page: '',
+        },
         form: {
             add: true,
             title: "Add Material",
@@ -352,15 +405,14 @@
           tonase: '',
           coil_no_all: '',
           type_pengiriman: '',
-
         },
-        dataCoil : {},
+        getDes : '',
+        process_program: '',
       }
     },
     mounted(){
       this.get();
       this.getDataSJ();
-      
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
@@ -373,13 +425,12 @@
         })
         .call()        
       },
-      // ============================== KONSEP LAMA =================================
       getDataSJ() {
         let context = this;               
         Api(context, delivery.getDataSJ(context.$route.params.packing_list_no)).onSuccess(function(response) {
             context.dataSJ = response.data.data.data;
-            // context.dataCoil = response.data.data.dataCoil;
-            context.$refs.autocomplete.setValue(response.data.data.data.lpp_no)       
+            context.getDes = response.data.data.getDes;
+            context.$refs.autocompleteLP.setValue(response.data.data.data.lpp_no)    
         })
         .onError(function(error) {                    
             context.dataSJ = []
@@ -435,40 +486,94 @@
           }
         }
       },
-      countQty(){
-        let diBuatArray   = this.dataSJ.jumlah.split(/(\s+)/)
-        let removeNewLine = diBuatArray.filter(x => !/^\s*$/.test(x));
-        let convertNumber = removeNewLine.map(i=>Number(i));
-        let totalQty = 0;
+      // ============================== KONSEP LAMA FOR TOLLING =================================
+      countQty(id, qty, tebalMaterial, od, prod_panjang){
+        // let diBuatArray   = this.dataSJ.jumlah.split(/(\s+)/)
+        // let removeNewLine = diBuatArray.filter(x => !/^\s*$/.test(x));
+        // let convertNumber = removeNewLine.map(i=>Number(i));
+        // let totalQty = 0;
+        // let totalQtyseq = [];
+        //         // RUMUS BERAT BARANG
+        //         let tebalMaterial = this.getDes.material_tebal;
+        //         let od            = this.getDes.produksi_odia;
 
-        for (let i = 0; i < convertNumber.length; i++) {
-            totalQty += convertNumber[i];
-        }
+        // for (let i = 0; i < convertNumber.length; i++) {
+        //     totalQty   += convertNumber[i];
+        //     let prod_panjang = (i == 0) ? this.getDes.produksi_panjang1 : (i == 1) ? this.getDes.produksi_panjang : (i == 2) ? this.getDes.produksi_panjang2 : 1
+            // totalQtyseq.push(Number(convertNumber[i] * (0.02466 * tebalMaterial * (od - tebalMaterial) * ( prod_panjang / 1000) * 1)).toFixed(2) + "\n");
+        // }
         
-        this.detailDeliveryData.qty = totalQty
-        this.updateSJ(this.detailDeliveryData.packing_list_no)
+        // this.detailDeliveryData.qty = totalQty
+        // this.dataSJ.tonase          = totalQtyseq.join("")
+        // this.countWeight();
+        // this.updateSJ(this.detailDeliveryData.packing_list_no)
+
+        let api     = null;
+        let context = this;
+
+        api = Api(context, delivery.updateQtyTol({
+            id_del_tl : id,
+            qty : qty,
+            panjang : prod_panjang,
+            tonase : Number(qty * (0.02466 * tebalMaterial * (od - tebalMaterial) * ( prod_panjang / 1000) * 1)).toFixed(2),
+            packing_list_no: this.detailDeliveryData.packing_list_no
+        }));
+        api.onSuccess(function(response) {
+            context.notifyVue(response.data.message, 'top', 'right', 'info')
+        }).onError(function(error) { 
+            context.notifyVue('Update Failed', 'top', 'right', 'danger')
+        }).onFinish(function() {
+          context.getMaterialTbl();  
+        })
+        .call();
       },
-      countWeight(){
-        let diBuatArray   = this.dataSJ.tonase.split(/(\s+)/)
-        let removeNewLine = diBuatArray.filter(x => !/^\s*$/.test(x));
-        let convertNumber = removeNewLine.map(i=>Number(i));
-        let totalWeight = 0;
+      // countWeight(){
+      //   let diBuatArray   = this.dataSJ.tonase.split(/(\s+)/)
+      //   let removeNewLine = diBuatArray.filter(x => !/^\s*$/.test(x));
+      //   let convertNumber = removeNewLine.map(i=>Number(i));
+      //   let totalWeight = 0;
 
-        for (let i = 0; i < convertNumber.length; i++) {
-            totalWeight += convertNumber[i];
-        }
-        console.log(totalWeight)
+      //   for (let i = 0; i < convertNumber.length; i++) {
+      //       totalWeight += convertNumber[i];
+      //   }
         
-        this.detailDeliveryData.weight = totalWeight
-        this.updateSJ(this.detailDeliveryData.packing_list_no)
+      //   this.detailDeliveryData.weight = totalWeight.toFixed(2)
+      //   this.updateSJ(this.detailDeliveryData.packing_list_no)
+      // },
+      addMaterialToll(op_no, packing_list_no){
+        let api = null;
+        let context = this;
+        let formData = new FormData(); 
+
+        formData.append('op_no', op_no);
+        formData.append('packing_list_no', packing_list_no);
+
+        api = Api(context, delivery.addMaterialToll(formData));
+        api.onSuccess(function(response) {
+            context.notifyVue((context.formTitle === 'Add Material') ? 'Data Berhasil di Simpan' : 'Data Berhasil di Update', 'top', 'right', 'info')
+        }).onError(function(error) {                    
+            context.notifyVue((context.formTitle === 'Add Material') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
+        }).onFinish(function() {  
+            context.getMaterialTbl()
+        })
+        .call();
+      },
+      deleteMatToll(id) {
+        let api = null;
+        let context = this;
+
+        Api(context, delivery.deleteMatToll(id)).onSuccess(function(response) {
+            context.getMaterialTbl();
+            context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
+        }).call();
       },
       // ========================== END ===============================
 
 
-      // ========================== KONSEP BARU ===============================
+      // ========================== KONSEP BARU FOR SLITTING ===============================
       getMaterialMdl() {
         let context = this;               
-        Api(context, delivery.getMaterialMdl({job_no: context.detailDeliveryData.job_no, type_pengiriman: context.dataSJ.type_pengiriman})).onSuccess(function(response) {
+        Api(context, delivery.getMaterialMdl({process_program: context.process_program, type_pengiriman: context.dataSJ.type_pengiriman})).onSuccess(function(response) {
             context.tableMatMdl.data = response.data.data;                   
         })
         .onError(function(error) {                    
@@ -478,11 +583,12 @@
       },
       getMaterialTbl() {
         let context = this;               
-        Api(context, delivery.getMaterialTbl({job_no: context.detailDeliveryData.job_no, surat_jalan_no: context.detailDeliveryData.packing_list_no})).onSuccess(function(response) {
-            context.tableMatTbl.data = response.data.data.data;                   
-            context.totalQty         = response.data.data.totalQty;                   
-            context.totalWeight      = response.data.data.totalWeight;                   
-            context.lp_no            = response.data.data.lp_no;                 
+        Api(context, delivery.getMaterialTbl({job_no: context.detailDeliveryData.job_no, surat_jalan_no: context.detailDeliveryData.packing_list_no, page: context.pagination.page})).onSuccess(function(response) {
+            context.tableMatTbl.data      = response.data.data.data.data;                   
+            context.totalQty              = response.data.data.totalQty;                   
+            context.totalWeight           = response.data.data.totalWeight.toFixed(2);                   
+            context.lp_no                 = response.data.data.lp_no;    
+            context.pagination.page_count = response.data.data.data.last_page         
         })
         .onError(function(error) {                    
             context.tableMatTbl.data = []
@@ -509,6 +615,7 @@
           //     formData.append('packing_date', '');
           // }
           formData.append('type', type);
+          formData.append('process_program', context.process_program);
           formData.append('id', id);
           formData.append('job_no', this.detailDeliveryData.job_no);
         }else{
@@ -539,12 +646,22 @@
             type: type
         })
       },
+      changePage(page){
+        this.pagination.page = page;
+        this.get();
+      },
       // ================= Autocomplete ============
+      // AMBIL DATA YANG DI PILIH AC
+      getDataSLT(obj){
+        this.process_program = obj.process_program;
+        this.updateSJ(this.detailDeliveryData.packing_list_no)
+        this.getMaterialMdl()
+      },
       // AMBIL DATA YANG DI PILIH AC
       getData(obj){
         this.dataSJ.lpp_no = (this.detailDeliveryData.prod_class == 'Slitting') ? obj.process_program : obj.op_no;
         this.updateSJ(this.detailDeliveryData.packing_list_no)
-        this.getDataSJ()
+        this.addMaterialToll(obj.op_no, this.detailDeliveryData.packing_list_no)
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

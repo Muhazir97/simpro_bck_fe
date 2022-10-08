@@ -45,10 +45,14 @@
                       <th>PO NO</th>
                       <th>CLIENT</th>
                       <th>OP NO</th>
-                      <th>LINE MACHINE</th>
-                      <th>SPECIFICATION</th>
-                      <th>Created At</th>
-                      <th>Created By</th>
+                      <th v-if="role == 'Admin'">LINE MACHINE</th>
+                      <th v-if="role == 'Admin'">SPECIFICATION</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">QTY OP</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT OP</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">QTY DELIV</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT DELIV</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">QTY SISA</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SISA</th>
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -63,14 +67,36 @@
                     <td style="font-size: 13px;">
                       <label class="badge badge-warning">{{ row.po_no }}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.client_name}}</td>
+                    <td style="font-size: 13px;">
+                      {{row.client_name}}
+                    </td>
                     <td style="font-size: 13px;">
                       <label class="badge badge-info" style="cursor: pointer;" @click="detailOP(row.op_no)">{{row.op_no}}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.line_machine}}</td>
-                    <td style="font-size: 13px;">{{ row.specification }}</td>
-                    <td style="font-size: 13px;">{{row.created_at}}</td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin'">
+                      {{row.line_machine}}
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin'">
+                      {{ row.specification }}  {{ row.produksi_nd }} x {{ row.material_tebal }} x {{ row.produksi_panjang1 }}
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ convertRp(row.produksi_jumlah1 + row.produksi_jumlah + row.produksi_jumlah2) }}
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ +(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2) }}
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ convertRp(row.qty_deliv) }}
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ row.weight_deliv }}
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      <label class="badge badge-danger badge-fill">{{ convertRp(row.produksi_jumlah1 + row.produksi_jumlah + row.produksi_jumlah2 - row.qty_deliv) }}</label>
+                    </td>
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      <label class="badge badge-danger badge-fill">{{ Number(+(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2) - (row.weight_deliv)).toFixed(2) }}</label>
+                    </td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -97,16 +123,17 @@
                 <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
              </template>
              <div>
-              <div class="form-group">
+              <div class="form-group" v-if="form.title === 'Add Data'">
                 <label>Job No</label><br>
                 <autocomplete
+                  disabled
                   ref="autocomplete"
                   :url="apiUrl+'job-request/find-job-no'"
                   :customHeaders="{ Authorization: tokenApi }"
                   anchor="job_no"
                   label="job_name"
                   :on-select="getData"
-                  placeholder="Choose Job No"
+                  placeholder="Choose Job No / PO NO"
                   :min="3"
                   :process="processJSON"
                   :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
@@ -118,16 +145,19 @@
                     placeholder="OP No"
                     v-model="prodTollData.op_no">
               </base-input>
-              <base-input type="text"
-                    label="Line Machine"
-                    placeholder="Line Machine"
-                    v-model="prodTollData.line_machine">
+              <div class="form-group">
+                <label>Line Machine</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="prodTollData.line_machine">
+                  <option selected>Select Line</option>
+                  <option value="TM 60">TM 60</option>
+                  <option value="TM 114">TM 114</option>
+                </select>
+              </div>
+              <base-input type="date"
+                    label="Date"
+                    placeholder="Date"
+                    v-model="prodTollData.created_at">
               </base-input>
-              <!-- <base-input type="text"
-                    label="Specification"
-                    placeholder="Specification"
-                    v-model="prodTollData.specification">
-              </base-input> -->
 
              </div>
              <template slot="footer">
@@ -287,16 +317,18 @@
         apiUrl :config.apiUrl,
         tokenApi : '',
         dataImport: '',
+        role: '',
       }
     },
     mounted(){
       this.get();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
+      this.role = localStorage.getItem('role');
     },
     methods: {
       get(param){
         let context = this;               
-        Api(context, produksiTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, specification: context.search.specification, line_machine: context.search.line_machine, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, produksiTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, specification: context.search.specification, line_machine: context.search.line_machine, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {  
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
@@ -367,10 +399,10 @@
         let context = this;
         let formData = new FormData();
        
-        if (this.prodTollData.job_no != undefined && this.prodTollData.op_no != undefined && this.prodTollData.line_machine != undefined) {
+        if (this.prodTollData.job_no != undefined && this.prodTollData.op_no != undefined && this.prodTollData.line_machine != undefined && this.prodTollData.created_at != undefined) {
           formData.append('job_no', this.prodTollData.job_no);
           formData.append('op_no', this.prodTollData.op_no);
-          // formData.append('specification', this.prodTollData.specification);
+          formData.append('date', this.prodTollData.created_at);
           formData.append('line_machine', this.prodTollData.line_machine);
         }else{
           return alert('Semua field Wajib Di Isi')

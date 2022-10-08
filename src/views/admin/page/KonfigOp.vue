@@ -90,7 +90,7 @@
               </base-input>
               <div >
                 <label>Normal Diameter</label><br>
-                <select class="form-select form-control" v-model="konfigData.nd" @change="getOdOp()">
+                <select class="form-select form-control" v-model="konfigData.nd">
                   <option selected>Select</option>
                   <option value='1 "'>1 "</option>
                   <option value='1½ "'>1½ "</option>

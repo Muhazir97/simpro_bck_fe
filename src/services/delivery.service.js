@@ -54,4 +54,16 @@ export default {
             }
         });
     },
+    addMaterialToll(params) {
+        return Service().post('delivery/add-material-toll', params);
+    },
+    deleteMatToll(id) {
+        return Service().post('delivery/delete-material-toll/'+id);
+    },
+    getCardAll(params) {
+        return Service().get('delivery/get-all-card', {params});
+    },
+    updateQtyTol(params) {
+        return Service().post('delivery/update-qty-toll', params);
+    },
 }

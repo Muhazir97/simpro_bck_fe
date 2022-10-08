@@ -116,7 +116,7 @@
                     placeholder="BA Date"
                     v-model="newsData.news_date">
               </base-input>
-              <base-input type="number"
+              <!-- <base-input type="number"
                     label="Weight"
                     placeholder="Weight"
                     v-model="newsData.weight">
@@ -125,7 +125,7 @@
                     label="Qty"
                     placeholder="Qty"
                     v-model="newsData.qty">
-              </base-input>
+              </base-input> -->
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
@@ -363,12 +363,12 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.newsData.job_no != undefined && this.newsData.news_no != undefined && this.newsData.news_date != undefined && this.newsData.weight != undefined && this.newsData.qty != undefined) {
+        if (this.newsData.job_no != undefined && this.newsData.news_no != undefined && this.newsData.news_date != undefined) {
           formData.append('job_no', this.newsData.job_no);
           formData.append('news_no', this.newsData.news_no);
           formData.append('news_date', this.newsData.news_date);
-          formData.append('weight', this.newsData.weight);
-          formData.append('qty', this.newsData.qty);
+          // formData.append('weight', this.newsData.weight);
+          // formData.append('qty', this.newsData.qty);
         }else{
           return alert('Semua Field Wajib Di Isi')
         }

@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-12">
           <div class="row">
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
                   <i class="nc-icon nc-app text-info"></i>
@@ -18,7 +18,7 @@
               </stats-card>
             </div>
 
-            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PROD', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PROD', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
                   <i class="nc-icon nc-settings-gear-64 text-success"></i>
@@ -32,7 +32,7 @@
               </stats-card>
             </div>
 
-            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT IN PROD', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT IN PROD', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
                   <i class="nc-icon nc-bullet-list-67 text-warning"></i>
@@ -46,7 +46,7 @@
               </stats-card>
             </div>
 
-            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'RETURN', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'RETURN', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
                   <i class="nc-icon nc-refresh-02 text-danger"></i>

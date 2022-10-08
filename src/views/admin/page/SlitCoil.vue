@@ -4,13 +4,13 @@
       <div class="row">
         <div class="col-12">
           <div class="row">
-            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'DELIVERY', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
-                  <i class="nc-icon nc-settings-gear-64 text-success"></i>
+                  <i class="nc-icon nc-app text-info"></i>
                 </div>
                 <div slot="content">
-                  <p class="card-category">Delivery</p>
+                  <p class="card-category">All Slit Coil</p>
                   <h4 class="card-title">{{ convertRp(totalWeightDel) }}</h4>
                 </div>
                 <div slot="footer">
@@ -18,42 +18,70 @@
               </stats-card>
             </div>
 
-            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT YET DELIVERY', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'SLIT FROM INT', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
-                  <i class="nc-icon nc-bullet-list-67 text-warning"></i>
+                  <i class="nc-icon nc-cloud-download-93 text-warning"></i>
                 </div>
                 <div slot="content">
-                  <p class="card-category">Not Yet Delivery</p>
-                  <h4 class="card-title">{{ convertRp(totalWeightNotDel) }}</h4>
-                </div>
-                <div slot="footer">
-                </div>
-              </stats-card>
-            </div>
-<!-- 
-            <div class="col-xl-3 col-md-6" style="cursor:pointer;" @click="search.material_status = 'RETURN', get()">
-              <stats-card class="shadow">
-                <div slot="header" class="icon-warning">
-                  <i class="nc-icon nc-refresh-02 text-danger"></i>
-                </div>
-                <div slot="content">
-                  <p class="card-category">Production</p>
-                  <h4 class="card-title"></h4>
+                  <p class="card-category">Slit From Int</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightSlitInt) }}</h4>
                 </div>
                 <div slot="footer">
                 </div>
               </stats-card>
             </div>
 
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'SLIT FROM EXT', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
-                  <i class="nc-icon nc-app text-info"></i>
+                  <i class="nc-icon nc-spaceship text-danger"></i>
                 </div>
                 <div slot="content">
-                  <p class="card-category">All Coil</p>
-                  <h4 class="card-title"></h4>
+                  <p class="card-category">Slit From Ext</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightSlitExt) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PROD', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-settings-gear-64 text-success"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Production</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightProd) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-4 col-md-6" @click="search.material_status = 'NOT YET PROD', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-notes"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Not Yet Prod</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightNotProd) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <!-- <div class="col-xl-4 col-md-6">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-compass-05"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Pending Material</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightNotProd) }}</h4>
                 </div>
                 <div slot="footer">
                 </div>
@@ -62,11 +90,11 @@
           </div>
 
           <div v-if="role != 'Visitor'">
-            <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+            <a :href="apiUrl+'report-excel/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+'&age='+search.age+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
 
             <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
-            <a :href="apiUrl+'report-pdf/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+''" target="_BLANK" class="btn btn-sm btn-warning mb-4"><i class="fa fa-file-text fa-sm"></i> PRINT</a>
+            <a :href="apiUrl+'report-pdf/slit-coil?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+'&slit_from='+search.slit_from+'&age='+search.age+''" target="_BLANK" class="btn btn-sm btn-warning mb-4"><i class="fa fa-file-text fa-sm"></i> PRINT</a>
           </div>
 
           <!-- CARD -->
@@ -106,8 +134,9 @@
                       <th>WEIGHT / kg</th>
                       <!-- <th>SIZE</th> -->
                       <th>DESCRIPTION</th>
-                      <th>STATUS</th>
+                      <!-- <th>STATUS</th> -->
                       <th>SLIT FROM</th>
+                      <th>Age</th>
                       <!-- <th>Created By</th> -->
                       <th></th>
                       <th></th>
@@ -126,7 +155,7 @@
                         <small><label class="badge badge-primary" style="cursor: pointer;">{{row.travel_latter_no}}</label></small>
                       </a>
                     </td>
-                    <td style="font-size: 13px;">{{row.slitting_date}}</td>
+                    <td style="font-size: 13px;">{{ moment(row.slitting_date).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
                     <td style="font-size: 13px;">
                       <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
@@ -140,12 +169,13 @@
                     <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
                     <!-- <td style="font-size: 13px;">{{row.size}}</td> -->
                     <td style="font-size: 13px;">{{row.description}}</td>
-                    <td style="font-size: 13px;">
+                   <!--  <td style="font-size: 13px;">
                       <small><label class="badge badge-light">{{ row.material_status }}</label></small>
-                    </td>
+                    </td> -->
                     <td style="font-size: 13px;">
                       <small><label class="badge badge-warning">{{ row.slit_from }}</label></small>
                     </td>
+                    <td style="font-size: 13px;">{{ moment().diff(row.slitting_date, "days")+' Days' }}</td>
                     <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="role != 'Visitor'"></i>
@@ -179,14 +209,14 @@
                     placeholder="Date Entry"
                     v-model="slitCoilData.slitting_date">
               </base-input>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label>Material Status</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="slitCoilData.material_status">
                   <option selected>Select Status</option>
                   <option value="DELIVERY">DELIVERY</option>
                   <option value="NOT YET DELIVERY">NOT YET DELIVERY</option>
                 </select>
-              </div>
+              </div> -->
               <base-input type="text"
                     label="Surat Jalan No"
                     placeholder="Surat Jalan No"
@@ -238,11 +268,11 @@
                     placeholder="Weight"
                     v-model="slitCoilData.weight">
               </base-input>
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="Size"
                     placeholder="Size"
                     v-model="slitCoilData.size">
-              </base-input>
+              </base-input> -->
               <base-input type="text"
                     label="Description"
                     placeholder="Description"
@@ -292,18 +322,20 @@
                 <label>Material Status</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="search.material_status">
                   <option selected>Select Status</option>
-                  <option value="DELIVERY">DELIVERY</option>
-                  <option value="NOT YET DELIVERY">NOT YET DELIVERY</option>
+                  <option value="NOT YET PROD">NOT YET PROD</option>
+                  <option value="PROD">PROD</option>
+                  <option value="SLIT FROM INT">SLIT FROM INT</option>
+                  <option value="SLIT FROM EXT">SLIT FROM EXT</option>
                 </select>
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label>Slit From</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="search.slit_from">
                   <option selected>Select From</option>
                   <option value="FROM OUTSIDE">FROM OUTSIDE</option>
                   <option value="FROM PRODUCTION">FROM PRODUCTION</option>
                 </select>
-              </div>
+              </div> -->
               <base-input type="text"
                     label="Surat Jalan No"
                     placeholder="Surat Jalan No"
@@ -355,10 +387,15 @@
                     placeholder="Weight"
                     v-model="search.weight">
               </base-input>
-              <base-input type="number"
+              <!-- <base-input type="number"
                     label="Size"
                     placeholder="Size"
                     v-model="search.size">
+              </base-input> -->
+              <base-input type="number"
+                    label="Age"
+                    placeholder="Days"
+                    v-model="search.age">
               </base-input>
              </div>
              <template slot="footer">
@@ -410,6 +447,7 @@
   import "flatpickr/dist/flatpickr.css";
   import ChartCard from '@/components/Cards/ChartCard.vue'
   import StatsCard from '@/components/Cards/StatsCard.vue'
+  var moment = require('moment');
   
   export default {
     components: {
@@ -422,6 +460,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,
@@ -433,7 +472,10 @@
         },
         totalMaterialWeight: '',
         totalWeightDel: '',
-        totalWeightNotDel: '',
+        totalWeightSlitInt: '',
+        totalWeightSlitExt: '',
+        totalWeightProd: '',
+        totalWeightNotProd: '',
         form: {
             add: true,
             title: "Add Data",
@@ -467,6 +509,7 @@
           slitting_date: '',
           material_status: '',
           slit_from: '',
+          age: '',
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
@@ -482,12 +525,15 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, material_status: context.search.material_status, slit_from: context.search.slit_from, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, material_status: context.search.material_status, slit_from: context.search.slit_from, age: context.search.age, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page;
             context.totalMaterialWeight   = response.data.data.totalWeight;
             context.totalWeightDel        = response.data.data.totalWeightDel;
-            context.totalWeightNotDel     = response.data.data.totalWeightNotDel;
+            context.totalWeightSlitInt    = response.data.data.totalWeightSlitInt;
+            context.totalWeightSlitExt    = response.data.data.totalWeightSlitExt;
+            context.totalWeightProd       = response.data.data.totalWeightProd;
+            context.totalWeightNotProd    = response.data.data.totalWeightNotProd;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -556,18 +602,18 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.slitCoilData.owner != undefined && this.slitCoilData.process_program != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.slitting_date != undefined && this.slitCoilData.material_status != undefined) {
+        if (this.slitCoilData.owner != undefined && this.slitCoilData.process_program != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.slitting_date != undefined) {
           formData.append('travel_latter_no', this.slitCoilData.travel_latter_no);
           formData.append('owner', this.slitCoilData.owner);
           formData.append('process_program', this.slitCoilData.process_program);
-          formData.append('material_status', this.slitCoilData.material_status);
+          // formData.append('material_status', this.slitCoilData.material_status);
           formData.append('slitting_date', this.slitCoilData.slitting_date);
           formData.append('coil_no', this.slitCoilData.coil_no);
           // formData.append('pack', (this.slitCoilData.pack == undefined) ? '' : this.slitCoilData.pack);
           formData.append('thick', (this.slitCoilData.thick == undefined) ? '' : this.slitCoilData.thick);
           formData.append('width', (this.slitCoilData.width == undefined) ? '' : this.slitCoilData.width);
           formData.append('weight', (this.slitCoilData.weight == undefined) ? '' : this.slitCoilData.weight);
-          formData.append('size', (this.slitCoilData.size == undefined) ? '' : this.slitCoilData.size);
+          // formData.append('size', (this.slitCoilData.size == undefined) ? '' : this.slitCoilData.size);
           formData.append('description', (this.slitCoilData.description == undefined) ? '' : this.slitCoilData.description);
         }else{
           return alert('Owner, Entry No, Coil NO, Entry Date, Material Status Wajib Di Isi')

@@ -32,7 +32,7 @@
               <i class="nc-icon nc-scissors"></i>
               <p>Slitting</p>
             </sidebar-link>
-            <sidebar-link to="/produksi-tolling" v-if="role == 'Admin'">
+            <sidebar-link to="/produksi-tolling" v-if="role == 'Admin' || role == 'Delivery'">
               <i class="nc-icon nc-chart"></i>
               <p>Tolling</p>
             </sidebar-link>

@@ -3,7 +3,79 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/report-slitting-merge?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <div class="row">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-settings-gear-64 text-success"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">All Production</p>
+                  <h4 class="card-title">{{ convertRp(totalProd) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'DELIVERY', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-delivery-fast"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Delivery</p>
+                  <h4 class="card-title">{{ convertRp(totalDelivery) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT YET DELIVERY', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-bullet-list-67 text-warning"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Not Yet Delivery</p>
+                  <h4 class="card-title">{{ convertRp(totalNotYetDelivery) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'DELIVERY INT', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-cloud-download-93 text-primary"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Delivery Int</p>
+                  <h4 class="card-title">{{ convertRp(totalDeliveryInt) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'DELIVERY EXT', get()">
+              <stats-card class="shadow">
+                <div slot="header" class="icon-warning">
+                  <i class="nc-icon nc-spaceship text-danger"></i>
+                </div>
+                <div slot="content">
+                  <p class="card-category">Delivery Ext</p>
+                  <h4 class="card-title">{{ convertRp(totalDeliveryExt) }}</h4>
+                </div>
+                <div slot="footer">
+                </div>
+              </stats-card>
+            </div>
+          </div>
+
+          <a :href="apiUrl+'report-excel/report-slitting-merge?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&process_program='+search.process_program+'&owner='+search.owner+'&pack='+search.pack+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&size='+search.size+'&slitting_date='+search.slitting_date+'&material_status='+search.material_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -57,9 +129,7 @@
                     </td>
                     <td style="font-size: 13px;">{{row.po_no}}</td>
                     <td style="font-size: 13px;">
-                      <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK">
-                        <small><label class="badge badge-primary" style="cursor: pointer;">{{row.travel_latter_no}}</label></small>
-                      </a>
+                      <small><label class="badge badge-primary">{{row.travel_latter_no}}</label></small>
                     </td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
                     <td style="font-size: 13px;">{{row.slitting_date}}</td>
@@ -280,6 +350,16 @@
                       </base-input>
                   </div>
               </div>
+              <div class="form-group">
+                <label>Material Status</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.material_status">
+                  <option selected>Select Status</option>
+                  <option value="NOT YET DELIVERY">NOT YET DELIVERY</option>
+                  <option value="DELIVERY">DELIVERY</option>
+                  <option value="DELIVERY INT">DELIVERY INT</option>
+                  <option value="DELIVERY EXT">DELIVERY EXT</option>
+                </select>
+              </div>
 
              </div>
              <template slot="footer">
@@ -329,6 +409,8 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  import ChartCard from '@/components/Cards/ChartCard.vue'
+  import StatsCard from '@/components/Cards/StatsCard.vue'
   
   export default {
     components: {
@@ -336,6 +418,8 @@
       Modal,
       Autocomplete,
       flatPicker,
+      ChartCard,
+      StatsCard,
     },
     data () {
       return {
@@ -348,6 +432,12 @@
         table: {
           data: []
         },
+        totalMaterialWeight: '',
+        totalProd: '',
+        totalDelivery: '',
+        totalNotYetDelivery: '',
+        totalDeliveryInt: '',
+        totalDeliveryExt: '',
         form: {
             add: true,
             title: "Add Data",
@@ -379,6 +469,7 @@
           weight: '',
           size: '',
           slitting_date: '',
+          material_status: '',
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
@@ -392,9 +483,15 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, reportSlitting.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, page: context.pagination.page})).onSuccess(function(response) {    
-            context.table.data            = response.data.data.data.data;
-            context.pagination.page_count = response.data.data.data.last_page
+        Api(context, reportSlitting.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, material_status: context.search.material_status, page: context.pagination.page})).onSuccess(function(response) {    
+            context.table.data             = response.data.data.data.data;
+            context.pagination.page_count  = response.data.data.data.last_page
+            // context.totalMaterialWeight = response.data.data.totalWeight;
+            context.totalProd              = response.data.data.totalProd;
+            context.totalDelivery          = response.data.data.totalDelivery;
+            context.totalNotYetDelivery    = response.data.data.totalNotYetDelivery;
+            context.totalDeliveryInt       = response.data.data.totalDeliveryInt;
+            context.totalDeliveryExt       = response.data.data.totalDeliveryExt;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -514,8 +611,8 @@
       getLapProdSlit(coil_no){
         let context = this;               
         Api(context, reportSlitting.getLapProdSlit({coil_no: coil_no})).onSuccess(function(response) {    
-            context.reportSlittingData = response.data.data;
-            context.$refs.autocompleteJO.setValue( response.data.data.job_no)
+            // context.reportSlittingData = response.data.data;
+            // context.$refs.autocompleteJO.setValue( response.data.data.job_no)
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 // context.reportSlittingData = {};
@@ -559,7 +656,9 @@
       // AMBIL DATA YANG DI PILIH AC
       getData(obj){
         this.reportSlittingData.coil_no = obj.coil_no;
-        this.getLapProdSlit(obj.coil_no)
+        if (this.form.title == 'Edit Data') {
+          this.getLapProdSlit(obj.coil_no)
+        }
       },
       getDataJO(obj){
         this.reportSlittingData.job_no = obj.job_no;

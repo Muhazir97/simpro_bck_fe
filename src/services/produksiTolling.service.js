@@ -48,6 +48,9 @@ export default {
             }
         });
     },
+    addMaterialAll(params) {
+        return Service().get('produksi-tolling/add-material-all', {params});
+    },
     getSpecOp() {
         return Service().get('produksi-tolling/get-spec-op');
     },

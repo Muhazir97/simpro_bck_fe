@@ -30,6 +30,9 @@ import ReportTolling from "./views/admin/page/ReportTolling";
 import ProduksiShearing from "./views/admin/page/ProduksiShearing";
 import ReportShearing from "./views/admin/page/ReportShearing";
 import Delivery from "./views/admin/page/Delivery";
+import DeliverySltInt from "./views/admin/page/DeliverySltInt";
+import DeliverySltExt from "./views/admin/page/DeliverySltExt";
+import DeliveryTl from "./views/admin/page/DeliveryTl";
 import DetailDelivery from "./views/admin/page/DetailDelivery";
 import News from "./views/admin/page/News";
 import DetailNews from "./views/admin/page/DetailNews";
@@ -158,6 +161,21 @@ const vurRouter = new Router({
         path: 'delivery',
         name: 'Delivery',
         component: Delivery
+      },
+      {
+        path: 'delivery-slt-int',
+        name: 'DeliverySltInt',
+        component: DeliverySltInt
+      },
+      {
+        path: 'delivery-slt-ext',
+        name: 'DeliverySltExt',
+        component: DeliverySltExt
+      },
+      {
+        path: 'delivery-tl',
+        name: 'DeliveryTl',
+        component: DeliveryTl
       },
       {
         path: 'detail-delivery/:packing_list_no',
