@@ -1,7 +1,12 @@
 import Service from '@/helpers/service'
 
 export default {
-
+    getCardAll(params) {
+        return Service().get('delivery/get-all-card', {params});
+    },
+    getRkpDeliveryMonth(params) {
+        return Service().get('delivery/get-rkp-delivery-month', {params});
+    },
     index(params) {
         return Service().get('delivery/index', {params});
     },
@@ -59,9 +64,6 @@ export default {
     },
     deleteMatToll(id) {
         return Service().post('delivery/delete-material-toll/'+id);
-    },
-    getCardAll(params) {
-        return Service().get('delivery/get-all-card', {params});
     },
     updateQtyTol(params) {
         return Service().post('delivery/update-qty-toll', params);

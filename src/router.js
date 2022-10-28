@@ -4,7 +4,7 @@ import Router from "vue-router";
 import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
 import Components from "./views/Components.vue";
-import Landing from "./views/Landing.vue";
+import Landing from "./views/Landing.vue"; 
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import TableList from './views/admin/TableList.vue'
@@ -19,6 +19,7 @@ import SlitCoil from "./views/admin/page/SlitCoil";
 import DetailSlitCoil from "./views/admin/page/DetailSlitCoil";
 import JobRequest from "./views/admin/page/JobRequest";
 import DetailJobRequest from "./views/admin/page/DetailJobRequest";
+import Produksi from "./views/admin/page/Produksi";
 import ProduksiSlitting from "./views/admin/page/ProduksiSlitting";
 import DetailProdSlitting from "./views/admin/page/DetailProdSlitting";
 import ReportSlitting from "./views/admin/page/ReportSlitting";
@@ -27,16 +28,19 @@ import ProduksiTolling from "./views/admin/page/ProduksiTolling";
 import DetailProdTolling from "./views/admin/page/DetailProdTolling";
 import KonfigOp from "./views/admin/page/KonfigOp";
 import ReportTolling from "./views/admin/page/ReportTolling";
+import DetailReportTolling from "./views/admin/page/DetailReportTolling";
 import ProduksiShearing from "./views/admin/page/ProduksiShearing";
 import ReportShearing from "./views/admin/page/ReportShearing";
 import Delivery from "./views/admin/page/Delivery";
 import DeliverySltInt from "./views/admin/page/DeliverySltInt";
 import DeliverySltExt from "./views/admin/page/DeliverySltExt";
 import DeliveryTl from "./views/admin/page/DeliveryTl";
+import DeliveryShr from "./views/admin/page/DeliveryShr";
 import DetailDelivery from "./views/admin/page/DetailDelivery";
 import News from "./views/admin/page/News";
 import DetailNews from "./views/admin/page/DetailNews";
 import Invoice from "./views/admin/page/Invoice";
+import DetailInvoice from "./views/admin/page/DetailInvoice";
 import Payment from "./views/admin/page/Payment";
 import AllAccount from './views/admin/page/AllAccount.vue'
 
@@ -108,6 +112,11 @@ const vurRouter = new Router({
         component: DetailJobRequest
       },
       {
+        path: 'produksi',
+        name: 'Produksi',
+        component: Produksi
+      },
+      {
         path: 'produksi-slitting',
         name: 'ProduksiSlitting',
         component: ProduksiSlitting
@@ -148,6 +157,11 @@ const vurRouter = new Router({
         component: ReportTolling
       },
       {
+        path: 'detail-report-tolling/:date',
+        name: 'DetailReportTolling',
+        component: DetailReportTolling
+      },
+      {
         path: 'produksi-shearing',
         name: 'ProduksiShearing',
         component: ProduksiShearing
@@ -178,6 +192,11 @@ const vurRouter = new Router({
         component: DeliveryTl
       },
       {
+        path: 'delivery-shr',
+        name: 'DeliveryShr',
+        component: DeliveryShr
+      },
+      {
         path: 'detail-delivery/:packing_list_no',
         name: 'DetailDelivery',
         component: DetailDelivery
@@ -196,6 +215,11 @@ const vurRouter = new Router({
         path: 'invoice',
         name: 'Invoice',
         component: Invoice
+      },
+      {
+        path: 'detail-invoice/:invoice_no',
+        name: 'DetailInvoice',
+        component: DetailInvoice
       },
       {
         path: 'payment',

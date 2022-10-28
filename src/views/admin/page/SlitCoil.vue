@@ -24,7 +24,7 @@
                   <i class="nc-icon nc-cloud-download-93 text-warning"></i>
                 </div>
                 <div slot="content">
-                  <p class="card-category">Slit From Int</p>
+                  <p class="card-category">Slit From Prod</p>
                   <h4 class="card-title">{{ convertRp(totalWeightSlitInt) }}</h4>
                 </div>
                 <div slot="footer">
@@ -38,7 +38,7 @@
                   <i class="nc-icon nc-spaceship text-danger"></i>
                 </div>
                 <div slot="content">
-                  <p class="card-category">Slit From Ext</p>
+                  <p class="card-category">Slit From Outside</p>
                   <h4 class="card-title">{{ convertRp(totalWeightSlitExt) }}</h4>
                 </div>
                 <div slot="footer">
@@ -60,7 +60,7 @@
               </stats-card>
             </div>
 
-            <div class="col-xl-4 col-md-6" @click="search.material_status = 'NOT YET PROD', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'NOT YET PROD', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
                   <i class="nc-icon nc-notes"></i>
@@ -74,19 +74,19 @@
               </stats-card>
             </div>
 
-            <!-- <div class="col-xl-4 col-md-6">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PENDING', get()">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
-                  <i class="nc-icon nc-compass-05"></i>
+                  <i class="nc-icon nc-time-alarm text-warning"></i>
                 </div>
                 <div slot="content">
-                  <p class="card-category">Pending Material</p>
-                  <h4 class="card-title">{{ convertRp(totalWeightNotProd) }}</h4>
+                  <p class="card-category">OP Pending</p>
+                  <h4 class="card-title">{{ convertRp(totalWeightPending) }}</h4>
                 </div>
                 <div slot="footer">
                 </div>
               </stats-card>
-            </div> -->
+            </div>
           </div>
 
           <div v-if="role != 'Visitor'">
@@ -126,18 +126,16 @@
                       <th>Surat Jalan NO</th>
                       <th>DATE</th>
                       <th>OWNER</th>
-                      <th>PROGRAM</th>
                       <th>COIL NO</th>
                       <th>PACK</th>
                       <th>THICK / mm</th>
                       <th>WIDTH / mm</th>
                       <th>WEIGHT / kg</th>
-                      <!-- <th>SIZE</th> -->
                       <th>DESCRIPTION</th>
-                      <!-- <th>STATUS</th> -->
                       <th>SLIT FROM</th>
+                      <th>PROGRAM</th>
+                      <th>OP NO</th>
                       <th>Age</th>
-                      <!-- <th>Created By</th> -->
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -158,25 +156,23 @@
                     <td style="font-size: 13px;">{{ moment(row.slitting_date).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
                     <td style="font-size: 13px;">
-                      <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
-                    </td>
-                    <td style="font-size: 13px;">
                       <label class="badge badge-danger">{{row.coil_no}}</label>
                     </td>
                     <td style="font-size: 13px;">{{row.pack}}</td>
                     <td style="font-size: 13px;">{{row.thick}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-                    <!-- <td style="font-size: 13px;">{{row.size}}</td> -->
                     <td style="font-size: 13px;">{{row.description}}</td>
-                   <!--  <td style="font-size: 13px;">
-                      <small><label class="badge badge-light">{{ row.material_status }}</label></small>
-                    </td> -->
                     <td style="font-size: 13px;">
                       <small><label class="badge badge-warning">{{ row.slit_from }}</label></small>
                     </td>
+                    <td style="font-size: 13px;">
+                      <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
+                    </td>
+                    <td style="font-size: 13px;">
+                      <small><label class="badge badge-light">{{ row.op_no }}</label></small>
+                    </td>
                     <td style="font-size: 13px;">{{ moment().diff(row.slitting_date, "days")+' Days' }}</td>
-                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="role != 'Visitor'"></i>
                     </td>
@@ -475,6 +471,7 @@
         totalWeightSlitInt: '',
         totalWeightSlitExt: '',
         totalWeightProd: '',
+        totalWeightPending: '',
         totalWeightNotProd: '',
         form: {
             add: true,
@@ -533,6 +530,7 @@
             context.totalWeightSlitInt    = response.data.data.totalWeightSlitInt;
             context.totalWeightSlitExt    = response.data.data.totalWeightSlitExt;
             context.totalWeightProd       = response.data.data.totalWeightProd;
+            context.totalWeightPending    = response.data.data.totalWeightPending;
             context.totalWeightNotProd    = response.data.data.totalWeightNotProd;
         }).onError(function(error) {                    
             if (error.response.status == 404) {

@@ -66,7 +66,7 @@
           </router-link>
         </div>
 
-        <div class="col-xl-4 col-md-6">
+        <!-- <div class="col-xl-4 col-md-6">
           <router-link :to="'/delivery-spo'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
@@ -96,8 +96,136 @@
               </div>
             </stats-card>
           </router-link>
-        </div>
+        </div> -->
       </div>
+
+      <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+        <template slot="header">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-8 text-center">
+              <h5 class="card-title font-weight-bold">RKP DELIVERY - {{new Date().getFullYear()}}</h5><br>
+              <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+            </div>
+            <div class="col-2">
+            </div>
+          </div>
+        </template>
+        <div class="scroll">
+          <table border='1'>
+            <thead>
+              <slot name="columns">
+                <tr style="background-color: #F0F8FF;">
+                  <th style="font-size: 13px; text-align: center;">PERIODE</th>
+                  <th style="font-size: 13px; text-align: center; background-color: #F0E68C;">SLITTING INT</th>
+                  <th style="font-size: 13px; text-align: center; background-color: #E6E6FA;">SLITTING EXT</th>
+                  <th style="font-size: 13px; text-align: center; background-color: #00FA9A;">TOLLING PIPA</th>
+                  <th style="font-size: 13px; text-align: center; background-color: #FFF5EE;">SHEARING</th>
+                </tr>
+              </slot>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-size: 13px;">JANUARI</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Jan) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Jan) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Jan) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Jan) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">FEBRUARI</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Feb) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Feb) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Feb) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Feb) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">MARET</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Mar) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Mar) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Mar) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Mar) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">APRIL</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Apr) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Apr) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Apr) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Apr) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">MEI</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Mei) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Mei) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Mei) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Mei) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">JUNI</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Jun) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Jun) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Jun) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Jun) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">JULI</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Jul) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Jul) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Jul) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Jul) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">AGUSTUS</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Aug) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Aug) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Aug) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Aug) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">SEPTEMBER</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Sep) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Sep) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Sep) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Sep) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">OKTOBER</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Oct) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Oct) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Oct) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Oct) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">NOVEMBER</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Nov) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Nov) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Nov) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Nov) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px;">DESEMBER</td>
+                <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Des) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Des) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Des) }}</td>
+                <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Des) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL</td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalWeightSltInt) }}</td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalWeightSltExt) }}</td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalWeightTll) }}</td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalWeightShr) }}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL SLITTING</td>
+                <td colspan="2" style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(Number(+(totalWeightSltInt) + +(totalWeightSltExt))) }}</td>
+                <td style="display: none" ></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </card>
 
       </div>
     </div>
@@ -126,10 +254,21 @@
         SltShr : '',
         SltScr : '',
         SltSpo : '',
+
+        rkpSltInt: {},
+        rkpSltExt: {},
+        rkpTll: {},
+        rkpShr: {},
+
+        totalWeightSltInt: '',
+        totalWeightSltExt: '',
+        totalWeightTll: '',
+        totalWeightShr: '',
       }
     },
     mounted(){
       this.get();
+      this.getRkpDeliveryMonth();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
       this.role = localStorage.getItem('role');
     },
@@ -145,7 +284,24 @@
             context.SltSpo = response.data.data.SltSpo;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
-                context.table.data = [];
+            }
+        })
+        .call()
+      },
+      getRkpDeliveryMonth(param){
+        let context = this;               
+        Api(context, delivery.getRkpDeliveryMonth()).onSuccess(function(response) {    
+            context.rkpSltInt = response.data.data.sltInt;
+            context.rkpSltExt = response.data.data.sltExt;
+            context.rkpTll    = response.data.data.tll;
+            context.rkpShr    = response.data.data.shr;
+
+            context.totalWeightSltInt = response.data.data.totalWeightSltInt;
+            context.totalWeightSltExt = response.data.data.totalWeightSltExt;
+            context.totalWeightTll    = response.data.data.totalWeightTll;
+            context.totalWeightShr    = response.data.data.totalWeightShr;
+        }).onError(function(error) {                    
+            if (error.response.status == 404) {
             }
         })
         .call()

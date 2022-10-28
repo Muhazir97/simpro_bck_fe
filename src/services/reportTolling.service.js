@@ -32,4 +32,13 @@ export default {
             }
         });
     },
+    showReportTolling(date) {
+        return Service().get('report-tolling/show-report-tolling/'+date);
+    },
+    updateRpt(id, params) {
+        return Service().post('report-tolling/update-report-tolling/'+id, params);
+    },
+    updateLength(id, params) {
+        return Service().post('report-tolling/update-report-tolling-length/'+id, params);
+    },
 }

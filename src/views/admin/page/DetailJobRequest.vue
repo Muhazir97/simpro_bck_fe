@@ -58,10 +58,10 @@
                 </tr> -->
             </tbody>
         </table>
-      </div><hr>
+      </div>
 
       <!-- ========================= MATERIAL ===============================  -->
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-12">
           <card class="strpied-tabled-with-hover">
             <template slot="header">
@@ -117,7 +117,317 @@
             </div>
           </card>
         </div>
-      </div>
+      </div> -->
+
+      <div class="mt-5 py-5 border-top text-center">
+        <tabs fill class="flex-column flex-md-row">
+            <card shadow>
+                <!-- ================= MATERIAL ============== -->
+                <tab-pane key="pembelian">
+                  <template slot="title">
+                      <i class="ni ni-box-2 mr-2"></i>Material
+                  </template>
+                  <div class="row">
+                    <div class="col-4">
+                      <h5 class="card-title float-left">Material</h5>
+                    </div>
+                    <div class="col-4">
+                    </div>
+                    <div class="col-4">
+                      <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()">
+                        Add New
+                      </button>
+                    </div>
+                  </div>
+                  <div class="table-responsive">
+                      <table class="table">
+                        <thead style="font-size: 13px;">
+                          <slot name="columns">
+                            <tr style="background-color: #F0F8FF;">
+                              <th>No</th>
+                              <th>Coil No</th>
+                              <th>Thick</th>
+                              <th>Width</th>
+                              <th>Weight</th>
+                              <th>Spec</th>
+                              <th>Information</th>
+                              <th></th>
+                              <th style="display: none" ></th>
+                            </tr>
+                          </slot>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(row, i) in tableMatReq.data" :key="i">
+                            <td style="font-size: 13px;">{{ i + 1 }}</td>
+                            <template v-if="jobRequestData.prod_class == 'Slitting' || jobRequestData.prod_class == 'Shearing'">
+                              <td style="font-size: 13px;">{{row.coil_no}}</td>
+                              <td style="font-size: 13px;">{{row.dimension_thick}}</td>
+                              <td style="font-size: 13px;">{{row.dimension_width}}</td>
+                              <td style="font-size: 13px;">{{ convertRp(row.dimension_weight) }}</td>
+                              <td style="font-size: 13px;">{{row.dimension_spec}}</td>
+                              <td style="font-size: 13px;">{{row.information}}</td>
+                              <td>
+                                <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id, row.coil_no, row.dimension_thick, row.dimension_width, row.dimension_weight, row.dimension_spec, row.information)" v-if="jobRequestData.job_status == 'Draft'"></i>
+                              </td>
+                            </template>
+                            <template v-else>
+                              <td style="font-size: 13px;">{{row.coil_no }} {{ row.pack }}</td>
+                              <td style="font-size: 13px;">{{row.thick}}</td>
+                              <td style="font-size: 13px;">{{row.width}}</td>
+                              <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
+                              <td style="font-size: 13px;">{{row.dimension_spec}}</td>
+                              <td style="font-size: 13px;">{{row.information}}</td>
+                            </template>
+                            <td style="display: none" ></td>
+                          </tr>
+                          <tr>
+                            <td colspan="4" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                            <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeight) }}</td>
+                            <td colspan="3"></td>
+                            <td style="display: none" ></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </tab-pane>
+
+                <!-- ==================== PRODUKSI ==================== -->
+                <tab-pane key="barang">
+                    <template slot="title">
+                        <i class="ni ni-settings-gear-65 mr-2"></i>Produksi
+                    </template>
+                    <div class="row">
+                      <div class="col-4">
+                        <h5 class="card-title float-left">Produksi</h5>
+                      </div>
+                      <div class="col-4">
+                      </div>
+                      <div class="col-4">
+                        <!-- <button type="submit" class="btn btn-sm btn-success btn-fill float-right" @click="addMaterial()">
+                          <i class="fa fa-file-text"></i> Print
+                        </button> -->
+                      </div>
+                    </div>
+                    <div class="table-responsive">
+                      <template v-if="jobRequestData.prod_class == 'Slitting'">
+                        <table class="table">
+                          <thead style="font-size: 13px;">
+                            <slot name="columns">
+                              <tr style="background-color: #F0F8FF;">
+                                <th>No</th>
+                                <th>SJ No</th>
+                                <th>Slitting Date</th>
+                                <th>Program</th>
+                                <th>Coil No</th>
+                                <th>Pack</th>
+                                <th>Thick</th>
+                                <th>Width</th>
+                                <th>Weight</th>
+                                <th>Scrap</th>
+                                <th>Remark</th>
+                                <th style="display: none" ></th>
+                              </tr>
+                            </slot>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(row, i) in tableDataProd.data" :key="i">
+                              <td style="font-size: 15px;">{{ i + 1 }}</td>
+                              <td style="font-size: 15px;">
+                                <label class="badge badge-primary">{{row.travel_latter_no}}</label>
+                              </td>
+                              <td style="font-size: 15px;">{{ moment(row.slitting_date).locale('id').format('L') }}</td>
+                              <td style="font-size: 15px;">
+                                <router-link :to="/detail-lap-prod-slit/+row.process_program">
+                                  <label style="cursor: pointer;" class="badge badge-info">{{row.process_program}}</label>
+                                </router-link>
+                              </td>
+                              <td style="font-size: 15px;">
+                                <label class="badge badge-danger">{{row.coil_no}}</label>
+                              </td>
+                              <td style="font-size: 15px;">{{row.pack}}</td>
+                              <td style="font-size: 15px;">{{row.thick}}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.width) }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.weight) }}</td>
+                              <td style="font-size: 15px;">{{row.scrap_all}}</td>
+                              <td style="font-size: 15px;">{{row.remark_all}}</td>
+                              <td style="display: none" ></td>
+                            </tr>
+                            <tr>
+                              <td colspan="8" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                              <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightProd) }}</td>
+                              <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightScrap) }}</td>
+                              <td colspan="3"></td>
+                              <td style="display: none" ></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </template>
+
+                      <template v-if="jobRequestData.prod_class == 'Tolling'">
+                        <table class="table">
+                          <thead style="font-size: 13px;">
+                            <slot name="columns">
+                              <tr style="background-color: #F0F8FF;">
+                                <th>No</th>
+                                <th>Date</th>
+                                <th>OP No</th>
+                                <th>Coil No</th>
+                                <th>Coil Weight</th>
+                                <th>Qty</th>
+                                <th>Prod Weight</th>
+                                <th>Remark B</th>
+                                <th>Remark C</th>
+                                <th style="display: none" ></th>
+                              </tr>
+                            </slot>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(row, i) in tableDataProd.data" :key="i">
+                              <td style="font-size: 15px;">{{ i + 1 }}</td>
+                              <td style="font-size: 15px;">
+                                <label class="badge badge-info" style="cursor: pointer;">
+                                  <router-link :to="/detail-report-tolling/+row.date"><span style="color: gray;">{{ moment(row.date).locale('id').format('L') }}</span></router-link>
+                                </label>
+                              </td>
+                              <td style="font-size: 15px;">
+                                <label class="badge badge-primary" style="cursor: pointer;" @click="detailOP(row.op_no)">{{row.op_no}}</label>
+                              </td>
+                              <td>
+                                <label class="badge badge-danger">{{row.coil_no }} {{ row.pack}}</label>
+                              </td>
+                              <td style="font-size: 15px;">{{ convertRp(row.weight) }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.qty) }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.prod_weight) }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.remark_b) }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.remark_c) }}</td>
+                              <td style="display: none" ></td>
+                            </tr>
+                            <tr>
+                              <td colspan="4" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                              <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightProd) }}</td>
+                              <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightScrap) }}</td>
+                              <td colspan="3"></td>
+                              <td style="display: none" ></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </template>
+
+                      <template v-if="jobRequestData.prod_class == 'Shearing'">
+                        <table class="table">
+                          <thead style="font-size: 13px;">
+                            <slot name="columns">
+                              <tr style="background-color: #F0F8FF;">
+                                <th>No</th>
+                                <th>Coil No</th>
+                                <th>Input Pack</th>
+                                <th>Input Thick</th>
+                                <th>Input Width</th>
+                                <th>Input Weight</th>
+                                <th></th>
+                                <th>Output Pack</th>
+                                <th>Output Thick</th>
+                                <th>Output Width</th>
+                                <th>Output Length</th>
+                                <th>Total Sheet</th>
+                                <th>Output Weight</th>
+                                <th>Remark</th>
+                                <th>Date</th>
+                                <th style="display: none" ></th>
+                              </tr>
+                            </slot>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(row, i) in tableDataProd.data" :key="i">
+                              <td style="font-size: 13px;">{{ i + 1 }}</td>
+                              <td style="font-size: 13px;">{{ row.coil_no }}</td>
+                              <td style="font-size: 13px;">{{ row.input_pack }}</td>
+                              <td style="font-size: 13px;">{{ row.input_thick }}</td>
+                              <td style="font-size: 13px;">{{ row.input_width }}</td>
+                              <td style="font-size: 13px;">{{ convertRp(row.input_weight) }}</td>
+                              <td></td>
+                              <td style="font-size: 13px;">{{ row.output_pack }}</td>
+                              <td style="font-size: 13px;">{{ row.output_thick }}</td>
+                              <td style="font-size: 13px;">{{ row.output_width }}</td>
+                              <td style="font-size: 13px;">{{ row.output_length }}</td>
+                              <td style="font-size: 13px;">{{ row.output_total_sheet }}</td>
+                              <td style="font-size: 13px;">{{ convertRp(row.output_weight) }}</td>
+                              <td style="font-size: 13px;">{{ row.remark }}</td>
+                              <td style="font-size: 13px;">{{ moment(row.shearing_date).locale('id').format('L') }}</td>
+                              <td style="display: none" ></td>
+                            </tr>
+                            <tr>
+                              <td colspan="5" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                              <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightProd) }}</td>
+                              <td colspan="6"></td>
+                              <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightScrap) }}</td>
+                              <td colspan="2"></td>
+                              <td style="display: none" ></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </template>
+                    </div>
+                </tab-pane>
+
+                <!-- ===================== DELIVERY ==================== -->
+                <tab-pane key="pesanan">
+                    <template slot="title">
+                        <i class="ni ni-delivery-fast mr-2"></i>Delivery
+                    </template>
+                    <div class="row">
+                      <div class="col-4">
+                        <h5 class="card-title float-left">Delivery</h5>
+                      </div>
+                      <div class="col-4">
+                      </div>
+                      <div class="col-4">
+                        <!-- <button type="submit" class="btn btn-sm btn-success btn-fill float-right" @click="addMaterial()">
+                          <i class="fa fa-file-text"></i> Print
+                        </button> -->
+                      </div>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead style="font-size: 13px;">
+                          <slot name="columns">
+                            <tr style="background-color: #F0F8FF;">
+                              <th>No</th>
+                              <th>Surat Jalan No</th>
+                              <th>Weight</th>
+                              <th>Qty</th>
+                              <th>Date</th>
+                              <th style="display: none" ></th>
+                            </tr>
+                          </slot>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(row, i) in tableDataDeliv.data" :key="i">
+                            <td style="font-size: 15px;">{{ i + 1 }}</td>
+                            <td style="font-size: 15px;">
+                              <router-link :to="/detail-delivery/+row.packing_list_no">
+                                <label class="badge badge-info" style="cursor: pointer;">{{row.packing_list_no}}</label>
+                              </router-link>
+                            </td>
+                            <td style="font-size: 15px;">{{convertRp(row.weight)}}</td>
+                            <td style="font-size: 15px;">{{convertRp(row.qty)}}</td>
+                            <td style="font-size: 15px;">{{moment(row.packing_date).locale('id').format('L')}}</td>
+                            <td style="display: none" ></td>
+                          </tr>
+                          <tr>
+                            <td colspan="2" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                            <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightDeliv) }}</td>
+                            <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalQtyDeliv) }}</td>
+                            <td colspan="3"></td>
+                            <td style="display: none" ></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                </tab-pane>
+            </card>
+        </tabs>
+    </div>
 
       <!-- ========================= NOTE ===============================  -->
       <h4 class="card-title">Note</h4>
@@ -190,15 +500,21 @@
   import Api from '@/helpers/api';
   import Autocomplete from 'vue2-autocomplete-js'
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  import Tabs from "@/components/Tabs/Tabs.vue";
+  import TabPane from "@/components/Tabs/TabPane.vue";
+  var moment = require('moment');
 
   export default {
     components: {
       Card,
       Modal,
-      Autocomplete
+      Autocomplete,
+      Tabs,
+      TabPane,
     },
     data () {
       return {
+        moment:moment,
         form: {
             add: true,
             title: "Add Material",
@@ -216,6 +532,12 @@
         tableMatMas: {
           data: []
         },
+        tableDataProd: {
+          data: []
+        },
+        tableDataDeliv: {
+          data: []
+        },
         attachRequest: {},
         update_job_note: '',
         apiUrl :config.apiUrl,
@@ -223,11 +545,14 @@
         tokenApi : '',
         material_code: '',
         totalWeight: '',
+        totalWeightProd: '',
+        totalWeightScrap: '',
+        totalWeightDeliv: '',
+        totalQtyDeliv: '',
       }
     },
     mounted(){
       this.getHeader();
-      this.getMaterialReq();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
@@ -237,7 +562,7 @@
             context.jobRequestData = response.data.data[0];
             context.update_job_note = response.data.data[0].job_note
         }).onFinish(function() {  
-            
+            context.getMaterialReq();
         })
         .call()        
       },
@@ -253,9 +578,16 @@
       },
       getMaterialReq() {
         let context = this;               
-        Api(context, jobRequest.getMaterialReq({job_no: context.$route.params.job_no})).onSuccess(function(response) {
-            context.tableMatReq.data = response.data.data.data;
-            context.totalWeight      = response.data.data.totalWeight;
+        Api(context, jobRequest.getMaterialReq({job_no: context.$route.params.job_no, prod_class: context.jobRequestData.prod_class})).onSuccess(function(response) {
+            context.tableMatReq.data    = response.data.data.data;
+            context.totalWeight         = response.data.data.totalWeight;
+            context.tableDataProd.data  = response.data.data.dataProd;
+            context.totalWeightProd     = response.data.data.totalWeightProd;
+            context.totalWeightScrap    = response.data.data.totalWeightScrap;
+            context.tableDataDeliv.data = response.data.data.dataDelivery;
+            context.totalWeightDeliv    = response.data.data.totalWeightDeliv;
+            context.totalQtyDeliv       = response.data.data.totalQtyDeliv;
+            console.log(response.data.data.data)
         })
         .onError(function(error) {                    
             context.tableMatReq.data = []

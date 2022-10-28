@@ -53,12 +53,12 @@
                       <th>OUTPUT THICK</th>
                       <th>OUTPUT WIDTH</th>
                       <th>OUTPUT LENGTH</th>
-                      <th>OUTPUT TOTDAL SHEET</th>
+                      <th>OUTPUT TOTAL SHEET</th>
                       <th>OUTPUT WEIGHT</th>
                       <th>REMARK</th>
                       <th>SHEARING DATE</th>
-                      <th>Created At</th>
-                      <th>Created By</th>
+                      <!-- <th>Created At</th>
+                      <th>Created By</th> -->
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -91,8 +91,8 @@
                     <td style="font-size: 13px;">{{ row.output_weight }}</td>
                     <td style="font-size: 13px;">{{ row.remark }}</td>
                     <td style="font-size: 13px;">{{ row.shearing_date }}</td>
-                    <td style="font-size: 13px;">{{ row.created_at }}</td>
-                    <td style="font-size: 13px;">{{ row.created_by }}</td>
+                    <!-- <td style="font-size: 13px;">{{ row.created_at }}</td>
+                    <td style="font-size: 13px;">{{ row.created_by }}</td> -->
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>

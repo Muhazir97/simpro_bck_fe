@@ -11,7 +11,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">NEWS / BA</h4>
+                  <h4 class="card-title">BA</h4>
                 </div>
                 <div class="col-4">
                 </div>

@@ -32,4 +32,7 @@ export default {
             }
         });
     },
+    showInvoice(invoice_no) {
+        return Service().get('invoice/show-invoice/'+invoice_no);
+    },
 }

@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/report-tolling?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&op_no='+search.op_no+'&coil_no='+search.coil_no+'&grade='+search.grade+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/report-tolling?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&op_no='+search.op_no+'&coil_no='+search.coil_no+'&thick='+search.thick+'&width='+search.width+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -11,7 +11,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">Daily Tolling Production Report</h4>
+                  <h4 class="card-title">Laporan Produksi Pipa</h4>
                 </div>
                 <div class="col-4">
                 </div>
@@ -30,24 +30,14 @@
                 <thead>
                   <slot name="columns">
                     <tr style="background-color: #F0F8FF;">
-                      <th>JOB NO</th>
-                      <th>PO NO</th>
-                      <th>CLIENT</th>
+                      <th>DATE</th>
                       <th>OP NO</th>
                       <th>COIL NO</th>
-                      <th>GRADE</th>
-                      <th>THICK / mm</th>
-                      <th>WIDTH / mm</th>
-                      <th>WEIGHT / kg</th>
-                      <th>OD</th>
-                      <th>LENGTH</th>
+                      <th>COIL WEIGHT</th>
                       <th>QTY</th>
-                      <th>JOINT</th>
                       <th>PROD WEIGHT</th>
                       <th>REMARK B</th>
                       <th>REMARK C</th>
-                      <!-- <th>Created At</th> -->
-                      <!-- <th>Created By</th> -->
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -57,29 +47,21 @@
                 <tbody>
                   <tr v-for="(row, i) in table.data" :key="i">
                     <td style="font-size: 13px;">
-                      <label class="badge badge-success">{{row.job_no}}</label>
+                      <label class="badge badge-info" style="cursor: pointer;">
+                        <router-link :to="/detail-report-tolling/+row.date"><span style="color: gray;">{{ moment(row.date).locale('id').format('L') }}</span></router-link>
+                      </label>
                     </td>
-                    <td style="font-size: 13px;">{{row.po_no}}</td>
-                    <td style="font-size: 13px;">{{row.client_name}}</td>
                     <td style="font-size: 13px;">
-                      <label class="badge badge-info">{{row.op_no}}</label>
+                      <label class="badge badge-primary" style="cursor: pointer;" @click="detailOP(row.op_no)">{{row.op_no}}</label>
                     </td>
                     <td>
-                      <small><label class="badge badge-danger">{{row.coil_no}}</label></small>
+                      <small><label class="badge badge-danger">{{row.coil_no }} {{ row.pack}}</label></small>
                     </td>
-                    <td style="font-size: 13px;">{{row.grade}}</td>
-                    <td style="font-size: 13px;">{{row.thick}}</td>
-                    <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-                    <td style="font-size: 13px;">{{row.od}}</td>
-                    <td style="font-size: 13px;">{{ convertRp(row.length) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.qty) }}</td>
-                    <td style="font-size: 13px;">{{row.joint}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.prod_weight) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.remark_b) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.remark_c) }}</td>
-                    <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
-                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -92,6 +74,7 @@
               </table>
             </div>
             <template slot="footer">
+              <div class="float-left">TOTAL : {{table.data.length}} , TOTAL WEIGHT : {{ convertRp(totalWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -106,7 +89,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
              </template>
              <div>
-              <div class="form-group">
+              <div class="form-group" v-if="form.title === 'Add Data'">
                 <label>OP No</label><br>
                 <autocomplete
                   ref="autocomplete"
@@ -122,55 +105,26 @@
                   >
                 </autocomplete>
               </div>
-              <base-input type="text"
-                    label="Coil No"
-                    placeholder="Coil No"
-                    v-model="reportTollingData.coil_no">
-              </base-input>
-              <base-input type="text"
-                    label="Grade"
-                    placeholder="Grade"
-                    v-model="reportTollingData.grade">
-              </base-input>
-              <base-input type="number"
-                    label="Thick"
-                    placeholder="Thick"
-                    v-model="reportTollingData.thick">
-              </base-input>
-              <base-input type="number"
-                    label="Width"
-                    placeholder="Width"
-                    v-model="reportTollingData.width">
-              </base-input>
-              <base-input type="number"
-                    label="Weight"
-                    placeholder="Weight"
-                    v-model="reportTollingData.weight">
-              </base-input>
-              <base-input type="number"
-                    label="OD"
-                    placeholder="OD"
-                    v-model="reportTollingData.od">
-              </base-input>
-              <base-input type="number"
-                    label="Length"
-                    placeholder="Length"
-                    v-model="reportTollingData.length">
-              </base-input>
+              <div class="form-group" v-if="form.title === 'Add Data'">
+                <label>Coil No</label><br>
+                <autocomplete
+                  ref="autocomplete"
+                  :url="apiUrl+'slit-coil/find-slit-coil'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="coil_no"
+                  label="pack"
+                  :on-select="getDataCoilNo"
+                  placeholder="Choose Coil No"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
               <base-input type="number"
                     label="Qty"
                     placeholder="Qty"
                     v-model="reportTollingData.qty">
-              </base-input>
-              <base-input type="number"
-                    label="Joint"
-                    placeholder="Joint"
-                    v-model="reportTollingData.joint">
-              </base-input>
-              <base-input type="number"
-                    label="Prod Weight"
-                    placeholder="Prod Weight"
-                    v-model="reportTollingData.prod_weight">
               </base-input>
               <base-input type="number"
                     label="Remark B"
@@ -181,6 +135,16 @@
                     label="Remark C"
                     placeholder="Remark C"
                     v-model="reportTollingData.remark_c">
+              </base-input>
+              <base-input type="number"
+                    label="Shift"
+                    placeholder="Shift"
+                    v-model="reportTollingData.shift">
+              </base-input>
+              <base-input type="date"
+                    label="Date"
+                    placeholder="Date"
+                    v-model="reportTollingData.date">
               </base-input>
 
              </div>
@@ -208,6 +172,22 @@
                     placeholder="PO No"
                     v-model="search.po_no">
               </base-input>
+              <div class="form-group">
+                <label>Client</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilterClient"
+                  placeholder="Choose Client"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
               <base-input type="text"
                     label="OP No"
                     placeholder="OP No"
@@ -218,10 +198,15 @@
                     placeholder="Coil No"
                     v-model="search.coil_no">
               </base-input>
-              <base-input type="text"
-                    label="Grade"
-                    placeholder="Grade"
-                    v-model="search.grade">
+              <base-input type="number"
+                    label="Thick"
+                    placeholder="Thick"
+                    v-model="search.thick">
+              </base-input>
+              <base-input type="number"
+                    label="Width"
+                    placeholder="Width"
+                    v-model="search.width">
               </base-input>
               <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
               <div class="input-daterange datepicker row align-items-center">
@@ -286,6 +271,7 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  var moment = require('moment');
   
   export default {
     components: {
@@ -296,6 +282,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,
@@ -305,6 +292,7 @@
         table: {
           data: []
         },
+        totalWeight: '',
         form: {
             add: true,
             title: "Add Data",
@@ -329,8 +317,8 @@
           client_name: '',
           op_no: '',
           coil_no: '',
-          owner: '',
-          grade: '',
+          thick: '',
+          width: '',
           date: '',
         },
         apiUrl :config.apiUrl,
@@ -345,9 +333,10 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, reportTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, coil_no: context.search.coil_no, grade: context.search.grade, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, reportTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, coil_no: context.search.coil_no, thick: context.search.thick, width: context.search.width, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
+            context.totalWeight           = response.data.data.totalWeight;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -419,17 +408,12 @@
         if (this.reportTollingData.op_no != undefined && this.reportTollingData.coil_no != undefined) {
           formData.append('op_no', this.reportTollingData.op_no);
           formData.append('coil_no', this.reportTollingData.coil_no);
-          formData.append('grade', (this.reportTollingData.grade == undefined) ? '' : this.reportTollingData.grade);
-          formData.append('thick', (this.reportTollingData.thick == undefined) ? '' : this.reportTollingData.thick);
-          formData.append('width', (this.reportTollingData.width == undefined) ? '' : this.reportTollingData.width);
-          formData.append('weight', (this.reportTollingData.weight == undefined) ? '' : this.reportTollingData.weight);
-          formData.append('od', (this.reportTollingData.od == undefined) ? '' : this.reportTollingData.od);
-          formData.append('length', (this.reportTollingData.length == undefined) ? '' : this.reportTollingData.length);
+          formData.append('pack', this.reportTollingData.pack);
           formData.append('qty', (this.reportTollingData.qty == undefined) ? '' : this.reportTollingData.qty);
-          formData.append('joint', (this.reportTollingData.joint == undefined) ? '' : this.reportTollingData.joint);
-          formData.append('prod_weight', (this.reportTollingData.prod_weight == undefined) ? '' : this.reportTollingData.prod_weight);
           formData.append('remark_b', (this.reportTollingData.remark_b == undefined) ? '' : this.reportTollingData.remark_b);
           formData.append('remark_c', (this.reportTollingData.remark_c == undefined) ? '' : this.reportTollingData.remark_c);
+          formData.append('shift', (this.reportTollingData.shift == undefined) ? '' : this.reportTollingData.shift);
+          formData.append('date', (this.reportTollingData.date == undefined) ? '' : this.reportTollingData.date);
         }else{
           return alert('OP No, Coil NO Wajib Di Isi')
         }
@@ -459,6 +443,9 @@
                 context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
             }).call();
           }
+      },
+      detailOP(op_no){
+        this.$router.push('/detail-prod-tolling/'+op_no)
       },
       notifyVue(message, verticalAlign, horizontalAlign, type) {
         const color = Math.floor((Math.random() * 4) + 1)
@@ -497,9 +484,13 @@
       getData(obj){
         this.reportTollingData.op_no = obj.op_no;
       },
+      getDataCoilNo(obj){
+        this.reportTollingData.coil_no = obj.coil_no;
+        this.reportTollingData.pack    = obj.pack;
+      },
       // AMBIL DATA YANG DI PILIH AC FILTER
-      getDataFilter(obj){
-        this.search.owner = obj.client_name;
+      getDataFilterClient(obj){
+        this.search.client_name = obj.client_name;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

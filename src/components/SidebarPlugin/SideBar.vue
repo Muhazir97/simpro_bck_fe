@@ -55,7 +55,7 @@
       },
       backgroundImage: {
         type: String,
-        default: 'img/brand/bg_login_bck.jpg'
+        default: 'img/brand/bg_login_bck1.jpg'
       },
       activeColor: {
         type: String,

@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/delivery?job_no='+search.job_no+'&po_no='+search.po_no+'&packing_list_no='+search.packing_list_no+'&packing_date='+search.packing_date+'&weight='+search.weight+'&qty='+search.qty+'&size='+search.size+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/delivery?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&packing_list_no='+search.packing_list_no+'&packing_date='+search.packing_date+'&weight='+search.weight+'&qty='+search.qty+'&size='+search.size+'&date='+search.date+'&deliv_type='+search.deliv_type+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -13,7 +13,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">Delivery</h4>
+                  <h4 class="card-title">Delivery Slitting Int</h4>
                 </div>
                 <div class="col-4">
                 </div>
@@ -167,6 +167,22 @@
                   >
                 </autocomplete>
               </div>
+              <div class="form-group">
+                <label>Client</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilterClient"
+                  placeholder="Choose Client"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
               <base-input type="text"
                     label="Surat Jalan No"
                     placeholder="Surat Jalan No"
@@ -187,11 +203,6 @@
                     placeholder="Qty"
                     v-model="search.qty">
               </base-input>
-              <!-- <base-input type="text"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="search.size">
-              </base-input> -->
               <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
               <div class="input-daterange datepicker row align-items-center">
                   <div class="col">
@@ -294,6 +305,7 @@
         loadTimeout: null,
         search: {
           job_no: '',
+          client_name: '',
           po_no: '',
           packing_list_no: '',
           packing_date: '',
@@ -315,7 +327,7 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, delivery.index({job_no: context.search.job_no, po_no: context.search.po_no, packing_list_no: context.search.packing_list_no, packing_date: context.search.packing_date, weight: context.search.weight, qty: context.search.qty, size: context.search.size, date: context.search.date, deliv_type: context.search.deliv_type, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, delivery.index({job_no: context.search.job_no, client_name: context.search.client_name, po_no: context.search.po_no, packing_list_no: context.search.packing_list_no, packing_date: context.search.packing_date, weight: context.search.weight, qty: context.search.qty, size: context.search.size, date: context.search.date, deliv_type: context.search.deliv_type, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
@@ -466,6 +478,9 @@
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){
         this.search.job_no = obj.job_no;
+      },
+      getDataFilterClient(obj){
+        this.search.client_name = obj.client_name;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

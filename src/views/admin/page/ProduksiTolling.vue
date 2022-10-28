@@ -22,7 +22,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">Prod Tolling</h4>
+                  <h4 class="card-title">Prod Tolling Pipa</h4>
                 </div>
                 <div class="col-4">
                 </div>

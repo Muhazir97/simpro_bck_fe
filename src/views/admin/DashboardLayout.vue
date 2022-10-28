@@ -22,7 +22,11 @@
         <i class="nc-icon nc-notes"></i>
         <p>Job Order</p>
       </sidebar-link>
-      <sidebar-link to="#" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
+      <sidebar-link to="/produksi" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception'">
+        <i class="nc-icon nc-settings-gear-64"></i>
+        <p>Produksi</p>
+      </sidebar-link>
+      <!-- <sidebar-link to="#" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
         <base-dropdown tag="li">
             <template slot="title">
               <i class="nc-icon nc-settings-90"></i>
@@ -41,23 +45,23 @@
               <p>Shearing</p>
             </sidebar-link>
           </base-dropdown>
-      </sidebar-link>
+      </sidebar-link> -->
       <sidebar-link to="/delivery" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-delivery-fast"></i>
         <p>Delivery</p>
       </sidebar-link>
       <sidebar-link to="/news" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-paper-2"></i>
-        <p>News / BA</p>
+        <p>Berita Acara</p>
       </sidebar-link>
       <sidebar-link to="/invoice" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-single-copy-04"></i>
         <p>Invoice</p>
       </sidebar-link>
-      <sidebar-link to="/payment" v-if="role == 'Admin' || role == 'Delivery'">
+      <!-- <sidebar-link to="/payment" v-if="role == 'Admin' || role == 'Delivery'">
         <i class="nc-icon nc-credit-card"></i>
         <p>Payment</p>
-      </sidebar-link>
+      </sidebar-link> -->
       <sidebar-link to="/all-account" v-if="role == 'Admin'">
         <i class="nc-icon nc-single-02"></i>
         <p>Account</p>

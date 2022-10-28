@@ -5,213 +5,101 @@
       <!-- ========================= INFORMATION ===============================  -->
       <div class="table-responsive mb-2">
         <div class="text-center display-4">
-          <span style="margin-bottom: -20px; font-weight: bold;">DETAIL SLIT COIL</span>
-          <a :href="apiUrl+'report-excel/merge-prod-slitting?process_program='+detailProdSlittingData.process_program" target="_BLANK">
-            <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
-              <i class="fa fa-download"></i> Download
+          <span style="margin-bottom: -20px; font-weight: bold;">DAILY PIPE PROD REPORT</span>
+          <a :href="apiUrl+'print-report-prod-tolling?date='+table.data[0].date" target="_BLANK">
+            <button type="submit" class="btn btn-sm btn-warning btn-fill float-right">
+              <i class="fa fa-file-text"></i> Print
             </button>
           </a>
           <hr style="margin-top: 50px;">
         </div>
-        <table class="table table-sm">
-            <tbody>
-                <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">JOB NO</td>
-                    <td width="300">  {{ detailProdSlittingData.job_no }} </td>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">PO NO</td>
-                    <td> {{ detailProdSlittingData.po_no }} </td>
-                </tr>
-                <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">PROGRAM NO</td>
-                    <td> {{ detailProdSlittingData.process_program }} </td>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CLIENT</td>
-                    <td> {{ detailProdSlittingData.owner }} </td>
-                </tr>
-                <tr>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CREATED BY</td>
-                    <td> {{ detailProdSlittingData.created_by }} </td>
-                    <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CREATED AT</td>
-                    <td> {{ detailProdSlittingData.created_at }} </td>
-                    <td style="display: none"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <table class="table table-center table-sm table-bordered text-center">
-          <thead>
-            <tr>
-                <th colspan="6" style="background-color: #FF7F50; text-align:center; color: black; font-weight: bold;"><span style="margin-left: 140px;">Material Input</span></th>
-                <th colspan="8" style="background-color: #7FFF00; text-align:center; color: black; font-weight: bold;"><span style="margin-left: 250px;">Material Output</span></th>
-                <th style="display: none"></th>
-            </tr>
-            <tr>
-                <th style="background-color: #7FFFD4; color: black;">No</th>
-                <th style="background-color: #7FFFD4; color: black;">Coil No</th>
-                <th style="background-color: #7FFFD4; color: black;">Spec</th>
-                <th style="background-color: #7FFFD4; color: black;">Thick (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Width (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Weight (kg)</th>
-
-                <th style="background-color: #7FFFD4; color: black;">No</th>
-                <th style="background-color: #7FFFD4; color: black;">Coil No</th>
-                <th style="background-color: #7FFFD4; color: black;">Pack</th>
-                <th style="background-color: #7FFFD4; color: black;">Thick (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Width (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Weight (kg)</th>
-                <th style="display: none"></th>
-            </tr>
-          </thead>
+        <table class="table table-sm table-bordered">
           <tbody>
-            <tr v-for="(row, i) in table.data" :key="i">
-              <td>{{ i + 1 }}</td>
-               <!-- ============== COIL NO ========= -->
-               <td>
-                  <!-- jika i sama dengan 0 -->
-                  <div v-if="i == 0">
-                    {{ row.coil_no }}
-                  </div>
-                  <!-- jika i bukan sama dengan 0 -->
-                  <div v-else>
-                    <!-- jika coil no sekarang dan sebelumnya sama -->
-                    <div v-if="row.coil_no == table.data[i - 1].coil_no">
-                      <!-- jika i sama dengan 0 -->
-                      <div v-if="i == 0">
-                        {{ row.coil_no }}
-                      </div>
-                      <!-- jika i bukan sama dengan 0 -->
-                      <div v-else>
-                        
-                      </div>
-                    </div>
-                    <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-                    <div v-else>
-                      {{ row.coil_no }}
-                    </div>
-                  </div>
-                </td>
-              <!-- ============== SPEC ========= -->
-              <td>
-                <!-- jika i sama dengan 0 -->
-                <div v-if="i == 0">
-                  {{ row.dimension_spec }}
-                </div>
-                <!-- jika i bukan sama dengan 0 -->
-                <div v-else>
-                  <!-- jika coil no sekarang dan sebelumnya sama -->
-                  <div v-if="row.coil_no == table.data[i - 1].coil_no">
-                    <!-- jika i sama dengan 0 -->
-                    <div v-if="i == 0">
-                      {{ row.dimension_spec }}
-                    </div>
-                    <!-- jika i bukan sama dengan 0 -->
-                    <div v-else>
-                      
-                    </div>
-                  </div>
-                  <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-                  <div v-else>
-                    {{ row.dimension_spec }}
-                  </div>
-                </div>
-              </td>
-              <!-- ============== THICK ========= -->
-              <td>
-                <!-- jika i sama dengan 0 -->
-                <div v-if="i == 0">
-                  {{ row.dimension_thick }}
-                </div>
-                <!-- jika i bukan sama dengan 0 -->
-                <div v-else>
-                  <!-- jika coil no sekarang dan sebelumnya sama -->
-                  <div v-if="row.coil_no == table.data[i - 1].coil_no">
-                    <!-- jika i sama dengan 0 -->
-                    <div v-if="i == 0">
-                      {{ row.dimension_thick }}
-                    </div>
-                    <!-- jika i bukan sama dengan 0 -->
-                    <div v-else>
-                      
-                    </div>
-                  </div>
-                  <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-                  <div v-else>
-                    {{ row.dimension_thick }}
-                  </div>
-                </div>
-              </td>
-              <!-- ============== WIDTH ========= -->
-              <td>
-                <!-- jika i sama dengan 0 -->
-                <div v-if="i == 0">
-                  {{ convertRp(row.dimension_width) }}
-                </div>
-                <!-- jika i bukan sama dengan 0 -->
-                <div v-else>
-                  <!-- jika coil no sekarang dan sebelumnya sama -->
-                  <div v-if="row.coil_no == table.data[i - 1].coil_no">
-                    <!-- jika i sama dengan 0 -->
-                    <div v-if="i == 0">
-                      {{ convertRp(row.dimension_width) }}
-                    </div>
-                    <!-- jika i bukan sama dengan 0 -->
-                    <div v-else>
-                      
-                    </div>
-                  </div>
-                  <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-                  <div v-else>
-                    {{ convertRp(row.dimension_width) }}
-                  </div>
-                </div>
-              </td>
-              <!-- ============== WEIGHT ========= -->
-              <td>
-                <!-- jika i sama dengan 0 -->
-                <div v-if="i == 0">
-                  {{ convertRp(row.dimension_weight) }}
-                </div>
-                <!-- jika i bukan sama dengan 0 -->
-                <div v-else>
-                  <!-- jika coil no sekarang dan sebelumnya sama -->
-                  <div v-if="row.coil_no == table.data[i - 1].coil_no">
-                    <!-- jika i sama dengan 0 -->
-                    <div v-if="i == 0">
-                      {{ convertRp(row.dimension_weight) }}
-                    </div>
-                    <!-- jika i bukan sama dengan 0 -->
-                    <div v-else>
-                      
-                    </div>
-                  </div>
-                  <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-                  <div v-else>
-                    {{ convertRp(row.dimension_weight) }}
-                  </div>
-                </div>
-              </td>
-
-              <td style="font-size: 13px;">{{ i + 1 }}</td>
-              <td style="font-size: 13px;">{{ row.coil_no }}</td>
-              <td style="font-size: 13px;">{{ row.pack }}</td>
-              <td style="font-size: 13px;">{{ row.thick }}</td>
-              <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
-              <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-              <td style="display: none"></td>
-            </tr>
-            <tr>
-              <td colspan="5">TOTAL INPUT</td>
-              <td>{{ convertRp(totalWeightInput) }}</td>
-              <td></td>
-              <td colspan="4">TOTAL OUTPUT</td>
-              <td>{{ convertRp(totalWeightOutput) }}</td>
-              <td style="display: none"></td>
-            </tr>
-            <tr>
-              <td colspan="15">YIELD : {{ convertRp(yieldSlit) }} %</td>
-              <td style="display: none"></td>
-            </tr>
+              <tr>
+                <td style="background-color: #F0F8FF; font-weight: bold;" width="150">DATE</td>
+                <td width="350"> {{ moment(table.data[0].date).locale('id').format('LL') }} </td>
+                <td style="background-color: #F0F8FF; font-weight: bold;" width="150">DAY</td>
+                <td> {{ moment(table.data[0].date).locale('id').format('dddd') }} </td>
+              </tr>
           </tbody>
         </table>
+
+        <div class="scroll">
+          <table border="1">
+            <thead>
+              <tr>
+                <th rowspan="2" style="font-size: 12px; text-align: center; background-color: #FFA07A;">NO</th>
+                <th rowspan="2" style="font-size: 12px; text-align: center; background-color: #FFA07A;">SHIFT</th>
+                <th rowspan="2" style="font-size: 12px; text-align: center; background-color: #FFA07A;">JOB NO</th>
+                <th rowspan="2" style="font-size: 12px; text-align: center; background-color: #FFA07A;">PO NO</th>
+                <th rowspan="2" style="font-size: 12px; text-align: center; background-color: #FFA07A;">CLIENT</th>
+                <th rowspan="2" style="font-size: 12px; text-align: center; background-color: #FFA07A;">OP NO</th>
+                <th colspan="5" style="background-color: #7FFF00; text-align:center; color: black; font-weight: bold;">COIL</th>
+                <th colspan="4" style="background-color: #87CEFA; text-align:center; color: black; font-weight: bold;">PIPE PRODUCTION</th>
+                <th colspan="2" style="background-color: #F5DEB3; text-align:center; color: black; font-weight: bold;">REMARK</th>
+              </tr>
+              <tr>
+                <th style="font-size: 12px; text-align: center; background-color: #7FFF00;">COIL NO</th>
+                <th style="font-size: 12px; text-align: center; background-color: #7FFF00;">GRADE</th>
+                <th style="font-size: 12px; text-align: center; background-color: #7FFF00;">THICK</th>
+                <th style="font-size: 12px; text-align: center; background-color: #7FFF00;">WIDTH</th>
+                <th style="font-size: 12px; text-align: center; background-color: #7FFF00;">WEIGHT</th>
+                <th style="font-size: 12px; text-align: center; background-color: #87CEFA;">OD</th>
+                <th style="font-size: 12px; text-align: center; background-color: #87CEFA;">LENGTH</th>
+                <th style="font-size: 12px; text-align: center; background-color: #87CEFA;">QTY</th>
+                <th style="font-size: 12px; text-align: center; background-color: #87CEFA;">PROD WEIGHT</th>
+                <th style="font-size: 12px; text-align: center; background-color: #F5DEB3;">B</th>
+                <th style="font-size: 12px; text-align: center; background-color: #F5DEB3;">C</th>
+                <th style="display: none" ></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, i) in table.data" :key="i">
+                <td style="font-size: 12px; text-align: center;">{{ i + 1 }}</td>
+                <td style="font-size: 12px; text-align: center;">{{ row.shift }}</td>
+                <td style="font-size: 12px; text-align: center;">
+                  <label class="badge badge-success">{{ row.job_no }}</label>
+                </td>
+                <td style="font-size: 12px; text-align: center;">{{ row.po_no }}</td>
+                <td style="font-size: 12px;">{{ row.client_name }}</td>
+                <td style="font-size: 12px; text-align: center;">
+                  <label class="badge badge-info">{{ row.op_no }}</label>
+                </td>
+                <td>
+                  <small><label class="badge badge-danger">{{ row.coil_no }} {{ row.pack}}</label></small>
+                </td>
+                <td style="font-size: 12px; text-align: center;">{{ row.grade}}</td>
+                <td style="font-size: 12px; text-align: center;">{{ row.thick}}</td>
+                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.width) }}</td>
+                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.weight) }}</td>
+                <td style="font-size: 12px; text-align: center;">{{ row.od}}</td>
+                <td style="font-size: 12px; text-align: center;"><input type="input" @change="updateLength(row.id, row.length)" v-model="row.length" size="5"></td>
+                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.qty)}} </td>
+                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.prod_weight) }}</td>
+                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.remark_b) }}</td>
+                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.remark_c) }}</td>
+                <td style="display: none" ></td>
+              </tr>
+              <tr>
+                <td style="font-size: 12px; text-align: center; font-weight: bold;" colspan="10">TOTAL</td>
+                <td style="font-size: 12px; text-align: center; font-weight: bold;" >{{ convertRp(totalWeightCoil) }}</td>
+                <td colspan="2"></td>
+                <td style="font-size: 12px; text-align: center; font-weight: bold;">{{ convertRp(totalQty) }}</td>
+                <td style="font-size: 12px; text-align: center; font-weight: bold;">{{ convertRp(totalWeightProd) }}</td>
+                <td style="font-size: 12px; text-align: center; font-weight: bold;">{{ convertRp(totalRemarkB) }}</td>
+                <td style="font-size: 12px; text-align: center; font-weight: bold;">{{ convertRp(totalRemarkC) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="card">
+              <textarea style="border: 1px solid white; resize: none; font-size: 15px;" rows="7" cols="40" @change="updateRpt(table.data[0].id)" v-model="reportData.catatan"></textarea> 
+            </div>
+          </div>
+        </div>
 
       </div>
 
@@ -222,29 +110,32 @@
   import Card from '@/components/Cards/Card.vue'
   import Modal from '@/components/Modal.vue'
   import config from '@/configs/config';
-  import slitCoil from '@/services/slitCoil.service';
+  import reportTolling from '@/services/reportTolling.service';
   import Api from '@/helpers/api';
-  import Autocomplete from 'vue2-autocomplete-js'
-  require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  var moment = require('moment');
 
   export default {
     components: {
       Card,
       Modal,
-      Autocomplete
     },
     data () {
       return {
+        moment:moment,
         detailProdSlittingData: {},
         table: {
           data: [],
         },
-        totalWeightInput : '',
-        totalWeightOutput : '',
-        yieldSlit : '',
+        reportData: {},
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
         tokenApi : '',
+
+        totalWeightCoil : '',
+        totalWeightProd : '',
+        totalQty : '',
+        totalRemarkB : '',
+        totalRemarkC : '',
       }
     },
     mounted(){
@@ -254,16 +145,51 @@
     methods: {
       get() {
         let context = this;               
-        Api(context, slitCoil.showSlitCoil(context.$route.params.process_program)).onSuccess(function(response) {
-            context.detailProdSlittingData = response.data.data.data[0];
-            context.table.data             = response.data.data.data;
-            context.totalWeightInput       = response.data.data.totalWeightInput;
-            context.totalWeightOutput      = response.data.data.totalWeightOutput;
-            context.yieldSlit              = response.data.data.yield;
+        Api(context, reportTolling.showReportTolling(context.$route.params.date)).onSuccess(function(response) {
+            context.table.data      = response.data.data.data;
+            context.totalWeightCoil = response.data.data.totalWeightCoil;
+            context.totalWeightProd = response.data.data.totalWeightProd;
+            context.totalQty        = response.data.data.totalQty;
+            context.totalRemarkB    = response.data.data.totalRemarkB;
+            context.totalRemarkC    = response.data.data.totalRemarkC;
+
+            context.reportData.catatan = response.data.data.data[0].catatan;
         }).onFinish(function() {  
              
         })
         .call()        
+      },
+      updateRpt(id){
+        let api     = null;
+        let context = this;
+
+        api = Api(context, reportTolling.updateRpt(id, {
+            catatan : context.reportData.catatan,
+        }));
+        api.onSuccess(function(response) {
+            context.notifyVue(response.data.message, 'top', 'right', 'info')
+        }).onError(function(error) { 
+            context.notifyVue('Update Failed', 'top', 'right', 'danger')
+        }).onFinish(function() { 
+            context.get(); 
+        })
+        .call();
+      },
+      updateLength(id, length){
+        let api     = null;
+        let context = this;
+
+        api = Api(context, reportTolling.updateLength(id, {
+            length : length,
+        }));
+        api.onSuccess(function(response) {
+            context.notifyVue(response.data.message, 'top', 'right', 'info')
+        }).onError(function(error) { 
+            context.notifyVue('Update Failed', 'top', 'right', 'danger')
+        }).onFinish(function() { 
+            context.get(); 
+        })
+        .call();
       },
       convertRp(bilangan) {
         if (bilangan) {

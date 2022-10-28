@@ -47,7 +47,6 @@
                       <th>INVOICE AMOUNT</th>
                       <!-- <th>INVOICE BALANCE</th> -->
                       <th>Created At</th>
-                      <th>Created By</th>
                       <th></th>
                       <th></th>
                     </tr>
@@ -68,15 +67,16 @@
                     <td style="font-size: 13px;">{{ convertRp(row.rate) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.amount) }}</td>
                     <td style="font-size: 13px;">
-                      <label class="badge badge-info">{{row.invoice_no}}</label>
+                      <router-link :to="/detail-invoice/+row.invoice_no">
+                        <label class="badge badge-info" style="cursor: pointer;">{{row.invoice_no}}</label>
+                      </router-link>
                     </td>
                     <td style="font-size: 13px;">{{row.invoice_date}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_weight) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_qty) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_amount) }}</td>
                     <!-- <td style="font-size: 13px;">{{ convertRp(row.invoice_balance) }}</td> -->
-                    <td style="font-size: 13px;">{{row.created_at}}</td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <td style="font-size: 13px;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -248,6 +248,7 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  var moment = require('moment');
   
   export default {
     components: {
@@ -258,6 +259,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,

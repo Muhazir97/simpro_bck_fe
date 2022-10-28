@@ -57,7 +57,7 @@
           </div>
           <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
             <router-link  to="/news" @click.native="modalMenu.show = false">
-              <i class="nc-icon nc-paper-2 text-dark"></i> <span class="text-dark"> News / BA </span>
+              <i class="nc-icon nc-paper-2 text-dark"></i> <span class="text-dark"> Berita Acara </span>
             </router-link><br>
           </div>
           <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
@@ -65,11 +65,11 @@
               <i class="nc-icon nc-single-copy-04 text-dark"></i> <span class="text-dark"> Invoice </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
+          <!-- <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
             <router-link  to="/payment" @click.native="modalMenu.show = false">
               <i class="nc-icon nc-credit-card text-dark"></i> <span class="text-dark"> Payment </span>
             </router-link><br>
-          </div>
+          </div> -->
           <div style="margin-bottom: 20px" v-if="role == 'Admin'">
             <router-link  to="/all-account" @click.native="modalMenu.show = false">
               <i class="nc-icon nc-single-02 text-dark"></i> <span class="text-dark"> Account </span>

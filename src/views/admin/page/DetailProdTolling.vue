@@ -9,7 +9,7 @@
               <i class="fa fa-cogs" aria-hidden="true"></i> Konfig
             </button>
           </router-link>
-          <span style="margin-bottom: -20px; font-weight: bold;">DETAIL PROD TOLLING</span>
+          <span style="margin-bottom: -20px; font-weight: bold;">DETAIL PROD TOLLING PIPA</span>
           <a :href="apiUrl+'print-prod-tolling/'+detailProdTollingData.op_no" target="_BLANK">
             <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
               <i class="fa fa-file-text"></i> Print
@@ -311,7 +311,7 @@
           <tbody>
             <tr v-for="(row, i) in tableDBB.data" :key="i">
               <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-              <td style="font-size: 13px; text-align: center;"></td>
+              <td style="font-size: 13px; text-align: center;">{{ row.no_urut_coil }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.coil_no}}</td>
               <td style="font-size: 13px; text-align: left;">{{ row.pack}}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>

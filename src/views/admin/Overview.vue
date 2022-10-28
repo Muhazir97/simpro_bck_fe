@@ -90,7 +90,7 @@
                 <i class="nc-icon nc-paper-2 text-dark"></i>
               </div>
               <div slot="content">
-                <p class="card-category">News</p>
+                <p class="card-category">BA</p>
                 <h4 class="card-title">{{ count_task.news }}</h4>
               </div>
               <div slot="footer">
@@ -115,7 +115,7 @@
           </router-link>
         </div>
 
-        <div class="col-xl-3 col-md-6">
+        <!-- <div class="col-xl-3 col-md-6">
           <router-link :to="'/payment'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
@@ -129,7 +129,7 @@
               </div>
             </stats-card>
           </router-link>
-        </div>
+        </div> -->
       </div>
 
         <div class="table-responsive" v-if="role != 'Visitor'">
@@ -144,7 +144,7 @@
                   </div>
                   <div class="col-8 text-center">
                     <h5 class="card-title font-weight-bold">STEEL CENTER</h5><br>
-                    <h5 class="card-title font-weight-bold" style="margin-top: -20px;">PROJECT MONITORING - 2022</h5><br>
+                    <h5 class="card-title font-weight-bold" style="margin-top: -20px;">PROJECT MONITORING - {{new Date().getFullYear()}}</h5><br>
                     <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
                   </div>
                   <div class="col-2">
@@ -165,27 +165,22 @@
                         <th>CLIENT</th>
                         <th>DATE</th>
                         <th>PROD CLASS</th>
-                        <th>QTY</th>
-                        <th>UNIT</th>
-                        <th>RATE</th>
-                        <th>TOTAL</th>
+                        <th style="background-color: #F0E68C;">WEIGHT</th>
+                        <th style="background-color: #F0E68C;">RATE</th>
+                        <th style="background-color: #F0E68C;">TOTAL</th>
                         <th></th>
-                        <th>DELIVERY QTY</th>
-                        <th>DELIVERY OUT</th>
-                        <th>DELIVERY TOTAL</th>
+                        <th style="background-color: #E6E6FA;">DELIVERY OUT</th>
+                        <th style="background-color: #E6E6FA;">DELIVERY SISA</th>
+                        <th style="background-color: #E6E6FA;">DELIVERY TOTAL (Rp)</th>
                         <th></th>
-                        <th>NEWS QTY</th>
-                        <th>NEWS OUT</th>
-                        <th>NEWS TOTAL</th>
+                        <th style="background-color: #00FA9A;">BA OUT</th>
+                        <th style="background-color: #00FA9A;">BA SISA</th>
+                        <th style="background-color: #00FA9A;">BA TOTAL</th>
                         <th></th>
-                        <th>INVOICE QTY</th>
-                        <th>INVOICE OUT</th>
-                        <th>INVOICE AMOUNT</th>
-                        <th></th>
-                        <th>PAYMENT QTY</th>
-                        <th>PAYMENT DATE</th>
-                        <th>PAYMENT TOTAL</th>
-                        <th></th>
+                        <th style="background-color: #FFE4B5;">INVOICE OUT</th>
+                        <th style="background-color: #FFE4B5;">INVOICE SISA</th>
+                        <th style="background-color: #FFE4B5;">INVOICE AMOUNT</th>
+                        <th style="display: none" ></th>
                       </tr>
                     </slot>
                   </thead>
@@ -193,35 +188,34 @@
                     <tr v-for="(row, i) in table.data" :key="i">
                       <!-- <td> {{ i + 1 }}</td> -->
                       <td style="font-size: 13px;">
-                        <label class="badge badge-success">{{row.job_no}}</label>
+                        <router-link :to="/detail-job-request/+row.job_no"><label style="cursor: pointer;" class="badge badge-success">{{row.job_no}}</label></router-link>
                       </td>
                       <td style="font-size: 13px;">{{row.po_no}}</td>
                       <td style="font-size: 13px;">{{row.client_name}}</td>
-                      <td style="font-size: 13px;">{{row.created_at }}</td>
+                      <td style="font-size: 13px;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                       <td style="font-size: 13px;">{{row.prod_class}}</td>
-                      <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
-                      <td style="font-size: 13px;"> Kg </td>
-                      <td style="font-size: 13px;">{{row.rate}}</td>
-                      <td style="font-size: 13px;">{{ convertRp(row.weight * row.rate) }}</td>
+                      <td style="font-size: 13px; background-color: #F0E68C;">{{ convertRp(row.weight) }}</td>
+                      <td style="font-size: 13px; background-color: #F0E68C;">{{row.rate}}</td>
+                      <td style="font-size: 13px; background-color: #F0E68C;">{{ convertRp(row.weight * row.rate) }}</td>
                       <td></td>
                       <!-- DELIVERY -->
-                      <td style="font-size: 13px;">{{ convertRp(row.delivery_qty) }}</td>
-                      <td style="font-size: 13px;" v-if="row.delivery_qty">{{ convertRp(row.weight - row.delivery_qty) }}</td>
-                      <td v-else></td>
-                      <td style="font-size: 13px;">{{ convertRp(row.delivery_qty * row.rate) }}</td>
+                      <td style="font-size: 13px; background-color: #E6E6FA;">{{ convertRp(row.delivery_qty) }}</td>
+                      <td style="font-size: 13px; background-color: #E6E6FA;" v-if="row.delivery_qty">{{ convertRp(row.weight - row.delivery_qty) }}</td>
+                      <td v-else style="font-size: 13px; background-color: #E6E6FA;"></td>
+                      <td style="font-size: 13px; background-color: #E6E6FA;">{{ convertRp(row.delivery_qty * row.rate) }}</td>
                       <td></td>
                       <!-- NEWS -->
-                      <td style="font-size: 13px;">{{ convertRp(row.news_qty) }}</td>
-                      <td style="font-size: 13px;"  v-if="row.news_qty">{{ convertRp(row.weight - row.news_qty) }}</td>
-                      <td v-else></td>
-                      <td style="font-size: 13px;">{{ convertRp(row.news_qty * row.rate) }}</td>
+                      <td style="font-size: 13px; background-color: #00FA9A;">{{ convertRp(row.news_qty) }}</td>
+                      <td style="font-size: 13px; background-color: #00FA9A;"  v-if="row.news_qty">{{ convertRp(row.weight - row.news_qty) }}</td>
+                      <td v-else style="font-size: 13px; background-color: #00FA9A;"></td>
+                      <td style="font-size: 13px; background-color: #00FA9A;">{{ convertRp(row.news_qty * row.rate) }}</td>
                       <td></td>
                       <!-- INVOICE -->
-                      <td style="font-size: 13px;">{{ convertRp(row.invoice_qty) }}</td>
-                      <td style="font-size: 13px;"  v-if="row.invoice_qty">{{ convertRp(row.weight - row.invoice_qty) }}</td>
-                      <td v-else></td>
-                      <td style="font-size: 13px;">{{ convertRp(row.invoice_qty * row.rate) }}</td>
-                      <td></td>
+                      <td style="font-size: 13px; background-color: #FFE4B5;">{{ convertRp(row.invoice_qty) }}</td>
+                      <td style="font-size: 13px; background-color: #FFE4B5;"  v-if="row.invoice_qty">{{ convertRp(row.weight - row.invoice_qty) }}</td>
+                      <td v-else style="font-size: 13px; background-color: #FFE4B5;"></td>
+                      <td style="font-size: 13px; background-color: #FFE4B5;">{{ convertRp(row.invoice_qty * row.rate) }}</td>
+                      <th style="display: none" ></th>
                     </tr>
                   </tbody>
                 </table>
@@ -251,6 +245,7 @@
   import Api from '@/helpers/api';
   import dashboard from '@/services/dashboard.service';
   import config from '@/configs/config';
+  var moment = require('moment');
 
   export default {
     components: {
@@ -261,6 +256,7 @@
     },
     data () {
       return {
+        moment:moment,
         count_task : [],
         apiUrl :config.apiUrl,
         role: '',
