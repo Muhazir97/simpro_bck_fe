@@ -36,17 +36,14 @@
                       <th>PO NO</th>
                       <th>CLIENT</th>
                       <th>PROD CLASS</th>
-                      <th>QTY</th>
-                      <th>UNIT</th>
+                      <th>WEIGHT</th>
                       <th>RATE</th>
                       <th>AMOUNT</th>
                       <th>INVOICE NO</th>
                       <th>INVOICE DATE</th>
                       <th>INVOICE WEIGHT</th>
-                      <th>INVOICE QTY</th>
                       <th>INVOICE AMOUNT</th>
                       <!-- <th>INVOICE BALANCE</th> -->
-                      <th>Created At</th>
                       <th></th>
                       <th></th>
                     </tr>
@@ -63,7 +60,6 @@
                     <td style="font-size: 13px;">{{row.client_name}}</td>
                     <td style="font-size: 13px;">{{row.prod_class}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.qty) }}</td>
-                    <td style="font-size: 13px;">{{row.unit}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.rate) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.amount) }}</td>
                     <td style="font-size: 13px;">
@@ -71,12 +67,10 @@
                         <label class="badge badge-info" style="cursor: pointer;">{{row.invoice_no}}</label>
                       </router-link>
                     </td>
-                    <td style="font-size: 13px;">{{row.invoice_date}}</td>
+                    <td style="font-size: 13px;">{{ moment(row.invoice_date).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_weight) }}</td>
-                    <td style="font-size: 13px;">{{ convertRp(row.invoice_qty) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_amount) }}</td>
                     <!-- <td style="font-size: 13px;">{{ convertRp(row.invoice_balance) }}</td> -->
-                    <td style="font-size: 13px;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -129,7 +123,7 @@
                     placeholder="Invoice Date"
                     v-model="invoiceData.invoice_date">
               </base-input>
-              <base-input type="number"
+              <!-- <base-input type="number"
                     label="Invoice Weight"
                     placeholder="Invoice Weight"
                     v-model="invoiceData.invoice_weight">
@@ -138,7 +132,7 @@
                     label="Invoice Qty"
                     placeholder="Invoice Qty"
                     v-model="invoiceData.invoice_qty">
-              </base-input>
+              </base-input> -->
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
@@ -376,20 +370,12 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.invoiceData.job_no != undefined && this.invoiceData.invoice_no != undefined && this.invoiceData.invoice_date != undefined && this.invoiceData.invoice_weight != undefined && this.invoiceData.invoice_qty != undefined) {
+        if (this.invoiceData.job_no != undefined && this.invoiceData.invoice_no != undefined && this.invoiceData.invoice_date != undefined) {
           formData.append('job_no', this.invoiceData.job_no);
-          // formData.append('qty', this.invoiceData.qty);
-          // formData.append('unit', this.invoiceData.unit);
-          // formData.append('rate', this.invoiceData.rate);
-          // formData.append('amount', this.invoiceData.amount);
           formData.append('invoice_no', this.invoiceData.invoice_no);
           formData.append('invoice_date', this.invoiceData.invoice_date);
-          formData.append('invoice_weight', this.invoiceData.invoice_weight);
-          formData.append('invoice_qty', this.invoiceData.invoice_qty);
-          // formData.append('invoice_amount', this.invoiceData.invoice_amount);
-          formData.append('invoice_balance', this.invoiceData.invoice_balance);
         }else{
-          return alert('Job No, Invoice No, Invoice Date, Invoice Weight dan Invoice Weight Wajib Di Isi')
+          return alert('Job No, Invoice No, Invoice Date, Wajib Di Isi')
         }
 
         if (context.form.title == 'Add Data') {

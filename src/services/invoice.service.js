@@ -35,4 +35,10 @@ export default {
     showInvoice(invoice_no) {
         return Service().get('invoice/show-invoice/'+invoice_no);
     },
+    addSJ(params) {
+        return Service().post('invoice/add-sj', params);
+    },
+    updateInv(params) {
+        return Service().post('invoice/update-inv', params);
+    },
 }

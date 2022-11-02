@@ -6,7 +6,7 @@
       <div class="table-responsive mb-2">
         <div class="text-center display-4">
           <span style="margin-bottom: -20px; font-weight: bold;">DETAIL INVOICE</span>
-          <a :href="apiUrl+'print-news/'+detailInvoiceData.news_no" target="_BLANK">
+          <a :href="apiUrl+'print-invoice/'+detailInvoiceData.invoice_no" target="_BLANK">
             <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
               <i class="fa fa-file-text"></i> Print
             </button>
@@ -21,9 +21,7 @@
       <div class="row mb-4">
         <div class="col-4">
           <p style="font-weight: bold;">{{ detailInvoiceData.client_name }}</p>        
-          KOMPLEK KRAKATAU STEEL CIGADING
-          PO BOX 7, WARNASARI, CITANGKIL
-          KOTA CILEGON BANTEN 43443
+          {{ detailInvoiceData.client_addres }}
         </div>
         <div class="col-4">
           <p style="margin-right: 90px;">No.</p>
@@ -39,13 +37,16 @@
           <p style="margin-top: -15px;">: &nbsp; {{ moment(detailInvoiceData.invoice_date).locale('id').format('LL') }} </p>
           <p style="margin-top: -15px;">: &nbsp; COD </p>
           <p style="margin-top: -15px;">: &nbsp; IDR </p>
-          <p style="margin-top: -15px;">: &nbsp; 19 November 2022 </p> 
+          <p style="margin-top: -15px;">: &nbsp; {{ moment(moment().add(detailInvoiceData.due_date, 'days')).locale('id').format('LL') }} <input style="border: 1px solid white; text-align: center;" size="1" placeholder="Days" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.due_date"></input> Days</p> 
           <p style="margin-top: -15px;">: &nbsp; {{ detailInvoiceData.po_no }} </p>
           <p style="margin-top: -15px;">: &nbsp; {{ detailInvoiceData.job_no }} </p>
         </div>
       </div>
 
       <!-- ----------------- TABLE -------------- -->
+      <button type="submit" class="btn btn-sm btn-primary btn-fill float-right mb-2 mr-2" @click="addSJ()">
+        Add Surat Jalan
+      </button>
       <table border="1" class="mb-4">
         <thead>
           <slot name="columns">
@@ -54,20 +55,30 @@
               <th style="text-align:center; font-size: 14px;">Keterangan / Description <br> JENIS & UKURAN / (Type & Size)</th>
               <th style="text-align:center; font-size: 14px;">HARGA PER UNIT / Unit Price</th>
               <th style="text-align:center; font-size: 14px;">JUMLAH / Amount</th>
+              <th></th>
             </tr>
           </slot>
         </thead>
         <tbody>
-          <tr>
-           <td>28820</td>
-           <td>Bare Pipe D 2 1/2" x 4,8 x 6000 mm (595 Btg)</td>
-           <td>1100</td>
-           <td>31702000</td>
+          <tr v-for="(row, i) in table.data" :key="i">
+            <td style="text-align: right;">{{ convertRp(row.weight) }}</td>
+            <td v-if="detailInvoiceData.prod_class === 'Slitting'">Slitting Coil</td>
+            <td v-if="detailInvoiceData.prod_class === 'Tolling'">{{ row.type_pipa }}</td>
+            <td v-if="detailInvoiceData.prod_class === 'Shearing'">Shearing Coil</td>
+            <td style="text-align: right;">{{ convertRp(row.rate) }}</td>
+            <td style="text-align: right;">{{ convertRp(row.weight * row.rate) }}</td>
+            <td style="text-align: center;">
+              <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveSJ(row.id, 'delete')"></i>
+            </td>
           </tr>
           <tr>
-            <td style="text-align: center;" colspan="1">Total</td>
-            <td style="text-align: center;">{{ convertRp(totalQty) }}</td>
-            <td style="text-align: center;">{{ convertRp(totalTonase) }}</td>
+            <td style="text-align: right;" colspan="2" class="align-middle"></td>
+            <td style="text-align: right;"> Sub Total <br> PPN 11 % <br><b style="margin-top: 80px;">Total</b></td>
+            <td style="text-align: right; margin-top: 100px;">
+              {{ convertRp(totalAmount) }} <br>
+              {{ convertRp(Number(ppn).toFixed(0)) }} <br>
+              <hr style="margin-top: -1px; background: black; height: 1px;"><p style="margin-top: -15px; font-weight: bold;"> {{ convertRp(Number(totalAmount + ppn).toFixed(0)) }}</p>
+            </td>
             <td style="display: none;"></td>
           </tr>
         </tbody>
@@ -81,19 +92,27 @@
             <tbody>
                 <tr>
                   <td width="300">Atas Nama / Account Name</td>
-                  <td> PT. BUANA CENTRA KARYA </td>
+                  <td>
+                    <input style="border: 1px solid white; background: transparent;" size="50" placeholder="Atas Nama" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.an_bank"></input>
+                  </td>
                 </tr>
                 <tr>
                   <td width="300">No. Rekening / Account Number </td>
-                  <td> 7149876938 </td>
+                  <td>
+                    <input style="border: 1px solid white; background: transparent;" size="50" placeholder="No. Rekening" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.no_rek"></input>
+                  </td>
                 </tr>
                 <tr>
                   <td width="300">Bank</td>
-                  <td> BANK SYARIAH INDONESIA (BSI) </td>
+                  <td>
+                    <input style="border: 1px solid white; background: transparent;" size="50" placeholder="Bank" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.bank"></input>
+                  </td>
                 </tr>
                 <tr>
                   <td width="300">Cabang / Branch</td>
-                  <td> CILEGON </td>
+                  <td>
+                    <input style="border: 1px solid white; background: transparent;" size="50" placeholder="Cabang" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.cabang"></input>
+                  </td>
                 </tr>
             </tbody>
         </table>
@@ -108,14 +127,14 @@
           <div style="width: 100%;">
             <div style="text-align: center;">
               <p style="text-align: center; margin-top: 70px"></p>
-              <p style="text-align: center; margin-top: -15px;">Cilegon, {{ detailInvoiceData.news_date }}</p>
+              <p style="text-align: center; margin-top: -15px;">Cilegon, {{ moment(detailInvoiceData.invoice_date).locale('id').format('LL') }}</p>
               <p style="text-align: center; margin-bottom: 60px; margin-top: -15px;">PT. BUANA CENTRA KARYA</p>
             </div>
           </div>
           <div style="width: 100%;">
             <div style="">
-              <p style="text-align: center;"><input style="border: 1px solid white; text-align: center; border-bottom: 1px solid black;" @change="updateBA(detailInvoiceData.news_no)" v-model="dataBA.nama_penerima"></p>
-              <p style="text-align: center; margin-top: -15px;"><input style="border: 1px solid white; text-align: center;" @change="updateBA(detailInvoiceData.news_no)" v-model="dataBA.jabatan_penerima"></p>
+              <p style="text-align: center;"><input style="border: 1px solid white; text-align: center; border-bottom: 1px solid black;" value="Robinand"></p>
+              <p style="text-align: center; margin-top: -15px;"><input style="border: 1px solid white; text-align: center;" value="Direktur"></p>
             </div>
           </div>
         </div>
@@ -144,7 +163,7 @@
                     <td style="font-size: 13px;">{{row.packing_list_no}}</td>
                     <td style="font-size: 13px;">{{row.packing_date}}</td>
                     <td>
-                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add SJ" style="cursor: pointer;" @click="saveSJ(row.packing_list_no)"></i>
+                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add SJ" style="cursor: pointer;" @click="saveSJ(row.id, 'add')"></i>
                     </td>
                   </tr>
                 </tbody>
@@ -156,64 +175,63 @@
       </div>
     </card>
 
-    <!-- ============================== REKAP SURAT JALAN ======================= -->
+    <!-- ============================== KWITANSI ======================= -->
     <card>
-      <p Style="text-align: center; font-weight: bold; margin-top: 20px">REKAP SURAT JALAN</p>
-      <p style="text-align: center; font-weight: bold; margin-top: -20px">BA NO. {{detailInvoiceData.news_no}}</p>
-      
-      <div>
-        <a :href="apiUrl+'print-rkp-sj-news/'+detailInvoiceData.news_no" target="_BLANK">
-          <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
-            <i class="fa fa-file-text"></i> Print
-          </button>
-        </a>
-        <button type="submit" class="btn btn-sm btn-primary btn-fill float-right mb-2 mr-2" @click="addSJ()">
-          Add Surat Jalan
-        </button>
+      <div class="row">
+        <div class="col-8">
+          <p Style="text-align: center; font-weight: bold; margin-top: 20px; margin-right: -290px;"><u>KWITANSI</u></p>
+          <p style="text-align: center; font-weight: bold; margin-top: -20px; margin-right: -290px;">RECEIPT</p>
+        </div>
+        <div class="col-4 mt-4">
+          <small style="margin-left: -80px;">{{ detailInvoiceData.invoice_no }}</small>
+        </div>
       </div>
-      <table border="1">
-        <thead>
-          <slot name="columns">
-            <tr style="background-color: #F0F8FF;">
-              <th style="text-align:center; font-size: 13px;">NO</th>
-              <th style="text-align:center; font-size: 13px;">Surat Jalan No</th>
-              <th style="text-align:center; font-size: 13px;">Tgl Surat Jalan</th>
-              <th style="text-align:center; font-size: 14px;" v-if="detailInvoiceData.prod_class == 'Slitting'">Qty</th>
-              <th style="text-align:center; font-size: 14px;" v-if="detailInvoiceData.prod_class == 'Tolling'">Btg</th>
-              <th style="text-align:center; font-size: 13px;">TONASE (Kg)</th>
-              <template v-if="detailInvoiceData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' " >
-                <th style="text-align:center; font-size: 13px;">Rate</th>
-                <th style="text-align:center; font-size: 13px;">Jumlah</th>
-              </template>
-              <th></th>
-              <th style="display: none;"></th>
-            </tr>
-          </slot>
-        </thead>
-        <<!-- tbody>
-          <tr v-for="(row, i) in tableSJ.data" :key="i">
-            <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-            <td style="font-size: 13px; text-align: center;">{{ row.surat_jalan_no }}</td>
-            <td style="font-size: 13px; text-align: center;">{{ row.tgl_sj }}</td>
-            <td style="font-size: 13px; text-align: center;">{{ convertRp(row.btg) }}</td>
-            <td style="font-size: 13px; text-align: center;">{{ convertRp(row.tonase) }}</td>
-            <template v-if="detailInvoiceData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' " >
-              <td style="font-size: 13px; text-align: center; border-bottom: none;">{{ convertRp(row.rate) }}</td>
-              <td style="font-size: 13px; text-align: center; border-bottom: none;">{{ convertRp(row.jumlah) }}</td>
-            </template>
-            <td style="text-align: center;"><i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i></td>
-            <td style="display: none;"></td>
-          </tr>
-          <tr>
-            <td style="text-align: center; font-size: 13px;" colspan="3">Total</td>
-            <td style="text-align: center; font-size: 13px;">{{ convertRp(totalQty) }}</td>
-            <td style="text-align: center; font-size: 13px;">{{ convertRp(totalTonase) }}</td>
-            <td></td>
-            <td style="text-align: center; font-size: 13px;" v-if="detailInvoiceData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' ">{{ convertRp(totalJmlh) }}</td>
-            <td style="display: none;"></td>
-          </tr> -->
-        </tbody>
-      </table>
+      
+      <hr style="height: 2px; background: black;">
+      <p>Sudah terima dari &nbsp;&nbsp; : &nbsp;  {{ detailInvoiceData.client_name }} <hr style="margin-top: -20px; background: black; height: 0.5px;"><br></p>
+      <p style="margin-top: -70px;">Received from</p>
+      <p>
+        Jumlah uang &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : &nbsp;  <input style="border: 1px solid white; background: transparent;" size="100" placeholder="Terbilang ..." @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.jumlah_uang"></input> <hr style="margin-top: -20px; background: black; height: 0.3px;"><br>
+      </p>
+      <p style="margin-top: -70px;">The amount of</p>
+      <p>Untuk pembayaran &nbsp;: &nbsp;   <hr style="margin-top: -20px; background: black; height: 0.1px;"><br></p>
+      <p style="margin-top: -70px;">Paymet for</p>
+      <hr style="height: 2px; background: black;">
+
+      <p style="font-weight: bold; margin-left: 100px;"><u>Rp. {{ convertRp(Number(totalAmount + ppn).toFixed(0)) }}</u></p>
+
+      <div class="row">
+        <div class="col-8">
+          <table class="table table-sm table-bordered mt-5">
+            <tbody>
+              <tr>
+                <td>
+                  Perhatian diminta dengan hormat Pembayaran dilakukan dengan giro bilyet A/N. PT Buana Centra Karya, Bank Syariah Indonesia, Cabang Cilegon, AC. 7149876938
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <small>
+            Catatan : Penyerahan kwitansi ini belum berarti pembayaran
+              telah diterima 
+          </small>
+        </div>
+        <div class="col-4" style="margin-top: -50px;">
+          <div style="width: 100%;">
+            <div style="text-align: center;">
+              <p style="text-align: center; margin-top: 70px"></p>
+              <p style="text-align: center; margin-top: -15px;">Cilegon, {{ moment(detailInvoiceData.invoice_date).locale('id').format('LL') }}</p>
+              <p style="text-align: center; margin-bottom: 60px; margin-top: -15px;">PT. BUANA CENTRA KARYA</p>
+            </div>
+          </div>
+          <div style="width: 100%;">
+            <div style="">
+              <p style="text-align: center;"><input style="border: 1px solid white; text-align: center; border-bottom: 1px solid black;" value="Robinand"></p>
+              <p style="text-align: center; margin-top: -15px;"><input style="border: 1px solid white; text-align: center;" value="Direktur"></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </card>
 
   </div>
@@ -254,19 +272,8 @@
         detailInvoiceData: {},
         totalTonase: '',
         totalQty: '',
-        totalJmlh: '',
-        dataBA : {
-          nama: '',
-          jabatan: '',
-          surat_jalan_no: '',
-          ppn: '',
-          nama_penerima: '',
-          jabatan_penerima: '',
-          nama_mengetahui: '',
-          jabatan_mengetahui: '',
-          nama_menyetujui: '',
-          jabatan_menyetujui: '',
-        }
+        totalAmount: '',
+        ppn: '',
       }
     },
     mounted(){
@@ -278,6 +285,10 @@
         let context = this;               
         Api(context, invoice.showInvoice(context.$route.params.invoice_no)).onSuccess(function(response) {    
             context.detailInvoiceData = response.data.data.data;
+            context.tableMDLSJ.data   = response.data.data.dataSJMdl;
+            context.table.data        = response.data.data.dataSJTbl;
+            context.totalAmount       = response.data.data.totalAmount;
+            context.ppn               = response.data.data.ppn;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.detailInvoiceData = '';
@@ -285,65 +296,62 @@
         })
         .call()
       },
-      // updateBA(news_no){
-      //   let api     = null;
-      //   let context = this;
-      //   api = Api(context, news.updateBA(news_no, {
-      //       nama: context.dataBA.nama,
-      //       jabatan: context.dataBA.jabatan,
-      //       ppn: context.dataBA.ppn,
+      addSJ() {
+          this.form.add   = true;
+          this.form.show  = true;
+          this.form.title = "Add Surat Jalan";
+      },
+      saveSJ(id, type){
+        let api = null;
+        let context = this;
+        let formData = new FormData(); 
 
-      //       nama_penerima: context.dataBA.nama_penerima,
-      //       jabatan_penerima: context.dataBA.jabatan_penerima,
-      //       nama_mengetahui: context.dataBA.nama_mengetahui,
-      //       jabatan_mengetahui: context.dataBA.jabatan_mengetahui,
-      //       nama_menyetujui: context.dataBA.nama_menyetujui,
-      //       jabatan_menyetujui: context.dataBA.jabatan_menyetujui,
-      //     }));
-      //   api.onSuccess(function(response) {
-      //       context.notifyVue(response.data.message, 'top', 'right', 'info')
-      //   }).onError(function(error) { 
-      //       context.notifyVue('Update Failed', 'top', 'right', 'danger')
-      //   }).onFinish(function() {  
-      //   })
-      //   .call();
-      // },
-      // addSJ() {
-      //     this.form.add   = true;
-      //     this.form.show  = true;
-      //     this.form.title = "Add Surat Jalan";
-      // },
-      // saveSJ(surat_jalan_no){
-      //   let api = null;
-      //   let context = this;
-      //   let formData = new FormData(); 
+        formData.append('id', id);
+        formData.append('type', type);
+        formData.append('invoice_no', context.detailInvoiceData.invoice_no);
 
-      //   formData.append('job_no', context.detailInvoiceData.job_no);
-      //   formData.append('news_no', context.detailInvoiceData.news_no);
-      //   formData.append('surat_jalan_no', surat_jalan_no);
+        api = Api(context, invoice.addSJ(formData));
+        api.onSuccess(function(response) {
+            context.notifyVue((context.formTitle === 'Add Material') ? 'Data Berhasil di Simpan' : 'Data Berhasil di Update', 'top', 'right', 'info')
+        }).onError(function(error) {                    
+            context.notifyVue((context.formTitle === 'Add Material') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
+        }).onFinish(function() {  
+            context.get();
+        })
+        .call();
+      },
+      remove(id) {
+          var r = confirm("Anda yakin ingin menghapus data ini ?");
+          if (r == true) {
+            let context = this;
 
-      //   api = Api(context, news.addSJ(formData));
-      //   api.onSuccess(function(response) {
-      //       context.notifyVue((context.formTitle === 'Add SJ') ? 'Data Berhasil di Simpan' : 'Data Berhasil di Update', 'top', 'right', 'info')
-      //   }).onError(function(error) {                    
-      //       context.notifyVue((context.formTitle === 'Add SJ') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
-      //   }).onFinish(function() {
-      //       // context.$refs.autocomplete.clearInput()
-      //       context.get();
-      //   })
-      //   .call();
-      // },
-      // remove(id) {
-      //     var r = confirm("Anda yakin ingin menghapus data ini ?");
-      //     if (r == true) {
-      //       let context = this;
+            Api(context, news.deleteSJ(id)).onSuccess(function(response) {
+                context.get();
+                context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
+            }).call();
+          }
+      },
+      updateInv(invoice_no){
+        let api     = null;
+        let context = this;
 
-      //       Api(context, news.deleteSJ(id)).onSuccess(function(response) {
-      //           context.get();
-      //           context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
-      //       }).call();
-      //     }
-      // },
+        api = Api(context, invoice.updateInv({
+            invoice_no: context.detailInvoiceData.invoice_no,
+            due_date: context.detailInvoiceData.due_date,
+            an_bank: context.detailInvoiceData.an_bank,
+            no_rek: context.detailInvoiceData.no_rek,
+            bank: context.detailInvoiceData.bank,
+            cabang: context.detailInvoiceData.cabang,
+            jumlah_uang: context.detailInvoiceData.jumlah_uang,
+          }));
+        api.onSuccess(function(response) {
+            context.notifyVue(response.data.message, 'top', 'right', 'info')
+        }).onError(function(error) { 
+            context.notifyVue('Update Failed', 'top', 'right', 'danger')
+        }).onFinish(function() {  
+        })
+        .call();
+      },
 
 
       convertRp(bilangan) {
