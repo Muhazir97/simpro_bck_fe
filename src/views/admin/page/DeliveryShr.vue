@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/delivery?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&packing_list_no='+search.packing_list_no+'&packing_date='+search.packing_date+'&weight='+search.weight+'&qty='+search.qty+'&size='+search.size+'&date='+search.date+'&deliv_type='+search.deliv_type+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/delivery?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&client_addres='+search.client_addres+'&packing_list_no='+search.packing_list_no+'&packing_date='+search.packing_date+'&weight='+search.weight+'&qty='+search.qty+'&size='+search.size+'&date='+search.date+'&invoice_status='+search.invoice_status+'&deliv_type='+search.deliv_type+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -35,14 +35,14 @@
                       <th>JOB NO</th>
                       <th>PO NO</th>
                       <th>CLIENT</th>
-                      <th>PROD CLASS</th>
                       <th>SURAT JALAN NO</th>
                       <th>DATE</th>
                       <th>WEIGHT</th>
                       <th>QTY</th>
                       <!-- <th>SIZE</th> -->
                       <!-- <th>Created At</th> -->
-                      <th>Created By</th>
+                      <!-- <th>Created By</th> -->
+                      <th>Invoice No</th>
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -58,16 +58,20 @@
                       <small><label class="badge badge-warning">{{row.po_no}}</label></small>
                     </td>
                     <td style="font-size: 13px;">{{row.client_name}}</td>
-                    <td style="font-size: 13px;">{{row.prod_class}}</td>
                     <td style="font-size: 13px;">
                       <label class="badge badge-info" style="cursor: pointer;" @click="detailDelivery(row.packing_list_no)">{{row.packing_list_no}}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.packing_date}}</td>
+                    <td style="font-size: 13px;">{{ moment(row.packing_date).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">{{convertRp(row.weight)}}</td>
                     <td style="font-size: 13px;">{{convertRp(row.qty)}}</td>
                     <!-- <td style="font-size: 13px;">{{row.size}}</td> -->
                     <!-- <td style="font-size: 13px;">{{row.created_at}}</td> -->
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <!-- <td style="font-size: 13px;">{{row.created_by}}</td> -->
+                    <td style="font-size: 15px;">
+                      <router-link :to="/detail-invoice/+row.invoice_no">
+                        <label class="badge badge-dark text-white" style="cursor: pointer;">{{row.invoice_no}}</label>
+                      </router-link>
+                    </td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -80,7 +84,7 @@
               </table>
             </div>
             <template slot="footer">
-              <div class="float-left">TOTAL : {{table.data.length}}</div>
+              <div class="float-left">TOTAL : {{table.data.length}}, TOTAL WEIGHT : {{ convertRp(totalWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -121,21 +125,6 @@
                     placeholder="Date"
                     v-model="deliveryData.packing_date">
               </base-input>
-              <!-- <base-input type="number"
-                    label="Weight"
-                    placeholder="Weight"
-                    v-model="deliveryData.weight">
-              </base-input>
-              <base-input type="number"
-                    label="Qty"
-                    placeholder="Qty"
-                    v-model="deliveryData.qty">
-              </base-input> -->
-              <!-- <base-input type="text"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="deliveryData.size">
-              </base-input> -->
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
@@ -217,6 +206,19 @@
                       </base-input>
                   </div>
               </div>
+              <div class="form-group">
+                <label>Status Invoice</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.invoice_status">
+                  <option selected>Select Status</option>
+                  <option value="INVOICE">INVOICE</option>
+                  <option value="NOT YET INVOICE">NOT YET INVOICE</option>
+                </select>
+              </div>
+              <base-input type="text"
+                    label="Client Addres"
+                    placeholder="Client Addres"
+                    v-model="search.client_addres">
+              </base-input>
 
              </div>
              <template slot="footer">
@@ -266,6 +268,7 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  var moment = require('moment');
   
   export default {
     components: {
@@ -276,6 +279,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,
@@ -301,11 +305,13 @@
             show: false
         },
         deliveryData: {}, 
+        totalWeight: '',
         storageUrl : config.storageUrl,
         loadTimeout: null,
         search: {
           job_no: '',
           client_name: '',
+          client_addres: '',
           po_no: '',
           packing_list_no: '',
           packing_date: '',
@@ -313,6 +319,7 @@
           qty: '',
           size: '',
           date: '',
+          invoice_status: '',
           deliv_type: 'SHEARING',
         },        
         apiUrl :config.apiUrl,
@@ -327,9 +334,10 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, delivery.index({job_no: context.search.job_no, client_name: context.search.client_name, po_no: context.search.po_no, packing_list_no: context.search.packing_list_no, packing_date: context.search.packing_date, weight: context.search.weight, qty: context.search.qty, size: context.search.size, date: context.search.date, deliv_type: context.search.deliv_type, page: context.pagination.page})).onSuccess(function(response) {    
+        Api(context, delivery.index({job_no: context.search.job_no, client_name: context.search.client_name, client_addres: context.search.client_addres, po_no: context.search.po_no, packing_list_no: context.search.packing_list_no, packing_date: context.search.packing_date, weight: context.search.weight, qty: context.search.qty, size: context.search.size, date: context.search.date, invoice_status: context.search.invoice_status, deliv_type: context.search.deliv_type, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
+            context.totalWeight           = response.data.data.totalWeight;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -348,6 +356,7 @@
           this.form.show    = true;
           this.form.title   = "Add Data";
           this.deliveryData = {}
+          this.defaultDate()
           this.$refs.autocompleteJO.clearInput()
       },
       edit(id) {
@@ -468,6 +477,14 @@
       changePage(page){
         this.pagination.page = page;
         this.get();
+      },
+      defaultDate(){
+        var date  = new Date();
+        var day   = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+
+        this.deliveryData.packing_date = today
       },
 
       // ================= Autocomplete ============

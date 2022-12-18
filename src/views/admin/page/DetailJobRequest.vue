@@ -5,7 +5,7 @@
       <!-- ========================= JOB INFORMATION ===============================  -->
       <div class="text-center display-4">
         <span style="margin-bottom: -20px; font-weight: bold;">DETAIL JOB ORDER</span>
-        <a :href="apiUrl+'print-job-order/'+jobRequestData.job_no" target="_BLANK">
+        <a v-if="role != 'Visitor'" :href="apiUrl+'print-job-order/'+jobRequestData.job_no" target="_BLANK">
           <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
             <i class="fa fa-file-text"></i> Print
           </button>
@@ -134,7 +134,7 @@
                     <div class="col-4">
                     </div>
                     <div class="col-4">
-                      <button type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()">
+                      <button v-if="role != 'Visitor'" type="submit" class="btn btn-sm btn-dark btn-fill float-right" @click="addMaterial()">
                         Add New
                       </button>
                     </div>
@@ -223,7 +223,7 @@
                                 <th>Thick</th>
                                 <th>Width</th>
                                 <th>Weight</th>
-                                <th>Scrap</th>
+                                <th v-if="role != 'Visitor'">Scrap</th>
                                 <th>Remark</th>
                                 <th style="display: none" ></th>
                               </tr>
@@ -237,9 +237,14 @@
                               </td>
                               <td style="font-size: 15px;">{{ moment(row.slitting_date).locale('id').format('L') }}</td>
                               <td style="font-size: 15px;">
-                                <router-link :to="/detail-lap-prod-slit/+row.process_program">
-                                  <label style="cursor: pointer;" class="badge badge-info">{{row.process_program}}</label>
-                                </router-link>
+                                <div v-if="role != 'Visitor'">
+                                  <router-link :to="/detail-lap-prod-slit/+row.process_program">
+                                    <label style="cursor: pointer;" class="badge badge-info">{{row.process_program}}</label>
+                                  </router-link>
+                                </div>
+                                <div v-if="role == 'Visitor'">
+                                  <label class="badge badge-info">{{row.process_program}}</label>
+                                </div>
                               </td>
                               <td style="font-size: 15px;">
                                 <label class="badge badge-danger">{{row.coil_no}}</label>
@@ -248,7 +253,7 @@
                               <td style="font-size: 15px;">{{row.thick}}</td>
                               <td style="font-size: 15px;">{{ convertRp(row.width) }}</td>
                               <td style="font-size: 15px;">{{ convertRp(row.weight) }}</td>
-                              <td style="font-size: 15px;">{{row.scrap_all}}</td>
+                              <td style="font-size: 15px;" v-if="role != 'Visitor'">{{row.scrap_all}}</td>
                               <td style="font-size: 15px;">{{row.remark_all}}</td>
                               <td style="display: none" ></td>
                             </tr>
@@ -285,12 +290,19 @@
                             <tr v-for="(row, i) in tableDataProd.data" :key="i">
                               <td style="font-size: 15px;">{{ i + 1 }}</td>
                               <td style="font-size: 15px;">
-                                <label class="badge badge-info" style="cursor: pointer;">
-                                  <router-link :to="/detail-report-tolling/+row.date"><span style="color: gray;">{{ moment(row.date).locale('id').format('L') }}</span></router-link>
-                                </label>
+                                <div v-if="role != 'Visitor'">
+                                  <label class="badge badge-info" style="cursor: pointer;">
+                                    <router-link :to="/detail-report-tolling/+row.date"><span style="color: gray;">{{ moment(row.date).locale('id').format('L') }}</span></router-link>
+                                  </label>
+                                </div>
+                                <div v-if="role == 'Visitor'">
+                                  <label class="badge badge-info">
+                                    <span style="color: gray;">{{ moment(row.date).locale('id').format('L') }}</span>
+                                  </label>
+                                </div>
                               </td>
                               <td style="font-size: 15px;">
-                                <label class="badge badge-primary" style="cursor: pointer;" @click="detailOP(row.op_no)">{{row.op_no}}</label>
+                                <label class="badge badge-primary" @click="detailOP(row.op_no)">{{row.op_no}}</label>
                               </td>
                               <td>
                                 <label class="badge badge-danger">{{row.coil_no }} {{ row.pack}}</label>
@@ -405,9 +417,14 @@
                           <tr v-for="(row, i) in tableDataDeliv.data" :key="i">
                             <td style="font-size: 15px;">{{ i + 1 }}</td>
                             <td style="font-size: 15px;">
-                              <router-link :to="/detail-delivery/+row.packing_list_no">
-                                <label class="badge badge-info" style="cursor: pointer;">{{row.packing_list_no}}</label>
-                              </router-link>
+                              <div v-if="role != 'Visitor'">
+                                <router-link :to="/detail-delivery/+row.packing_list_no">
+                                  <label class="badge badge-info" style="cursor: pointer;">{{row.packing_list_no}}</label>
+                                </router-link>
+                              </div>
+                              <div v-if="role == 'Visitor'">
+                                <label class="badge badge-info">{{row.packing_list_no}}</label>
+                              </div>
                             </td>
                             <td style="font-size: 15px;">{{convertRp(row.weight)}}</td>
                             <td style="font-size: 15px;">{{convertRp(row.qty)}}</td>
@@ -425,6 +442,66 @@
                       </table>
                     </div>
                 </tab-pane>
+
+                <!-- ===================== Invoice ==================== -->
+                <tab-pane key="pesanan">
+                  <template slot="title">
+                      <i class="ni ni-single-copy-04 mr-2"></i>Invoice
+                  </template>
+                  <div class="row">
+                    <div class="col-4">
+                      <h5 class="card-title float-left">Invoice</h5>
+                    </div>
+                    <div class="col-4">
+                    </div>
+                    <div class="col-4">
+                      <!-- <button type="submit" class="btn btn-sm btn-success btn-fill float-right" @click="addMaterial()">
+                        <i class="fa fa-file-text"></i> Print
+                      </button> -->
+                    </div>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead style="font-size: 13px;">
+                        <slot name="columns">
+                          <tr style="background-color: #F0F8FF;">
+                            <th>No</th>
+                            <th>Invoice No</th>
+                            <th>Date</th>
+                            <th>Weight</th>
+                            <th>Amount</th>
+                            <th style="display: none" ></th>
+                          </tr>
+                        </slot>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(row, i) in tableDataInv.data" :key="i">
+                          <td style="font-size: 15px;">{{ i + 1 }}</td>
+                          <td style="font-size: 15px;">
+                            <div v-if="role != 'Visitor'">
+                              <router-link :to="/detail-invoice/+row.invoice_no">
+                                <label class="badge badge-info" style="cursor: pointer;">{{row.invoice_no}}</label>
+                              </router-link>
+                            </div>
+                            <div v-if="role == 'Visitor'">
+                              <label class="badge badge-info">{{row.invoice_no}}</label>
+                            </div>
+                          </td>
+                          <td style="font-size: 15px;">{{moment(row.invoice_date).locale('id').format('L')}}</td>
+                          <td style="font-size: 15px;">{{convertRp(row.invoice_weight)}}</td>
+                          <td style="font-size: 15px;">{{convertRp(row.invoice_amount)}}</td>
+                          <td style="display: none" ></td>
+                        </tr>
+                        <tr>
+                          <td colspan="3" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                          <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightInv) }}</td>
+                          <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalAmountInv) }}</td>
+                          <td style="display: none" ></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </tab-pane>
             </card>
         </tabs>
     </div>
@@ -436,6 +513,7 @@
                 style="border-radius: 10px; border: 1px solid #DCDCDC; color: #808080;"
                 @change="updateJobNote(jobRequestData.job_no)"
                 v-model="update_job_note"
+                :disabled="role == 'Visitor'" 
                 >
       </textarea>
 
@@ -538,22 +616,30 @@
         tableDataDeliv: {
           data: []
         },
+        tableDataInv: {
+          data: []
+        },
         attachRequest: {},
         update_job_note: '',
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
         tokenApi : '',
+        role: '',
+
         material_code: '',
         totalWeight: '',
         totalWeightProd: '',
         totalWeightScrap: '',
         totalWeightDeliv: '',
         totalQtyDeliv: '',
+        totalWeightInv: '',
+        totalAmountInv: '',
       }
     },
     mounted(){
       this.getHeader();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
+      this.role     = localStorage.getItem('role');
     },
     methods: {
       getHeader() {
@@ -587,6 +673,9 @@
             context.tableDataDeliv.data = response.data.data.dataDelivery;
             context.totalWeightDeliv    = response.data.data.totalWeightDeliv;
             context.totalQtyDeliv       = response.data.data.totalQtyDeliv;
+            context.tableDataInv.data   = response.data.data.dataInvoice;
+            context.totalWeightInv      = response.data.data.totalWeightInv;
+            context.totalAmountInv      = response.data.data.totalAmountInv;
             console.log(response.data.data.data)
         })
         .onError(function(error) {                    

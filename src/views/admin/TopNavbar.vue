@@ -27,13 +27,18 @@
               <i class="nc-icon nc-support-17 text-dark"></i> <span class="text-dark"> Slit Coil </span>
             </router-link><br>
           </div>
-          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception'">
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception' || role == 'Visitor'">
             <router-link  to="/job-request" @click.native="modalMenu.show = false">
               <i class="nc-icon nc-notes text-dark"></i> <span class="text-dark"> Job Order </span>
             </router-link><br>
           </div>
+          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception'">
+            <router-link  to="/produksi" @click.native="modalMenu.show = false">
+              <i class="nc-icon nc-settings-gear-64 text-dark"></i> <span class="text-dark"> Produksi </span>
+            </router-link><br>
+          </div>
 
-          <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
+          <!-- <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Reception' || role == 'Delivery'">
             <base-dropdown tag="li">
               <template slot="title">
                 <i class="nc-icon nc-settings-90 text-dark"></i> <span class="text-dark"> Produksi </span> <i class="fa fa-angle-right fa-xs text-dark" aria-hidden="true"></i>
@@ -48,7 +53,7 @@
                 <i class="nc-icon nc-preferences-circle-rotate text-white"></i> <span class="text-white"> Shearing </span>
               </sidebar-link>
             </base-dropdown>
-          </div>
+          </div> -->
 
           <div style="margin-bottom: 20px" v-if="role == 'Admin' || role == 'Delivery'">
             <router-link  to="/delivery" @click.native="modalMenu.show = false">

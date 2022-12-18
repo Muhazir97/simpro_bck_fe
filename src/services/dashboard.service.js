@@ -1,7 +1,7 @@
 import Service from '@/helpers/service'
 
 export default {
-    countTask() {
-        return Service().get('dashboard/count-task');
+    countTask(params) {
+        return Service().get('dashboard/count-task', {params});
     },
 }

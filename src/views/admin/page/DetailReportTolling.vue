@@ -71,9 +71,9 @@
                 <td style="font-size: 12px; text-align: center;">{{ row.grade}}</td>
                 <td style="font-size: 12px; text-align: center;">{{ row.thick}}</td>
                 <td style="font-size: 12px; text-align: center;">{{ convertRp(row.width) }}</td>
-                <td style="font-size: 12px; text-align: center;">{{ convertRp(row.weight) }}</td>
+                <td style="font-size: 12px; text-align: center;"><input type="input" @change="updateLength(row.id, row.length, row.weight)" v-model="row.weight" size="5"></td>
                 <td style="font-size: 12px; text-align: center;">{{ row.od}}</td>
-                <td style="font-size: 12px; text-align: center;"><input type="input" @change="updateLength(row.id, row.length)" v-model="row.length" size="5"></td>
+                <td style="font-size: 12px; text-align: center;"><input type="input" @change="updateLength(row.id, row.length, row.length)" v-model="row.length" size="5"></td>
                 <td style="font-size: 12px; text-align: center;">{{ convertRp(row.qty)}} </td>
                 <td style="font-size: 12px; text-align: center;">{{ convertRp(row.prod_weight) }}</td>
                 <td style="font-size: 12px; text-align: center;">{{ convertRp(row.remark_b) }}</td>
@@ -175,11 +175,12 @@
         })
         .call();
       },
-      updateLength(id, length){
+      updateLength(id, length, weight){
         let api     = null;
         let context = this;
 
         api = Api(context, reportTolling.updateLength(id, {
+            weight : weight,
             length : length,
         }));
         api.onSuccess(function(response) {

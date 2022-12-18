@@ -24,20 +24,20 @@
           {{ detailInvoiceData.client_addres }}
         </div>
         <div class="col-4">
-          <p style="margin-right: 90px;">No.</p>
-          <p style="margin-top: -15px; margin-right: 90px;">Tanggal / Date</p>
-          <p style="margin-top: -15px; margin-right: 90px;">Syarat Pembayaran / Term</p>
-          <p style="margin-top: -15px; margin-right: 90px;">Mata Uang / Currency</p>
-          <p style="margin-top: -15px; margin-right: 90px;">Jatuh Tempo / Due Date</p>
-          <p style="margin-top: -15px; margin-right: 90px;">PO/SPK</p>
-          <p style="margin-top: -15px; margin-right: 90px;">Job No</p>
+          <p style="margin-left: 60px;">No.</p>
+          <p style="margin-top: -15px; margin-left: 60px;">Tanggal / Date</p>
+          <p style="margin-top: -15px; margin-left: 60px;">Syarat Pembayaran / Term</p>
+          <p style="margin-top: -15px; margin-left: 60px;">Mata Uang / Currency</p>
+          <p style="margin-top: -15px; margin-left: 60px;">Jatuh Tempo / Due Date</p>
+          <p style="margin-top: -15px; margin-left: 60px;">PO/SPK</p>
+          <p style="margin-top: -15px; margin-left: 60px;">Job No</p>
         </div>
         <div class="col-4" style="margin-left: -50px;">
           <p>: &nbsp; {{ detailInvoiceData.invoice_no }} </p> 
           <p style="margin-top: -15px;">: &nbsp; {{ moment(detailInvoiceData.invoice_date).locale('id').format('LL') }} </p>
           <p style="margin-top: -15px;">: &nbsp; COD </p>
           <p style="margin-top: -15px;">: &nbsp; IDR </p>
-          <p style="margin-top: -15px;">: &nbsp; {{ moment(moment().add(detailInvoiceData.due_date, 'days')).locale('id').format('LL') }} <input style="border: 1px solid white; text-align: center;" size="1" placeholder="Days" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.due_date"></input> Days</p> 
+          <p style="margin-top: -15px;">: &nbsp; {{ moment(moment(detailInvoiceData.invoice_date).add(detailInvoiceData.due_date, 'days')).locale('id').format('LL') }} <input style="border: 1px solid white; text-align: center;" size="1" placeholder="Days" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.due_date"></input> Days</p> 
           <p style="margin-top: -15px;">: &nbsp; {{ detailInvoiceData.po_no }} </p>
           <p style="margin-top: -15px;">: &nbsp; {{ detailInvoiceData.job_no }} </p>
         </div>
@@ -51,33 +51,49 @@
         <thead>
           <slot name="columns">
             <tr style="background-color: #F0F8FF;">
-              <th style="text-align:center; font-size: 14px;">KUANTITAS / Quantity Kg</th>
+              <th style="text-align:center; font-size: 14px;">No</th>
+              <th style="text-align:center; font-size: 14px;">KUANTITAS <br> / Quantity Kg</th>
               <th style="text-align:center; font-size: 14px;">Keterangan / Description <br> JENIS & UKURAN / (Type & Size)</th>
-              <th style="text-align:center; font-size: 14px;">HARGA PER UNIT / Unit Price</th>
+              <th style="text-align:center; font-size: 14px;">HARGA PER UNIT <br> / Unit Price</th>
               <th style="text-align:center; font-size: 14px;">JUMLAH / Amount</th>
+              <th style="text-align:center; font-size: 14px;">SJ NO</th>
               <th></th>
             </tr>
           </slot>
         </thead>
         <tbody>
           <tr v-for="(row, i) in table.data" :key="i">
+            <td style="text-align: right;">{{ i + 1 }}</td>
             <td style="text-align: right;">{{ convertRp(row.weight) }}</td>
             <td v-if="detailInvoiceData.prod_class === 'Slitting'">Slitting Coil</td>
             <td v-if="detailInvoiceData.prod_class === 'Tolling'">{{ row.type_pipa }}</td>
             <td v-if="detailInvoiceData.prod_class === 'Shearing'">Shearing Coil</td>
             <td style="text-align: right;">{{ convertRp(row.rate) }}</td>
             <td style="text-align: right;">{{ convertRp(row.weight * row.rate) }}</td>
+            <td style="text-align: right;">{{ row.packing_list_no }}</td>
             <td style="text-align: center;">
-              <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveSJ(row.id, 'delete')"></i>
+              <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveSJ('delete', row.id)"></i>
             </td>
           </tr>
           <tr>
-            <td style="text-align: right;" colspan="2" class="align-middle"></td>
-            <td style="text-align: right;"> Sub Total <br> PPN 11 % <br><b style="margin-top: 80px;">Total</b></td>
+            <td style="text-align: right;" class="align-middle">Total</td>
+            <td style="text-align: right;" class="align-middle">
+              <input style="border: 1px solid white; background: transparent; text-align: right;" size="10" placeholder="Total Weight" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.invoice_weight"></input>
+            </td>
+            <td style="text-align: right; margin-top: 100px;" colspan="2">
+              Sub Total <br>
+              <template v-if="detailInvoiceData.ppn == 1">PPN 11 % <br></template>
+              <p style="margin-top: 15px; font-weight: bold;">Total</p>
+            </td>
             <td style="text-align: right; margin-top: 100px;">
               {{ convertRp(totalAmount) }} <br>
-              {{ convertRp(Number(ppn).toFixed(0)) }} <br>
-              <hr style="margin-top: -1px; background: black; height: 1px;"><p style="margin-top: -15px; font-weight: bold;"> {{ convertRp(Number(totalAmount + ppn).toFixed(0)) }}</p>
+              <template v-if="detailInvoiceData.ppn == 1">{{ convertRp(Number(ppn).toFixed(0)) }} <br></template>
+              <hr style="margin-top: -1px; background: black; height: 1px;">
+              <p style="margin-top: -20px; font-weight: bold;"> {{ convertRp(Number(totalAmount + ppn).toFixed(0)) }}</p>
+            </td>
+            <td style="text-align: center;">
+              <span style="font-size: 11px;">PPN</span> <br>
+              <input style="margin-top: -10;" type="checkbox" @change="updateInv(detailInvoiceData.invoice_no)" v-model="detailInvoiceData.ppn">
             </td>
             <td style="display: none;"></td>
           </tr>
@@ -147,6 +163,8 @@
            <template slot="header">
               <h5 class="modal-title" id="exampleModalLabel">{{form.title}}</h5>
            </template>
+            TOTAL : {{tableMDLSJ.data.length}}
+            <i class="fa fa-check-circle text-primary fa-lg ml-2" style="cursor: pointer;" aria-hidden="true" title="Add SJ All" @click="saveSJ('all')"></i>
            <div>
               <table class="table">
                 <thead>
@@ -163,7 +181,7 @@
                     <td style="font-size: 13px;">{{row.packing_list_no}}</td>
                     <td style="font-size: 13px;">{{row.packing_date}}</td>
                     <td>
-                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add SJ" style="cursor: pointer;" @click="saveSJ(row.id, 'add')"></i>
+                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add SJ" style="cursor: pointer;" @click="saveSJ('add', row.id, )"></i>
                     </td>
                   </tr>
                 </tbody>
@@ -301,7 +319,7 @@
           this.form.show  = true;
           this.form.title = "Add Surat Jalan";
       },
-      saveSJ(id, type){
+      saveSJ(type, id){
         let api = null;
         let context = this;
         let formData = new FormData(); 
@@ -309,6 +327,7 @@
         formData.append('id', id);
         formData.append('type', type);
         formData.append('invoice_no', context.detailInvoiceData.invoice_no);
+        formData.append('job_no', context.detailInvoiceData.job_no);
 
         api = Api(context, invoice.addSJ(formData));
         api.onSuccess(function(response) {
@@ -343,12 +362,15 @@
             bank: context.detailInvoiceData.bank,
             cabang: context.detailInvoiceData.cabang,
             jumlah_uang: context.detailInvoiceData.jumlah_uang,
+            invoice_weight: context.detailInvoiceData.invoice_weight,
+            ppn: context.detailInvoiceData.ppn,
           }));
         api.onSuccess(function(response) {
             context.notifyVue(response.data.message, 'top', 'right', 'info')
         }).onError(function(error) { 
             context.notifyVue('Update Failed', 'top', 'right', 'danger')
         }).onFinish(function() {  
+            context.get();
         })
         .call();
       },

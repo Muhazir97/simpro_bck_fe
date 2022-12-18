@@ -7,4 +7,8 @@ export default {
     getRkpProduksiMonth(params) {
         return Service().get('produksi/get-rkp-produksi-month', {params});
     },
+    getRkpProduksiDaily(params) {
+        return Service().get('produksi/get-rkp-produksi-daily', {params});
+    },
+
 }

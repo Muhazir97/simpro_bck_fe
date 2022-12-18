@@ -220,22 +220,22 @@
           <tbody>
             <tr>
               <td style="font-size: 13px; text-align: center;">
-                <textarea style="border: 1px solid white; padding-right: -30; resize: none; text-align:center;" rows="18" cols="2" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.no_seq"></textarea>
+                <textarea style="border: 1px solid white; padding-right: -30; resize: none; width: 100%; text-align:center;" rows="20" cols="2" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.no_seq"></textarea>
               </td>
               <td style="font-size: 13px; text-align: center;">
-                <textarea style="border: 1px solid white; resize: none; text-align:center;" rows="18" cols="15" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.coil_no_all"></textarea>
+                <textarea style="border: 1px solid white; resize: none; width: 100%; text-align:center;" rows="20" cols="13" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.coil_no_all"></textarea>
               </td>
               <td style="font-size: 13px; text-align: center;">
-                <textarea style="border: 1px solid white; resize: none;" rows="18" cols="25" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.spesifikasi"></textarea>
+                <textarea style="border: 1px solid white; resize: none; width: 100%;" rows="20" cols="22" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.spesifikasi"></textarea>
               </td>
               <td style="font-size: 13px; text-align: center;">
-                <textarea style="border: 1px solid white; resize: none; text-align:center;" rows="18" cols="5" @change="updateSJ(detailDeliveryData.packing_list_no), countQtyShr()" v-model="dataSJ.jumlah"></textarea>
+                <textarea style="border: 1px solid white; resize: none; width: 100%; text-align:center;" rows="20" cols="5" @change="updateSJ(detailDeliveryData.packing_list_no), countQtyShr()" v-model="dataSJ.jumlah"></textarea>
               </td>
               <td style="font-size: 13px; text-align: center;">
-                <textarea style="border: 1px solid white; resize: none; text-align:center;" rows="18" cols="5" @change="updateSJ(detailDeliveryData.packing_list_no), countWeight()" v-model="dataSJ.tonase"></textarea>
+                <textarea style="border: 1px solid white; resize: none; width: 100%; text-align:center;" rows="20" cols="5" @change="updateSJ(detailDeliveryData.packing_list_no), countWeight()" v-model="dataSJ.tonase"></textarea>
               </td>
               <td style="font-size: 13px; text-align: center;">
-                <textarea style="border: 1px solid white; resize: none;" rows="18" cols="20" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.deskripsi"></textarea>
+                <textarea style="border: 1px solid white; resize: none; width: 100%;" rows="20" cols="15" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.deskripsi"></textarea>
               </td>
               <td style="display: none" ></td>
             </tr>
@@ -504,7 +504,7 @@
             packing_list_no: this.detailDeliveryData.packing_list_no
         }));
         api.onSuccess(function(response) {
-            context.notifyVue(response.data.message, 'top', 'right', 'info')
+            context.notifyVue('Updated Successfully', 'top', 'right', 'info')
         }).onError(function(error) { 
             context.notifyVue('Update Failed', 'top', 'right', 'danger')
         }).onFinish(function() {

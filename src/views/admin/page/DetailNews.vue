@@ -57,115 +57,25 @@
           </slot>
         </thead>
         <tbody>
-          <tr v-for="(row, i) in tableSJ.data" :key="i">
-            <!-- ============== NO ========= -->
-            <template v-if="i == 0">
-              <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-            </template>
-            <!-- jika i bukan sama dengan 0 -->
-            <template v-else>
-              <!-- jika coil no sekarang dan sebelumnya sama -->
-              <template v-if="row.nama_brg == tableSJ.data[i - 1].nama_brg">
-                <!-- jika i sama dengan 0 -->
-                <template v-if="i == 0">
-                  <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-                </template>
-                <!-- jika i bukan sama dengan 0 -->
-                <template v-else>
-
-                </template>
-              </template>
-              <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-              <template v-else>
-                <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-              </template>
-            </template>
-
-            <!-- ============== NAMA BARANG ========= -->
-            <template v-if="i == 0">
-              <td style="font-size: 13px; text-align: center;">{{ row.nama_brg }}</td>
-            </template>
-            <!-- jika i bukan sama dengan 0 -->
-            <template v-else>
-              <!-- jika coil no sekarang dan sebelumnya sama -->
-              <template v-if="row.nama_brg == tableSJ.data[i - 1].nama_brg">
-                <!-- jika i sama dengan 0 -->
-                <template v-if="i == 0">
-                  <td style="font-size: 13px; text-align: center;">{{ row.nama_brg }}</td>
-                </template>
-                <!-- jika i bukan sama dengan 0 -->
-                <template v-else>
-
-                </template>
-              </template>
-              <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-              <template v-else>
-                <td style="font-size: 13px; text-align: center;">{{ row.nama_brg }}</td>
-              </template>
-            </template>
-
-            <!-- ============== QTY / BTG ========= -->
-            <template v-if="i == 0">
-              <td style="font-size: 13px; text-align: center;">{{ row.btg }}</td>
-            </template>
-            <!-- jika i bukan sama dengan 0 -->
-            <template v-else>
-              <!-- jika coil no sekarang dan sebelumnya sama -->
-              <template v-if="row.nama_brg == tableSJ.data[i - 1].nama_brg">
-                <!-- jika i sama dengan 0 -->
-                <template v-if="i == 0">
-                  <td style="font-size: 13px; text-align: center;">{{ row.btg }}</td>
-                </template>
-                <!-- jika i bukan sama dengan 0 -->
-                <template v-else>
-
-                </template>
-              </template>
-              <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-              <template v-else>
-                <td style="font-size: 13px; text-align: center;">{{ row.btg }}</td>
-              </template>
-            </template>
-
-            <!-- ============== TONASE ========= -->
-            <template v-if="i == 0">
-              <td style="font-size: 13px; text-align: center;">{{ row.tonase }}</td>
-            </template>
-            <!-- jika i bukan sama dengan 0 -->
-            <template v-else>
-              <!-- jika coil no sekarang dan sebelumnya sama -->
-              <template v-if="row.nama_brg == tableSJ.data[i - 1].nama_brg">
-                <!-- jika i sama dengan 0 -->
-                <template v-if="i == 0">
-                  <td style="font-size: 13px; text-align: center;">{{ row.tonase }}</td>
-                </template>
-                <!-- jika i bukan sama dengan 0 -->
-                <template v-else>
-
-                </template>
-              </template>
-              <!-- jika coil no sekarang dan sebelumnya tidak sama -->
-              <template v-else>
-                <td style="font-size: 13px; text-align: center;">{{ row.tonase }}</td>
-              </template>
-            </template>
-              
+          <tr v-for="(row, i) in tableMerg.data" :key="i">
+            <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+            <td style="font-size: 13px; text-align: center;">{{ row.nama_brg }}</td>
+            <td style="font-size: 13px; text-align: center;">{{ convertRp(row.btg) }}</td>
+            <td style="font-size: 13px; text-align: center;">{{ convertRp(row.tonase) }}</td>
             <template v-if="detailNewsData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' " >
               <td style="font-size: 13px; text-align: center; border-bottom: none;">{{ convertRp(row.rate) }}</td>
               <td style="font-size: 13px; text-align: center; border-bottom: none;">{{ convertRp(row.jumlah) }}</td>
             </template>
-
-            <!-- ============== TEMPAT PENYERAHAN ========= -->
             <template v-if="i == 0">
-              <td :rowspan="tableSJ.data.length" style="font-size: 13px; text-align: center;">Gudang PT. BCK</td>
+              <td :rowspan="tableMerg.data.length" style="font-size: 13px; text-align: center;">Gudang PT. BCK</td>
             </template>
           </tr>
           <tr>
-            <td style="text-align: center;" colspan="1">Total</td>
-            <td style="text-align: center;">{{ convertRp(totalQty) }}</td>
-            <td style="text-align: center;">{{ convertRp(totalTonase) }}</td>
-            <td></td>
-            <td v-if="detailNewsData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' ">{{ convertRp(totalJmlh) }}</td>
+            <td style="text-align: center; font-size: 13px" colspan="2">Total</td>
+            <td style="text-align: center; font-size: 13px">{{ convertRp(totalQty) }}</td>
+            <td style="text-align: center; font-size: 13px">{{ convertRp(totalTonase) }}</td>
+            <td v-if="detailNewsData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' "></td>
+            <td style="text-align: center; font-size: 13px" v-if="detailNewsData.client_name !== 'PT. KRAKATAU PIPE INDUSTRIES' ">{{ convertRp(totalJmlh) }}</td>
             <td style="display: none;"></td>
           </tr>
         </tbody>
@@ -411,6 +321,9 @@
         tableSJ: {
           data: []
         },
+        tableMerg: {
+          data: []
+        },
         tableMDLSJ: {
           data: []
         },
@@ -446,6 +359,7 @@
             context.detailNewsData  = response.data.data.data;
             context.dataBA          = response.data.data.data;
             context.tableSJ.data    = response.data.data.newsSJ;
+            context.tableMerg.data  = response.data.data.mergSJ;
             context.tableMDLSJ.data = response.data.data.dataDeliverySJ;
             context.totalTonase     = response.data.data.totalTonase;
             context.totalQty        = response.data.data.totalQty;

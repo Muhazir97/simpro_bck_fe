@@ -5,7 +5,15 @@
       <!-- ========================= INFORMATION ===============================  -->
       <div class="table-responsive mb-2">
         <div class="text-center display-4">
+          <button type="submit" class="btn btn-sm btn-danger mt-3 btn-fill float-left" @click="remove()">
+            <i class="fa fa-trash-o"></i> Delete All
+          </button>
           <span style="margin-bottom: -20px; font-weight: bold;">DETAIL LAP PROD SLITTING</span>
+          <a :href="apiUrl+'print-detail-lap-prod_slitting?process_program='+detailProdSlittingData.process_program" target="_BLANK">
+            <button type="submit" class="btn btn-sm btn-warning btn-fill float-right ml-2">
+              <i class="fa fa-file-text"></i> Print
+            </button>
+          </a>
           <a :href="apiUrl+'report-excel/report-slitting?process_program='+detailProdSlittingData.process_program" target="_BLANK">
             <button type="submit" class="btn btn-sm btn-success btn-fill float-right">
               <i class="fa fa-download"></i> Download
@@ -31,7 +39,7 @@
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CREATED BY</td>
                     <td> {{ detailProdSlittingData.created_by }} </td>
                     <td style="background-color: #F0F8FF; font-weight: bold;" width="150">CREATED AT</td>
-                    <td> {{ detailProdSlittingData.created_at }} </td>
+                    <td> {{ moment(detailProdSlittingData.created_at).locale('id').format('L') }} </td>
                     <td style="display: none"></td>
                 </tr>
             </tbody>
@@ -71,7 +79,7 @@
                <td>
                 <!-- jika i sama dengan 0 -->
                 <div v-if="i == 0">
-                  {{ row.slitting_date }}
+                  {{ moment(row.slitting_date).locale('id').format('L') }}
                 </div>
                 <!-- jika i bukan sama dengan 0 -->
                 <div v-else>
@@ -79,7 +87,7 @@
                   <div v-if="row.coil_no == table.data[i - 1].coil_no">
                     <!-- jika i sama dengan 0 -->
                     <div v-if="i == 0">
-                      {{ row.slitting_date }}
+                      {{ moment(row.slitting_date).locale('id').format('L') }}
                     </div>
                     <!-- jika i bukan sama dengan 0 -->
                     <div v-else>
@@ -88,7 +96,7 @@
                   </div>
                   <!-- jika coil no sekarang dan sebelumnya tidak sama -->
                   <div v-else>
-                    {{ row.slitting_date }}
+                    {{ moment(row.slitting_date).locale('id').format('L') }}
                   </div>
                 </div>
               </td>
@@ -258,15 +266,17 @@
   import Api from '@/helpers/api';
   import Autocomplete from 'vue2-autocomplete-js'
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  var moment = require('moment');
 
   export default {
     components: {
       Card,
       Modal,
-      Autocomplete
+      Autocomplete,
     },
     data () {
       return {
+        moment:moment,
         detailProdSlittingData: {},
         table: {
           data: [],
@@ -298,6 +308,18 @@
              
         })
         .call()        
+      },
+      remove() {
+        var r = confirm("Anda yakin ingin menghapus data ini ?");
+        if (r == true) {
+          let context = this;
+
+          Api(context, reportSlitting.deleteProgramNo(context.$route.params.process_program)).onSuccess(function(response) {
+              context.get();
+              context.notifyVue('Data Berhasil di Hapus', 'top', 'right', 'info')
+              context.$router.go(-1)
+          }).call();
+        }
       },
       convertRp(bilangan) {
         if (bilangan) {

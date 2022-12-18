@@ -382,6 +382,28 @@
                       @change="filesChange">
                 </base-input>
                 <small>Download Template<a :href="storageUrl+'template_import/Template Import Report Slitting.xlsx'"> Import Report Slitting</a></small>
+                <div class="mt-2" v-if="tabelError.data.length !== 0 ">
+                  <table>
+                    <thead>
+                      <slot name="columns">
+                        <tr style="background-color: #F0F8FF;">
+                          <th style="font-size: 13px; text-align: center;">Column</th>
+                          <th style="font-size: 13px; text-align: center;">Error</th>
+                          <th style="font-size: 13px; text-align: center;">Row</th>
+                          <th style="font-size: 13px; text-align: center;">Values</th>
+                        </tr>
+                      </slot>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(row, i) in tabelError.data" :key="i">
+                        <td style="font-size: 13px; text-align: center;">{{ row.attribute }}</td>
+                        <td style="font-size: 13px; text-align: center;">{{ row.errors }}</td>
+                        <td style="font-size: 13px; text-align: center;">{{ row.row }}</td>
+                        <td style="font-size: 13px; text-align: center;">{{ row.values }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
@@ -430,6 +452,9 @@
         },
         onLoading: false,
         table: {
+          data: []
+        },
+        tabelError: {
           data: []
         },
         totalMaterialWeight: '',
@@ -526,6 +551,7 @@
         this.formImport.add   = true;
         this.formImport.show  = true;
         this.formImport.title = "Import Laporan Produksi Slitting";
+        this.tabelError.data  = [];
       },
       filesChange(e) {
           this.dataImport = e.target.files[0];
@@ -549,6 +575,7 @@
             context.formImport.show = false;
             context.notifyVue('Data Berhasil di Import', 'top', 'right', 'info')
         }).onError(function(error) {    
+            context.tabelError.data = error.response.data.data;
             context.notifyVue('Data Gagal di Import' , 'top', 'right', 'danger')
             context.onLoading = false;                
         }).onFinish(function() {  

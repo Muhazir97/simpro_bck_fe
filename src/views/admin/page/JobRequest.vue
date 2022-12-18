@@ -3,8 +3,8 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/job-request?job_no='+search.job_no+'&job_name='+search.job_name+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
-          <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
+          <a v-if="role != 'Visitor'" :href="apiUrl+'report-excel/job-request?job_no='+search.job_no+'&job_name='+search.job_name+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <button v-if="role != 'Visitor'" class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
           <card class="strpied-tabled-with-hover shadow"
                 body-classes="table-full-width table-responsive"
           >
@@ -19,7 +19,7 @@
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
                     Filter
                   </button>
-                  <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()">
+                  <button v-if="role != 'Visitor'" type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()">
                     Add New
                   </button>
                 </div>
@@ -39,8 +39,8 @@
                       <th>Weight</th>
                       <th>Rate /KG</th>
                       <th>Status</th>
-                      <th>Created At</th>
-                      <th>Created By</th>
+                      <th v-if="role != 'Visitor'">Created At</th>
+                      <th v-if="role != 'Visitor'">Created By</th>
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -62,13 +62,13 @@
                     <td>
                       <label class="badge badge-danger">{{row.job_status}}</label>
                     </td>
-                    <td style="font-size: 13px;">{{row.created_at}}</td>
-                    <td style="font-size: 13px;">{{row.created_by}}</td>
+                    <td style="font-size: 13px;" v-if="role != 'Visitor'">{{ moment(row.created_at).locale('id').format('L') }}</td>
+                    <td style="font-size: 13px;" v-if="role != 'Visitor'">{{row.created_by}}</td>
                     <td>
-                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
+                      <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit" v-if="role != 'Visitor'"></i>
                     </td>
                     <td>
-                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)"></i>
+                      <i class="fa fa-trash-o" aria-hidden="true" title="Hapus" style="cursor: pointer;" @click="remove(row.id)" v-if="role != 'Visitor'"></i>
                     </td>
                     <td style="display: none" ></td>
                   </tr>
@@ -76,6 +76,7 @@
               </table>
             </div>
             <template slot="footer">
+              <div class="float-left">TOTAL : {{table.data.length}} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -175,7 +176,7 @@
                     placeholder="Po Number"
                     v-model="search.po_no">
               </base-input>
-              <div class="form-group">
+              <div class="form-group" v-if="role != 'Visitor'">
                 <label>Client</label><br>
                 <autocomplete 
                   ref="autocomplete"
@@ -263,6 +264,7 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  var moment = require('moment');
   
   export default {
     components: {
@@ -273,6 +275,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,

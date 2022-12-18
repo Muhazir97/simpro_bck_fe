@@ -38,4 +38,7 @@ export default {
     getLapProdSlit(params) {
         return Service().get('report-slitting/get-lap-prod-slit', {params});
     },
+    deleteProgramNo(process_program) {
+        return Service().post('report-slitting/delete-program-no/'+process_program);
+    },
 }

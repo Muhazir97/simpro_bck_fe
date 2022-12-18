@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/invoice?job_no='+search.job_no+'&po_no='+search.po_no+'&invoice_no='+search.invoice_no+'&invoice_weight='+search.invoice_weight+'&invoice_qty='+search.invoice_qty+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/invoice?job_no='+search.job_no+'&po_no='+search.po_no+'&invoice_no='+search.invoice_no+'&invoice_weight='+search.invoice_weight+'&invoice_qty='+search.invoice_qty+'&date='+search.date+'&ppn_status='+search.ppn_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -83,6 +83,7 @@
               </table>
             </div>
             <template slot="footer">
+              <div class="float-left">TOTAL : {{table.data.length}}, TOTAL WEIGHT : {{ convertRp(totalWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
@@ -193,6 +194,14 @@
                     placeholder="Invoice Qty"
                     v-model="search.invoice_qty">
               </base-input>
+              <div class="form-group">
+                <label>Status PPN</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.ppn_status">
+                  <option selected>Select Status</option>
+                  <option value="INCLUDE PPN">INCLUDE PPN</option>
+                  <option value="NOT INCLUDE PPN">NOT INCLUDE PPN</option>
+                </select>
+              </div>
 
              </div>
              <template slot="footer">
@@ -278,6 +287,7 @@
             title: "Import Invoice",
             show: false
         },
+        totalWeight: '',
         invoiceData: {}, 
         storageUrl : config.storageUrl,
         loadTimeout: null,
@@ -288,6 +298,7 @@
           invoice_weight: '',
           invoice_qty: '',
           date: '',
+          ppn_status: '',
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
@@ -300,8 +311,9 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, invoice.index({job_no: context.search.job_no, po_no: context.search.po_no, invoice_no: context.search.invoice_no, invoice_weight: context.search.invoice_weight, invoice_qty: context.search.invoice_qty, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
-            context.table.data = response.data.data.data.data;
+        Api(context, invoice.index({job_no: context.search.job_no, po_no: context.search.po_no, invoice_no: context.search.invoice_no, invoice_weight: context.search.invoice_weight, invoice_qty: context.search.invoice_qty, date: context.search.date, ppn_status: context.search.ppn_status, page: context.pagination.page})).onSuccess(function(response) {    
+            context.table.data  = response.data.data.data.data;
+            context.totalWeight = response.data.data.totalWeight;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
@@ -316,10 +328,11 @@
         this.pagination.page  = 1 ;
       },
       create() {
-          this.form.add   = true;
-          this.form.show  = true;
-          this.form.title = "Add Data";
-          this.invoiceData   = {}
+          this.form.add    = true;
+          this.form.show   = true;
+          this.form.title  = "Add Data";
+          this.invoiceData = {}
+          this.defaultDate()
           this.$refs.autocomplete.clearInput()
       },
       edit(id) {
@@ -434,6 +447,14 @@
       changePage(page){
         this.pagination.page = page;
         this.get();
+      },
+      defaultDate(){
+        var date  = new Date();
+        var day   = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+
+        this.invoiceData.invoice_date = today
       },
 
       // ================= Autocomplete ============

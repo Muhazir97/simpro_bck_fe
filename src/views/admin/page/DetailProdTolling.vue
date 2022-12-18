@@ -314,7 +314,8 @@
               <td style="font-size: 13px; text-align: center;">{{ row.no_urut_coil }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.coil_no}}</td>
               <td style="font-size: 13px; text-align: left;">{{ row.pack}}</td>
-              <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="row.spec != null">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="row.spec == null">{{ row.spec_slit }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.weight) }}</td>
@@ -340,7 +341,8 @@
               <td style="font-size: 13px; text-align: center;"></td>
               <td style="font-size: 13px; text-align: center;">{{ row.coil_no }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.pack }}</td>
-              <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="row.spec != null">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="row.spec == null">{{ row.spec_slit }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.weight) }}</td>
@@ -529,7 +531,8 @@
               <td style="font-size: 13px; text-align: center;"></td>
               <td style="font-size: 13px; text-align: center;">{{ row.coil_no}}</td>
               <td style="font-size: 13px; text-align: left;">{{ row.pack}}</td>
-              <td style="font-size: 13px; text-align: center;">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="row.spec != null">{{ row.spec }}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="row.spec == null">{{ row.spec_slit }}</td>
               <td style="font-size: 13px; text-align: center;">{{ row.thick}}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.width) }}</td>
               <td style="font-size: 13px; text-align: center;">{{ convertRp(row.weight) }}</td>
@@ -766,7 +769,7 @@
             context.tableDBB.data          = response.data.data.data;
             context.tableDBB.dataAvailable = response.data.data.dataAvailable;
 
-            context.dataOP.material_spesifikasi  = response.data.data.data[0].spec
+            context.dataOP.material_spesifikasi  = (response.data.data.data[0].spec != null) ? response.data.data.data[0].spec : response.data.data.data[0].spec_slit
             context.dataOP.material_lebar        = response.data.data.data[0].width
             context.dataOP.material_tebal        = response.data.data.data[0].thick
             context.dataOP.material_jumlah_skelp = response.data.data.data.length

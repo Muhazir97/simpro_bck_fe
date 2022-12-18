@@ -18,7 +18,7 @@
         <i class="nc-icon nc-support-17"></i>
         <p>Slit Coil</p>
       </sidebar-link>
-      <sidebar-link to="/job-request" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception'">
+      <sidebar-link to="/job-request" v-if="role == 'Admin' || role == 'Delivery' || role == 'Reception' ||  role == 'Visitor'">
         <i class="nc-icon nc-notes"></i>
         <p>Job Order</p>
       </sidebar-link>

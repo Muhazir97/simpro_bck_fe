@@ -313,6 +313,7 @@
           this.form.show  = true;
           this.form.title = "Add Data";
           this.newsData   = {}
+          this.defaultDate()
           this.$refs.autocomplete.clearInput()
       },
       edit(id) {
@@ -432,6 +433,14 @@
       changePage(page){
         this.pagination.page = page;
         this.get();
+      },
+      defaultDate(){
+        var date  = new Date();
+        var day   = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+
+        this.newsData.news_date = today
       },
 
       // ================= Autocomplete ============

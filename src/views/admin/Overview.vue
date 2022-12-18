@@ -138,19 +138,21 @@
             >
               <template slot="header">
                 <div class="row">
-                  <div class="col-2">
+                  <div class="col-3">
                     <!-- <h4 class="card-title">Payment</h4> -->
-                    <!-- <p class="card-category">Here is a subtitle for this table</p> -->
                   </div>
-                  <div class="col-8 text-center">
+                  <div class="col-6 text-center">
                     <h5 class="card-title font-weight-bold">STEEL CENTER</h5><br>
                     <h5 class="card-title font-weight-bold" style="margin-top: -20px;">PROJECT MONITORING - {{new Date().getFullYear()}}</h5><br>
                     <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
                   </div>
-                  <div class="col-2">
-                    <!-- <button type="submit" class="btn btn-sm btn-info btn-fill float-right" @click="create()">
-                      Add New
-                    </button> -->
+                  <div class="col-3 mt-4">
+                    <a :href="apiUrl+'print-project-monitoring?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&date='+search.date+''" target="_BLANK">
+                      <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                        <i class="fa fa-file-text"></i> Print
+                      </button>
+                    </a>
+                    <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()"><i class="fa fa-filter"></i> Filter</button>
                   </div>
                 </div>
               </template>
@@ -223,6 +225,72 @@
             </card>
         </div>
 
+        <!-- MODAL FILTER -->
+        <div>
+           <modal :show.sync="formFilter.show">
+             <template slot="header">
+                <h5 class="modal-title" id="exampleModalLabel">{{formFilter.title}}</h5>
+             </template>
+             <div>
+              <base-input type="text"
+                    label="Job No"
+                    placeholder="Job No"
+                    v-model="search.job_no">
+              </base-input>
+              <base-input type="text"
+                    label="Po Number"
+                    placeholder="Po Number"
+                    v-model="search.po_no">
+              </base-input>
+              <div class="form-group">
+                <label>Client</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilter"
+                  placeholder="Choose Client"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
+              <div class="form-group">
+                <label>Production Classification</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.prod_class">
+                  <option selected>Select Classification</option>
+                  <option value="Slitting">Slitting</option>
+                  <option value="Tolling">Tolling</option>
+                  <option value="Shearing">Shearing</option>
+                </select>
+              </div>
+              <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
+              <div class="input-daterange datepicker row align-items-center">
+                  <div class="col">
+                      <base-input addon-left-icon="ni ni-calendar-grid-58">
+                          <flat-picker slot-scope="{focus, blur}"
+                                       @on-open="focus"
+                                       @on-close="blur"
+                                       :config="{allowInput: true, mode: 'range',}"
+                                       class="form-control datepicker"
+                                       v-model="search.date">
+                          </flat-picker>
+                      </base-input>
+                  </div>
+              </div>
+
+             </div>
+             <template slot="footer">
+                 <base-button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilter.show = false">Close</base-button>
+                 <base-button type="primary" class="btn btn-sm btn-info btn-fill" @click="countTask(), formFilter.show = false">Filter</base-button>
+             </template>
+           </modal>
+        </div>
+
+        <!-- JIKA ROLE NYA VISITOR -->
         <div v-if="role == 'Visitor'">
           <p class="display-2 img-fluid floating align-content-center">Hallo Selamat Datang di Simpro BCK</p>
           <img src="img/theme/Hello.png" class="img-fluid floating">
@@ -238,6 +306,7 @@
   </div>
 </template>
 <script>
+  import Modal from '@/components/Modal.vue'
   import ChartCard from '@/components/Cards/ChartCard.vue'
   import StatsCard from '@/components/Cards/StatsCard.vue'
   import LTable from '@/components/Table.vue'
@@ -246,33 +315,55 @@
   import dashboard from '@/services/dashboard.service';
   import config from '@/configs/config';
   var moment = require('moment');
+  import Autocomplete from 'vue2-autocomplete-js'
+  require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  import flatPicker from "vue-flatpickr-component";
+  import "flatpickr/dist/flatpickr.css";
+
 
   export default {
     components: {
       LTable,
       ChartCard,
       StatsCard,
-      LineChart
+      LineChart,
+      Modal,
+      Autocomplete,
+      flatPicker,
     },
     data () {
       return {
         moment:moment,
+        formFilter: {
+          add: true,
+          title: "Filter",
+          show: false
+        },
         count_task : [],
         apiUrl :config.apiUrl,
         role: '',
         table: {
           data: []
         },
+        search: {
+          job_no: '',
+          po_no: '',
+          client_name: '',
+          prod_class: '',
+          date: '',
+        },
+        tokenApi : '',
      }
     },
     mounted(){
       this.countTask();
       this.role = localStorage.getItem('role');
+      this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
       countTask(){
         let context = this;               
-        Api(context, dashboard.countTask()).onSuccess(function(response) {    
+        Api(context, dashboard.countTask({job_no: context.search.job_no, job_name: context.search.job_name, po_no: context.search.po_no, prod_class: context.search.prod_class, date: context.search.date})).onSuccess(function(response) {    
             context.count_task = response.data.data;
             context.table.data = response.data.data.report;
         }).onError(function(error) {                    
@@ -281,6 +372,12 @@
             }
         })
         .call()
+      },
+      filter() {
+        this.formFilter.add   = true;
+        this.formFilter.show  = true;
+        this.formFilter.title = "Filter";
+        this.$refs.autocomplete.clearInput()
       },
       convertRp(bilangan) {
         if (bilangan) {
@@ -297,6 +394,16 @@
             return bilangan
           }
         }
+      },
+
+      // ================= Autocomplete ============
+      // AMBIL DATA YANG DI PILIH AC FILTER
+      getDataFilter(obj){
+        this.search.client_name = obj.client_name;
+      },
+      // AMBIL DATA DARI API AC
+      processJSON(json) {
+        return json.data
       },
     }
   }

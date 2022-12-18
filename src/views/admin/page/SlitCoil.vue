@@ -74,7 +74,7 @@
               </stats-card>
             </div>
 
-            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PENDING', get()">
+            <div class="col-xl-4 col-md-6" style="cursor:pointer;" @click="search.material_status = 'PENDING', get()" v-if="role != 'Visitor'">
               <stats-card class="shadow">
                 <div slot="header" class="icon-warning">
                   <i class="nc-icon nc-time-alarm text-warning"></i>
@@ -149,9 +149,9 @@
                     </td>
                     <td style="font-size: 13px;">{{row.po_no}}</td>
                     <td style="font-size: 13px;">
-                      <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK">
-                        <small><label class="badge badge-primary" style="cursor: pointer;">{{row.travel_latter_no}}</label></small>
-                      </a>
+                      <!-- <a :href="apiUrl+'print-mother-coil/'+row.travel_latter_no" target="_BLANK"> -->
+                        <small><label class="badge badge-primary">{{row.travel_latter_no}}</label></small>
+                      <!-- </a> -->
                     </td>
                     <td style="font-size: 13px;">{{ moment(row.slitting_date).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">{{row.owner}}</td>
@@ -167,7 +167,12 @@
                       <small><label class="badge badge-warning">{{ row.slit_from }}</label></small>
                     </td>
                     <td style="font-size: 13px;">
-                      <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
+                      <div v-if="role != 'Visitor'">
+                        <label class="badge badge-info" style="cursor: pointer;" @click="detail(row.process_program)">{{row.process_program}}</label>
+                      </div>
+                      <div v-if="role == 'Visitor'">
+                        <label class="badge badge-info">{{row.process_program}}</label>
+                      </div>
                     </td>
                     <td style="font-size: 13px;">
                       <small><label class="badge badge-light">{{ row.op_no }}</label></small>
@@ -235,20 +240,20 @@
                 </autocomplete>
               </div>
               <base-input type="text"
-                    label="Entry No / Program No"
-                    placeholder="Entry No / Program No"
-                    v-model="slitCoilData.process_program">
+                    label="PO No"
+                    placeholder="PO No"
+                    v-model="slitCoilData.po_no">
               </base-input>
               <base-input type="text"
                     label="Coil No"
                     placeholder="Coil No"
                     v-model="slitCoilData.coil_no">
               </base-input>              
-              <!-- <base-input type="text"
+              <base-input type="text"
                     label="Pack"
                     placeholder="Pack"
                     v-model="slitCoilData.pack">
-              </base-input> -->
+              </base-input>
               <base-input type="number"
                     label="Thick"
                     placeholder="Thick"
@@ -264,11 +269,11 @@
                     placeholder="Weight"
                     v-model="slitCoilData.weight">
               </base-input>
-              <!-- <base-input type="text"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="slitCoilData.size">
-              </base-input> -->
+              <base-input type="text"
+                    label="Spec"
+                    placeholder="Spec"
+                    v-model="slitCoilData.spec">
+              </base-input>
               <base-input type="text"
                     label="Description"
                     placeholder="Description"
@@ -414,6 +419,28 @@
                       @change="filesChange">
                 </base-input>
                 <small>Download Template<a :href="storageUrl+'template_import/Template Import Slit Coil.xlsx'"> Import Slit Coil</a></small>
+                <div class="mt-2" v-if="tabelError.data.length !== 0 ">
+                  <table>
+                    <thead>
+                      <slot name="columns">
+                        <tr style="background-color: #F0F8FF;">
+                          <th style="font-size: 13px; text-align: center;">Column</th>
+                          <th style="font-size: 13px; text-align: center;">Error</th>
+                          <th style="font-size: 13px; text-align: center;">Row</th>
+                          <th style="font-size: 13px; text-align: center;">Values</th>
+                        </tr>
+                      </slot>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(row, i) in tabelError.data" :key="i">
+                        <td style="font-size: 13px; text-align: center;">{{ row.attribute }}</td>
+                        <td style="font-size: 13px; text-align: center;">{{ row.errors }}</td>
+                        <td style="font-size: 13px; text-align: center;">{{ row.row }}</td>
+                        <td style="font-size: 13px; text-align: center;">{{ row.values }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
              </div>
              <template slot="footer">
                  <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formImport.show = false">Close</button>
@@ -464,6 +491,9 @@
         },
         onLoading: false,
         table: {
+          data: []
+        },
+        tabelError: {
           data: []
         },
         totalMaterialWeight: '',
@@ -566,6 +596,7 @@
         this.formImport.add   = true;
         this.formImport.show  = true;
         this.formImport.title = "Import Slit Coil";
+        this.tabelError.data  = [];
       },
       filesChange(e) {
           this.dataImport = e.target.files[0];
@@ -588,7 +619,8 @@
             context.get();
             context.formImport.show = false;
             context.notifyVue('Data Berhasil di Import', 'top', 'right', 'info')
-        }).onError(function(error) {    
+        }).onError(function(error) {   
+            context.tabelError.data = error.response.data.data;  
             context.notifyVue('Data Gagal di Import' , 'top', 'right', 'danger')
             context.onLoading = false;                
         }).onFinish(function() {  
@@ -600,21 +632,21 @@
         let context = this;
         let formData = new FormData();
 
-        if (this.slitCoilData.owner != undefined && this.slitCoilData.process_program != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.slitting_date != undefined) {
+        if (this.slitCoilData.travel_latter_no != undefined && this.slitCoilData.owner != undefined && this.slitCoilData.coil_no != undefined && this.slitCoilData.pack != undefined && this.slitCoilData.slitting_date != undefined && this.slitCoilData.thick != undefined && this.slitCoilData.width != undefined && this.slitCoilData.weight != undefined && this.slitCoilData.spec != undefined) {
+          formData.append('po_no', (this.slitCoilData.po_no == undefined) ? '' : this.slitCoilData.po_no);
           formData.append('travel_latter_no', this.slitCoilData.travel_latter_no);
           formData.append('owner', this.slitCoilData.owner);
           formData.append('process_program', this.slitCoilData.process_program);
-          // formData.append('material_status', this.slitCoilData.material_status);
           formData.append('slitting_date', this.slitCoilData.slitting_date);
           formData.append('coil_no', this.slitCoilData.coil_no);
-          // formData.append('pack', (this.slitCoilData.pack == undefined) ? '' : this.slitCoilData.pack);
-          formData.append('thick', (this.slitCoilData.thick == undefined) ? '' : this.slitCoilData.thick);
-          formData.append('width', (this.slitCoilData.width == undefined) ? '' : this.slitCoilData.width);
-          formData.append('weight', (this.slitCoilData.weight == undefined) ? '' : this.slitCoilData.weight);
-          // formData.append('size', (this.slitCoilData.size == undefined) ? '' : this.slitCoilData.size);
+          formData.append('pack', this.slitCoilData.pack);
+          formData.append('thick', this.slitCoilData.thick);
+          formData.append('width', this.slitCoilData.width);
+          formData.append('weight', this.slitCoilData.weight);
+          formData.append('spec', this.slitCoilData.spec);
           formData.append('description', (this.slitCoilData.description == undefined) ? '' : this.slitCoilData.description);
         }else{
-          return alert('Owner, Entry No, Coil NO, Entry Date, Material Status Wajib Di Isi')
+          return alert('Date Entry Surat Jalan No, Owner, Coil NO, Pack, Thick, Width, Weight, Spec Wajib Di Isi')
         }
 
         if (context.form.title == 'Add Data') {
