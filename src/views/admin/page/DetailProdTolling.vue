@@ -903,7 +903,7 @@
         }
       },
       calculateJumlah(){
-        let yiel               = 0.94
+        let yiel               = 0.95
         let beratTotalMaterial = this.dataOP.material_berat_total
         let rumus              = 0.02466
         let tebalMaterial      = this.dataOP.material_tebal
@@ -916,7 +916,7 @@
         this.updatePT(this.detailProdTollingData.op_no)
       },
       calculateJumlah1(){
-        let yiel               = 0.94
+        let yiel               = 0.95
         let beratTotalMaterial = this.dataOP.material_berat_total
         let rumus              = 0.02466
         let tebalMaterial      = this.dataOP.material_tebal
@@ -929,7 +929,7 @@
         this.updatePT(this.detailProdTollingData.op_no)
       },
       calculateJumlah2(){
-        let yiel               = 0.94
+        let yiel               = 0.95
         let beratTotalMaterial = this.dataOP.material_berat_total
         let rumus              = 0.02466
         let tebalMaterial      = this.dataOP.material_tebal

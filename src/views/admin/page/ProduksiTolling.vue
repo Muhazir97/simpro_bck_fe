@@ -6,7 +6,7 @@
           <div class="row">
             <!-- TOMBOL EXPORT IMPORT -->
             <div class="col-6">
-              <a :href="apiUrl+'report-excel/prod-tolling?job_no='+search.job_no+'&client_name='+search.client_name+'&po_no='+search.po_no+'&op_no='+search.op_no+'&specification='+search.specification+'&line_machine='+search.line_machine+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+              <a :href="apiUrl+'report-excel/prod-tolling?job_no='+search.job_no+'&client_name='+search.client_name+'&po_no='+search.po_no+'&op_no='+search.op_no+'&specification='+search.specification+'&line_machine='+search.line_machine+'&nd='+search.nd+'&material_tebal='+search.material_tebal+'&date='+search.date+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
               <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
             </div>
             <!-- TOMBOL REPORT -->
@@ -49,6 +49,8 @@
                       <th v-if="role == 'Admin'">SPECIFICATION</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY OP</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT OP</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">ESTIMASI CUT OFF</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SLITED</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY DELIV</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT DELIV</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY SISA</th>
@@ -84,6 +86,10 @@
                     </td>
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       {{ +(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2) }}
+                    </td>
+                    <td></td>
+                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ convertRp(row.material_berat_total) }}
                     </td>
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       {{ convertRp(row.qty_deliv) }}
@@ -205,6 +211,16 @@
                     placeholder="Specification"
                     v-model="search.specification">
               </base-input>
+              <base-input type="text"
+                    label="ND (Inchi)"
+                    placeholder="ND (Inchi)"
+                    v-model="search.nd">
+              </base-input>
+              <base-input type="text"
+                    label="Tebal (mm)"
+                    placeholder="Tebal (mm)"
+                    v-model="search.material_tebal">
+              </base-input>
               <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
               <div class="input-daterange datepicker row align-items-center">
                   <div class="col">
@@ -313,6 +329,8 @@
           specification: '',
           line_machine: '',
           date: '',
+          nd: '',
+          material_tebal: '',
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
@@ -328,7 +346,7 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, produksiTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, specification: context.search.specification, line_machine: context.search.line_machine, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {  
+        Api(context, produksiTolling.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, op_no: context.search.op_no, specification: context.search.specification, line_machine: context.search.line_machine, date: context.search.date, nd: context.search.nd, material_tebal: context.search.material_tebal, page: context.pagination.page})).onSuccess(function(response) {  
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
         }).onError(function(error) {                    
