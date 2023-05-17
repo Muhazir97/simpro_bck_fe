@@ -116,6 +116,7 @@
       </div>
 
       <!-- ========================= MATERIAL ===============================  -->
+      <!-- TABLE FOR SLITTING -->
       <div class="table-responsive mb-4" v-if="detailDeliveryData.prod_class == 'Slitting'">
         <table border='1'>
           <thead>
@@ -126,6 +127,9 @@
               <th style="font-size: 13px; text-align: center;">JUMLAH</th>
               <th style="font-size: 13px; text-align: center;">BERAT</th>
               <th style="font-size: 13px; text-align: center;">SPECIFICATION</th>
+              <th style="font-size: 13px; text-align: center;">PROGRAM NO</th>
+              <th style="font-size: 13px; text-align: center;" v-if="detailDeliveryData.packing_list_no.includes('EXT')">SJ INT</th>
+              <th style="font-size: 13px; text-align: center;" v-if="detailDeliveryData.packing_list_no.includes('SPO')">JOB NO</th>
               <th style="font-size: 13px; text-align: center;"></th>
               <th style="display: none" ></th>
             </tr>
@@ -139,6 +143,9 @@
               <td style="font-size: 13px; text-align: center;">1</td>
               <td style="font-size: 13px; text-align: center;">{{convertRp(row.weight)}}</td>
               <td style="font-size: 13px; text-align: center;">{{row.dimension_spec}}</td>
+              <td style="font-size: 13px; text-align: center;">{{row.process_program}}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="detailDeliveryData.packing_list_no.includes('EXT')">{{row.from_sj_int}}</td>
+              <td style="font-size: 13px; text-align: center;" v-if="detailDeliveryData.packing_list_no.includes('SPO')">{{row.job_no}}</td>
               <td style="text-align:center;">
                 <i class="fa fa-times-circle" aria-hidden="true" title="Delete" style="cursor: pointer;" @click="saveMaterial('delete', row.id)"></i>
               </td>
@@ -204,6 +211,7 @@
         </table>
       </div>
 
+      <!-- TABLE FOR SHEARING -->
       <div class="table-responsive mb-4" v-if="detailDeliveryData.prod_class == 'Shearing'">
         <table border='1'>
           <thead>
@@ -309,32 +317,40 @@
 
             TOTAL : {{tableMatMdl.data.length}}
             <i class="fa fa-check-circle text-primary fa-lg ml-2" style="cursor: pointer;" aria-hidden="true" title="Add Material All" @click="saveMaterial('all')"></i>
+            <base-input 
+                  v-if="detailDeliveryData.packing_list_no.includes('SPO')"
+                  type="text"
+                  label="Search Thick"
+                  placeholder="Search Thick"
+                  v-model="search.thick"
+                  @change="getMaterialMdl()">
+            </base-input>
 
             <div class="scroll">
               <table class="table">
                 <thead>
                   <slot name="columns">
                     <tr style="background-color: #F0F8FF;">
+                      <th></th>
                       <th style="font-size: 13px;">Coil No</th>
                       <th style="font-size: 13px;">Pack</th>
                       <th style="font-size: 13px;">Thick</th>
                       <th style="font-size: 13px;">Width</th>
                       <th style="font-size: 13px;">Weight</th>
                       <!-- <th style="font-size: 13px;">Spec</th> -->
-                      <th></th>
                     </tr>
                   </slot>
                 </thead>
                 <tbody>
                   <tr v-for="(row, i) in tableMatMdl.data" :key="i">
+                    <td>
+                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id)"></i>
+                    </td>
                     <td style="font-size: 13px;">{{row.coil_no}}</td>
                     <td style="font-size: 13px;">{{row.pack}}</td>
                     <td style="font-size: 13px;">{{row.thick}}</td>
                     <td style="font-size: 13px;">{{row.width}}</td>
                     <td style="font-size: 13px;">{{row.weight}}</td>
-                    <td>
-                      <i class="fa fa-plus-square text-primary" aria-hidden="true" title="Add Material" style="cursor: pointer;" @click="saveMaterial('add', row.id)"></i>
-                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -411,6 +427,9 @@
         },
         getDes : '',
         process_program: '',
+        search: {
+          thick: '',
+        },
       }
     },
     mounted(){
@@ -577,7 +596,7 @@
       // ========================== KONSEP BARU FOR SLITTING ===============================
       getMaterialMdl() {
         let context = this;               
-        Api(context, delivery.getMaterialMdl({process_program: context.process_program, type_pengiriman: context.dataSJ.type_pengiriman})).onSuccess(function(response) {
+        Api(context, delivery.getMaterialMdl({process_program: context.process_program, type_pengiriman: context.dataSJ.type_pengiriman, surat_jalan_no: context.detailDeliveryData.packing_list_no, job_no: context.detailDeliveryData.job_no, thick: context.search.thick,})).onSuccess(function(response) {
             context.tableMatMdl.data = response.data.data;                   
         })
         .onError(function(error) {                    
@@ -594,7 +613,7 @@
             context.totalQty              = response.data.data.totalQty;                   
             context.totalWeight           = response.data.data.totalWeight;                   
             context.lp_no                 = response.data.data.lp_no;    
-            context.pagination.page_count = response.data.data.data.last_page         
+            context.pagination.page_count = response.data.data.data.last_page     
         })
         .onError(function(error) {                    
             context.tableMatTbl.data = []
@@ -624,6 +643,7 @@
           formData.append('process_program', context.process_program);
           formData.append('id', id);
           formData.append('job_no', this.detailDeliveryData.job_no);
+          formData.append('po_no', this.detailDeliveryData.po_no);
         }else{
           alert('Semua Field Wajib Di Isi')
         }

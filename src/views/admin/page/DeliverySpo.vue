@@ -13,7 +13,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-4">
-                  <h4 class="card-title">Delivery Slitting Int</h4>
+                  <h4 class="card-title">Delivery Sipo</h4>
                 </div>
                 <div class="col-4">
                 </div>
@@ -340,7 +340,7 @@
           size: '',
           date: '',
           invoice_status: '',
-          deliv_type: 'SLITTING INT',
+          deliv_type: 'SLITTING SPO',
         },        
         apiUrl :config.apiUrl,
         tokenApi : '',

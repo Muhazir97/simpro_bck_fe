@@ -52,23 +52,24 @@
                 <th colspan="8" style="background-color: #7FFF00; text-align:center; color: black; font-weight: bold;"><span style="margin-left: 250px;">Material Output</span></th>
                 <th style="display: none"></th>
             </tr>
-            <tr>
-                <th style="background-color: #7FFFD4; color: black;">No</th>
-                <th style="background-color: #7FFFD4; color: black;">Date</th>
-                <th style="background-color: #7FFFD4; color: black;">Coil No</th>
-                <th style="background-color: #7FFFD4; color: black;">Spec</th>
-                <th style="background-color: #7FFFD4; color: black;">Thick (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Width (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Weight (kg)</th>
+            <tr style="text-align: center;">
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">No</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Date</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Coil No</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Spec</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Thick (mm)</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Width (mm)</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Weight (kg)</th>
 
-                <th style="background-color: #7FFFD4; color: black;">No</th>
-                <th style="background-color: #7FFFD4; color: black;">Coil No</th>
-                <th style="background-color: #7FFFD4; color: black;">Pack</th>
-                <th style="background-color: #7FFFD4; color: black;">Thick (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Width (mm)</th>
-                <th style="background-color: #7FFFD4; color: black;">Weight (kg)</th>
-                <th style="background-color: #7FFFD4; color: black;">Scrap</th>
-                <th style="background-color: #7FFFD4; color: black;">Remark</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">No</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Coil No</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Pack</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Thick (mm)</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Width (mm)</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Weight (kg)</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Scrap</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Remark</th>
+                <th style="background-color: #7FFFD4; color: black; text-align: center;">Surat Jalan No</th>
                 <th style="display: none"></th>
             </tr>
           </thead>
@@ -234,6 +235,7 @@
               <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
               <td style="font-size: 13px;">{{ convertRp(row.scrap_all) }}</td>
               <td style="font-size: 13px;">{{ row.remark_all }}</td>
+              <td :style="(row.travel_latter_no) ? 'font-size: 12px; width: 160px; background-color:#7CFC00;' : 'font-size: 12px; width: 160px; background-color: #FF6347;' ">{{ row.travel_latter_no }}</td>
               <td style="display: none"></td>
             </tr>
             <tr>

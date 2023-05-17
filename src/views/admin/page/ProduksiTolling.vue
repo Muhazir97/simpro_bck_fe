@@ -21,10 +21,15 @@
           <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
             <template slot="header">
               <div class="row">
-                <div class="col-4">
+                <div class="col-6">
                   <h4 class="card-title">Prod Tolling Pipa</h4>
                 </div>
-                <div class="col-4">
+                <div class="col-2">
+                  <select style="margin-right: 900px;" class="form-select form-control" v-model="search.line_machine" @change="get()">
+                    <option selected>Select Line</option>
+                    <option value="TM 60">TM 60</option>
+                    <option value="TM 114">TM 114</option>
+                  </select>
                 </div>
                 <div class="col-4">
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
@@ -47,14 +52,15 @@
                       <th>OP NO</th>
                       <th v-if="role == 'Admin'">LINE MACHINE</th>
                       <th v-if="role == 'Admin'">SPECIFICATION</th>
+                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SLITED</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY OP</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT OP</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">ESTIMASI CUT OFF</th>
-                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SLITED</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY DELIV</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT DELIV</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY SISA</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SISA</th>
+                      <th>CREATED AT</th>
                       <th></th>
                       <th></th>
                       <th style="display: none" ></th>
@@ -79,30 +85,41 @@
                       {{row.line_machine}}
                     </td>
                     <td style="font-size: 13px;" v-if="role == 'Admin'">
-                      {{ row.specification }}  {{ row.produksi_nd }} x {{ row.material_tebal }} x {{ row.produksi_panjang1 }}
+                      {{ row.specification }}  {{ row.produksi_nd }} x {{ row.material_tebal }} x {{ row.produksi_panjang1 }} <span v-if="row.produksi_panjang"> & {{ row.produksi_panjang }}</span> <span v-if="row.produksi_panjang2"> & {{ row.produksi_panjang2 }}</span>
                     </td>
+                    <!-- WEIGHT SLITED -->
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ convertRp(row.material_berat_total) }}
+                    </td>
+                    <!-- QTY OP -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       {{ convertRp(row.produksi_jumlah1 + row.produksi_jumlah + row.produksi_jumlah2) }}
                     </td>
+                    <!-- WEIGHT OP -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
-                      {{ +(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2) }}
+                      {{ (+(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2)).toFixed(2) }}
                     </td>
-                    <td></td>
-                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
-                      {{ convertRp(row.material_berat_total) }}
+                    <!-- ESTIMASI CUT OFF -->
+                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      {{ convertRp(row.total_btg_count) }}
                     </td>
+                    <!-- QTY DELIV -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       {{ convertRp(row.qty_deliv) }}
                     </td>
+                    <!-- WEIGHT DELIV -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       {{ row.weight_deliv }}
                     </td>
+                    <!-- QTY SISA -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       <label class="badge badge-danger badge-fill">{{ convertRp(row.produksi_jumlah1 + row.produksi_jumlah + row.produksi_jumlah2 - row.qty_deliv) }}</label>
                     </td>
+                    <!-- WEIGHT SISA -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       <label class="badge badge-danger badge-fill">{{ Number(+(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2) - (row.weight_deliv)).toFixed(2) }}</label>
                     </td>
+                    <td style="font-size: 13px;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -119,6 +136,100 @@
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
             </template>
+          </card>
+
+          <!-- MONTHLY REPORT PRODUKSI PIPA -->
+          <card class="strpied-tabled-with-hover shadow container-fluid" body-classes="table-full-width table-responsive">
+            <template slot="header">
+              <div class="row">
+                <!-- <div class="col-2">
+                </div> -->
+                <div class="col-6 text-center mb-3">
+                  <h5 class="card-title font-weight-bold">LAPORAN PRODUKSI PIPA</h5><br>
+                  <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">BULAN {{ moment().set({'month': month - 1}).locale('id').format('MMMM').toUpperCase() }} {{ moment().set({'year': year}).format('Y') }}</h5><br>
+                </div>
+                <div class="col-2">
+                  <select class="form-select form-control w-10" v-model="month" @change="getLP()">
+                    <option selected>Month</option>
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                  <select class="form-select form-control w-10" v-model="year" @change="getLP()">
+                    <option selected>Year</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                 </div>
+                 <div class="col-2">
+                  <a :href="apiUrl+'print-month-lp-pipa?month='+Number(month)+'&year='+year+''" target="_BLANK">
+                    <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                      <i class="fa fa-file-text"></i> Print
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </template>
+            <!-- <div class="scroll"> -->
+              <table border='1'>
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th rowspan="2" style="font-size: 13px; text-align: center;" width="4">NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">PO NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">OP NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">SIZE</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">COIL TERPAKAI (KG)</th>
+                      <th colspan="2" style="font-size: 13px; text-align: center;">HASIL PRODUKSI</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">YIELD</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                    </tr>
+                    <tr>
+                      <th style="font-size: 13px; text-align: center;">BTG</th>
+                      <th style="font-size: 13px; text-align: center;">BERAT (KG)</th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableLPPipa.data" :key="i">
+                    <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.po_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.op_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">
+                      {{ row.produksi_nd }} x {{ row.material_tebal }} x {{ row.length }}</span>
+                    </td>
+                    <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_btg_count - row.remark_b - row.remark_c) }}</td>
+                    <td style="font-size: 13px; text-align: center;">
+                      {{ convertRp(((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))).toFixed(2)) }}
+                    </td>
+                    <td style="font-size: 13px; text-align: center;">{{ (((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))) / row.total_coil_terpakai_count * 100).toFixed(2) }} %</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.client_name }}</td>
+                  </tr>
+                  <tr style="background-color: #F0F8FF;">
+                    <td colspan="4" style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalCoilTerpakaiAll) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBtgAll) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBeratProduksiAll.toFixed(2)) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ (totalBeratProduksiAll / totalCoilTerpakaiAll * 100).toFixed(2) }} %</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            <!-- </div> -->
           </card>
         </div>
 
@@ -146,11 +257,11 @@
                   >
                 </autocomplete>
               </div>
-              <base-input type="text"
+              <!-- <base-input type="text"
                     label="OP No"
                     placeholder="OP No"
                     v-model="prodTollData.op_no">
-              </base-input>
+              </base-input> -->
               <div class="form-group">
                 <label>Line Machine</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="prodTollData.line_machine">
@@ -167,8 +278,13 @@
 
              </div>
              <template slot="footer">
-                 <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
-                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="save()">Save</button>
+                <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
+                <button type="primary" class="btn btn-sm btn-info btn-fill" @click="save()" :disabled="onLoading">
+                    <span v-if="onLoading"><i class="fa fa-spinner fa-spin"></i> Please Wait...</span>
+                    <span v-else>
+                        <span>Save</span>
+                    </span>
+                </button>
              </template>
            </modal>
         </div>
@@ -201,21 +317,33 @@
                     placeholder="OP No"
                     v-model="search.op_no">
               </base-input>
-              <base-input type="text"
-                    label="Line Machine"
-                    placeholder="Line Machine"
-                    v-model="search.line_machine">
-              </base-input>
+              <div class="form-group">
+                <label>Line Machine</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.line_machine">
+                  <option selected>Select Line</option>
+                  <option value="TM 60">TM 60</option>
+                  <option value="TM 114">TM 114</option>
+                </select>
+              </div>
               <base-input type="text"
                     label="Specification"
                     placeholder="Specification"
                     v-model="search.specification">
               </base-input>
-              <base-input type="text"
-                    label="ND (Inchi)"
-                    placeholder="ND (Inchi)"
-                    v-model="search.nd">
-              </base-input>
+              <div class="form-group">
+                <label>ND (Inchi)</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.nd">
+                  <option selected>Select</option>
+                  <option value='1 "'>1 "</option>
+                  <option value='1½ "'>1½ "</option>
+                  <option value='1¼ "'>1¼ "</option>
+                  <option value='2 "'>2 "</option>
+                  <option value='2½ "'>2½ "</option>
+                  <option value='3 "'>3 "</option>
+                  <option value='4 "'>4 "</option>
+                  <option value='5 "'>5 "</option>
+                </select>
+              </div>
               <base-input type="text"
                     label="Tebal (mm)"
                     placeholder="Tebal (mm)"
@@ -234,6 +362,22 @@
                           </flat-picker>
                       </base-input>
                   </div>
+              </div>
+              <div class="form-group">
+                <label>Client</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilterClient"
+                  placeholder="Choose Client"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
               </div>
 
              </div>
@@ -284,6 +428,7 @@
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  var moment = require('moment');
   
   export default {
     components: {
@@ -294,6 +439,7 @@
     },
     data () {
       return {
+        moment:moment,
         pagination: {
           page_count: '',
           default: 1,
@@ -301,6 +447,9 @@
         },
         onLoading: false,
         table: {
+          data: []
+        },
+        tableLPPipa: {
           data: []
         },
         form: {
@@ -336,10 +485,17 @@
         tokenApi : '',
         dataImport: '',
         role: '',
+        
+        totalCoilTerpakaiAll: '',
+        totalBtgAll: '',
+        totalBeratProduksiAll: '',
+        month: moment().format('MM'),
+        year: moment().format('Y'),
       }
     },
     mounted(){
       this.get();
+      this.getLP();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
       this.role = localStorage.getItem('role');
     },
@@ -356,6 +512,21 @@
         })
         .call()
       },
+      getLP(){
+        let context = this;               
+        Api(context, produksiTolling.getLP({month: this.month, year: this.year})).onSuccess(function(response) {  
+            context.tableLPPipa.data      = response.data.data.data;
+            context.totalBtgAll           = (response.data.data.totalBtgAll - response.data.data.totalBtgAllB - response.data.data.totalBtgAllC);
+            context.totalCoilTerpakaiAll  = response.data.data.totalCoilTerpakaiAll;
+            context.totalBeratProduksiAll = ((response.data.data.totalBeratProduksiAll / response.data.data.totalBtgAll) *  (response.data.data.totalBtgAll - (+response.data.data.totalBtgAllB + +response.data.data.totalBtgAllC)));
+            console.log(((response.data.data.totalBeratProduksiAll / response.data.data.totalBtgAll) *  (response.data.data.totalBtgAll - (+response.data.data.totalBtgAllB + +response.data.data.totalBtgAllC))));
+        }).onError(function(error) {                    
+            if (error.response.status == 404) {
+                context.tableLPPipa.data = [];
+            }
+        })
+        .call()
+      },
       filter() {
         this.formFilter.add   = true;
         this.formFilter.show  = true;
@@ -367,7 +538,9 @@
           this.form.show    = true;
           this.form.title   = "Add Data";
           this.prodTollData = {}
+          this.defaultDate()
           this.$refs.autocomplete.clearInput()
+          this.onLoading = false
       },
       edit(id) {
         let context = this;               
@@ -416,10 +589,10 @@
         let api = null;
         let context = this;
         let formData = new FormData();
+        this.onLoading = true;
        
-        if (this.prodTollData.job_no != undefined && this.prodTollData.op_no != undefined && this.prodTollData.line_machine != undefined && this.prodTollData.created_at != undefined) {
+        if (this.prodTollData.job_no != undefined && this.prodTollData.line_machine != undefined && this.prodTollData.created_at != undefined) {
           formData.append('job_no', this.prodTollData.job_no);
-          formData.append('op_no', this.prodTollData.op_no);
           formData.append('date', this.prodTollData.created_at);
           formData.append('line_machine', this.prodTollData.line_machine);
         }else{
@@ -438,6 +611,7 @@
         }).onError(function(error) {                    
             context.notifyVue((context.formTitle === 'Add Data') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
         }).onFinish(function() {  
+            context.onLoading = false
         })
         .call();
       },
@@ -486,6 +660,14 @@
         this.pagination.page = page;
         this.get();
       },
+      defaultDate(){
+        var date  = new Date();
+        var day   = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+
+        this.prodTollData.created_at = today
+      },
 
       // ================= Autocomplete ============
       // AMBIL DATA YANG DI PILIH AC
@@ -495,6 +677,10 @@
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){
         this.search.job_no = obj.job_no;
+      },
+      // AMBIL DATA YANG DI PILIH AC FILTER
+      getDataFilterClient(obj){
+        this.search.client_name = obj.client_name;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

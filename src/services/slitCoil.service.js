@@ -5,6 +5,9 @@ export default {
     index(params) {
         return Service().get('slit-coil/index', {params});
     },
+    getResume(params) {
+        return Service().get('slit-coil/get-resume', {params});
+    },
     show(id) {
         return Service().get('slit-coil/show/'+id);
     },

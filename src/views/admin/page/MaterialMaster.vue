@@ -169,6 +169,71 @@
               </div>
             </template>
           </card>
+
+          <!-- CHART MATERIAL -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive" v-if="role != 'Visitor'">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold"><u>DIAGRAM MATERIAL</u> </h5><br>
+                  <!-- <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">Desember - 2022</h5><br> -->
+                </div>
+                <div class="col-2">
+                  <a :href="apiUrl+'print-rkp-material?job_no='+search.job_no+'&po_no='+search.po_no+'&travel_latter_no='+search.travel_latter_no+'&coil_no='+search.coil_no+'&owner='+search.owner+'&thick='+search.thick+'&width='+search.width+'&weight='+search.weight+'&spec='+search.spec+'&process_program='+search.process_program+'&date='+search.date+'&material_status='+search.material_status+'&po_has_not_prod='+search.po_has_not_prod+'&age='+search.age+''" target="_BLANK">
+                    <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                      <i class="fa fa-print "></i> Print
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </template>
+            <div class="container" >
+              <line-chart :chart-data="datacollection" :width="300" :height="120"></line-chart>
+            </div>
+          </card>
+
+          <!-- TOTAL AKUMULASI PER CLIENT -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive" v-if="role != 'Visitor'">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold">RKP MATERIAL</h5><br>
+                  <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+                </div>
+                <div class="col-2">
+                </div>
+              </div>
+            </template>
+            <!-- <div class="scroll"> -->
+              <table border='1'>
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th style="font-size: 13px; text-align: center;">NO</th>
+                      <th style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                      <th style="font-size: 13px; text-align: center;">WEIGHT</th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableAkumulasiClient.data" :key="i">
+                    <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                    <td style="font-size: 13px;">{{ row.owner }}</td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight) }} </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;" colspan="2">TOTAL</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiAll) }} </td>
+                  </tr>
+                </tbody>
+              </table>
+            <!-- </div> -->
+          </card>
+
         </div>
 
         <!-- MODAL CREATE -->
@@ -442,7 +507,7 @@
   </div>
 </template>
 <script>
-  import Card from '@/components/Cards/Card.vue'
+  // import Card from '@/components/Cards/Card.vue'
   import Modal from '@/components/Modal.vue'
   import config from '@/configs/config';
   import Api from '@/helpers/api';
@@ -453,15 +518,17 @@
   import "flatpickr/dist/flatpickr.css";
   import ChartCard from '@/components/Cards/ChartCard.vue'
   import StatsCard from '@/components/Cards/StatsCard.vue'
+  import LineChart from '../LineChart.js'
   var moment = require('moment');
   
   export default {
     components: {
-      Card,
+      // Card,
       Modal,
       Autocomplete,
       flatPicker,
       ChartCard,
+      LineChart,
       StatsCard,
     },
     data () {
@@ -476,6 +543,10 @@
         table: {
           data: []
         },
+        tableAkumulasiClient: {
+          data: []
+        },
+        totalAkumulasiAll: '',
         tabelError: {
           data: []
         },
@@ -522,6 +593,8 @@
         tokenApi : '',
         role : '',
         dataImport: '',
+
+        datacollection: null,
       }
     },
     mounted(){
@@ -540,10 +613,15 @@
             context.totalWeightProd       = response.data.data.totalWeightProd;
             context.totalWeightNotProd    = response.data.data.totalWeightNotProd;
             context.totalWeightReturn     = response.data.data.totalWeightReturn;
+
+            context.tableAkumulasiClient.data = response.data.data.totalAkumulasi;
+            context.totalAkumulasiAll         = response.data.data.totalAkumulasiAll;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
             }
+        }).onFinish(function() {  
+            context.fillData()
         })
         .call()
       },
@@ -684,6 +762,25 @@
           }else{
             return bilangan
           }
+        }
+      },
+      fillData () {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        var color;
+
+        this.datacollection = {
+          labels: this.tableAkumulasiClient.data.map(item => item.owner),
+          datasets: [
+            {
+              label: '',
+              backgroundColor: this.tableAkumulasiClient.data.map(item => '#' + Math.random().toString(16).substr(-6)),
+              data: this.tableAkumulasiClient.data.map(item => item.weight)
+            }
+          ],
         }
       },
       changePage(page){

@@ -142,8 +142,13 @@
               </base-input> -->
              </div>
              <template slot="footer">
-                 <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
-                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="save()">Save</button>
+                <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
+                <button type="primary" class="btn btn-sm btn-info btn-fill" @click="save()" :disabled="onLoading">
+                    <span v-if="onLoading"><i class="fa fa-spinner fa-spin"></i> Please Wait...</span>
+                    <span v-else>
+                        <span>Save</span>
+                    </span>
+                </button>
              </template>
            </modal>
         </div>
@@ -421,6 +426,7 @@
         let api = null;
         let context = this;
         let formData = new FormData();
+        this.onLoading = true;
 
         if (this.deliveryData.job_no != undefined && this.deliveryData.packing_list_no != undefined && this.deliveryData.packing_date != undefined) {
           formData.append('job_no', this.deliveryData.job_no);
@@ -445,6 +451,7 @@
         }).onError(function(error) {                    
             context.notifyVue((context.formTitle === 'Add Data') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
         }).onFinish(function() {  
+            context.onLoading = false
         })
         .call();
       },

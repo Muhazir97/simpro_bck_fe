@@ -10,5 +10,8 @@ export default {
     getRkpProduksiDaily(params) {
         return Service().get('produksi/get-rkp-produksi-daily', {params});
     },
+    getWeeklyReport(params) {
+        return Service().get('produksi/get-weekly-report', {params});
+    },
 
 }

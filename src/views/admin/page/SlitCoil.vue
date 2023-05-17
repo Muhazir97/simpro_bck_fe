@@ -113,6 +113,9 @@
                   <button type="submit" class="btn btn-sm btn-info btn-fill float-right mr-2" @click="create()" v-if="role != 'Visitor'">
                     Add New
                   </button>
+                  <button type="submit" class="btn btn-sm btn-success btn-fill float-right mr-2" @click="resumeSlitCoil()">
+                    Resume Slit Coil
+                  </button>
                 </div>
               </div>
             </template>
@@ -131,6 +134,7 @@
                       <th>THICK / mm</th>
                       <th>WIDTH / mm</th>
                       <th>WEIGHT / kg</th>
+                      <th>SIZE</th>
                       <th>DESCRIPTION</th>
                       <th>SLIT FROM</th>
                       <th>PROGRAM</th>
@@ -162,6 +166,7 @@
                     <td style="font-size: 13px;">{{row.thick}}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.width) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.weight) }}</td>
+                    <td style="font-size: 13px;">{{row.size}}</td>
                     <td style="font-size: 13px;">{{row.description}}</td>
                     <td style="font-size: 13px;">
                       <small><label class="badge badge-warning">{{ row.slit_from }}</label></small>
@@ -295,7 +300,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">{{formFilter.title}}</h5>
              </template>
              <div>
-              <!-- <base-input type="text"
+              <base-input type="text"
                     label="Job No"
                     placeholder="Job No"
                     v-model="search.job_no">
@@ -304,7 +309,7 @@
                     label="PO No"
                     placeholder="PO No"
                     v-model="search.po_no">
-              </base-input> -->
+              </base-input>
               <small class="d-block text-uppercase font-weight-bold mb-3">Date Entry</small>
               <div class="input-daterange datepicker row align-items-center">
                   <div class="col">
@@ -388,11 +393,20 @@
                     placeholder="Weight"
                     v-model="search.weight">
               </base-input>
-              <!-- <base-input type="number"
-                    label="Size"
-                    placeholder="Size"
-                    v-model="search.size">
-              </base-input> -->
+              <div class="form-group">
+                <label>Size (Inchi)</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.size">
+                  <option selected>Select</option>
+                  <option value='1 "'>1 "</option>
+                  <option value='1½ "'>1½ "</option>
+                  <option value='1¼ "'>1¼ "</option>
+                  <option value='2 "'>2 "</option>
+                  <option value='2½ "'>2½ "</option>
+                  <option value='3 "'>3 "</option>
+                  <option value='4 "'>4 "</option>
+                  <option value='5 "'>5 "</option>
+                </select>
+              </div>
               <base-input type="number"
                     label="Age"
                     placeholder="Days"
@@ -454,12 +468,165 @@
            </modal>
         </div>
 
+        <!-- MODAL RESUME SLIT COIL -->
+        <modal-lg :show.sync="formResumeSlit.show">
+         <template slot="header">
+            <h5 class="modal-title" id="exampleModalLabel">{{formResumeSlit.title}}</h5>
+         </template>
+         <div>
+          <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filterResume()"><i class="fa fa-filter" aria-hidden="true"></i> Filter</button>
+          <a :href="apiUrl+'print-resume-slit-coil?po_no='+searchResume.po_no+'&travel_latter_no='+searchResume.travel_latter_no+'&coil_no='+searchResume.coil_no+'&process_program='+searchResume.process_program+'&owner='+searchResume.owner+'&thick='+searchResume.thick+'&width='+searchResume.width+'&size='+searchResume.size+'&slitting_date='+searchResume.slitting_date+'&age='+searchResume.age+''" target="_BLANK">
+            <button type="submit" class="btn btn-sm btn-success btn-fill mb-3" @click="filter()"><i class="fa fa-file-text"></i> Print</button>
+          </a>
+          <div class="scroll">
+            <table class="table">
+              <thead>
+                <slot name="columns">
+                  <tr style="background-color: #F0F8FF; text-align: center;">
+                    <th>NO</th>
+                    <th>TANGGAL</th>
+                    <th>PO NO</th>
+                    <th style="width: 200px;">NO SURAT JALAN</th>
+                    <th style="width: 90px;">WIDTH</th>
+                    <th style="width: 90px;">SIZE</th>
+                    <th>BERAT</th>
+                    <th>QTY</th>
+                    <th>NO COIL</th>
+                    <th>Owner</th>
+                    <th style="display: none" ></th>
+                  </tr>
+                </slot>
+              </thead>
+              <tbody>
+                <tr v-for="(row, i) in tableResumeSlit.data" :key="i">
+                  <td style="font-size: 13px;">{{ i + 1 }}</td>
+                  <td style="font-size: 13px;">{{ moment(row.slitting_date).locale('id').format('L') }}</td>
+                  <td style="font-size: 13px;">{{ row.po_no }}</td>
+                  <td style="font-size: 13px;"  v-html="row.travel_latter_no"></td>
+                  <td style="font-size: 13px;">{{row.width}}</td>
+                  <td style="font-size: 13px;">{{row.size}} x {{row.thick}}</td>
+                  <td style="font-size: 13px;">{{ convertRp(row.weight_sum) }}</td>
+                  <td style="font-size: 13px;">{{ convertRp(row.total_qty) }}</td>
+                  <td style="font-size: 13px;">{{ row.coil_no_con }}</td>
+                  <td style="font-size: 13px;">{{ row.owner }}</td>
+                  <td style="display: none" ></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+         </div>
+         <template slot="footer">
+          <div class="float-left">TOTAL COIL : {{ convertRp(totalCoilresume) }}, TOTAL WEIGHT : {{ convertRp(totalWeightresume) }}</div>
+          <div class="float-right">
+             
+           </div>
+         </template>
+        </modal-lg>
+
+        <!-- MODAL FILTER RESUME -->
+        <modal :show.sync="formFilterResume.show">
+         <template slot="header">
+            <h5 class="modal-title" id="exampleModalLabel">{{formFilterResume.title}}</h5>
+         </template>
+         <div>
+          <base-input type="text"
+                label="PO No"
+                placeholder="PO No"
+                v-model="searchResume.po_no">
+          </base-input>
+          <small class="d-block text-uppercase font-weight-bold mb-3">Date Entry</small>
+          <div class="input-daterange datepicker row align-items-center">
+              <div class="col">
+                  <base-input addon-left-icon="ni ni-calendar-grid-58">
+                      <flat-picker slot-scope="{focus, blur}"
+                                   @on-open="focus"
+                                   @on-close="blur"
+                                   :config="{allowInput: true, mode: 'range',}"
+                                   class="form-control datepicker"
+                                   v-model="searchResume.slitting_date">
+                      </flat-picker>
+                  </base-input>
+              </div>
+          </div>
+          <base-input type="text"
+                label="Surat Jalan No"
+                placeholder="Surat Jalan No"
+                v-model="searchResume.travel_latter_no">
+          </base-input>
+          <base-input type="text"
+                label="Coil No"
+                placeholder="Coil No"
+                v-model="searchResume.coil_no">
+          </base-input>
+          <base-input type="text"
+                label="Program No"
+                placeholder="Program No"
+                v-model="searchResume.process_program">
+          </base-input>
+          <div class="form-group">
+            <label>Owner</label><br>
+            <autocomplete 
+              ref="autocomplete"
+              :url="apiUrl+'client/find-client'"
+              :customHeaders="{ Authorization: tokenApi }"
+              anchor="client_name"
+              label="client_code"
+              :on-select="getDataFilterResume"
+              placeholder="Choose Owner"
+              :min="3"
+              :process="processJSON"
+              :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+              >
+            </autocomplete>
+          </div>
+          <base-input type="text"
+                label="Pack"
+                placeholder="Pack"
+                v-model="searchResume.pack">
+          </base-input>
+          <base-input type="number"
+                label="Thick"
+                placeholder="Thick"
+                v-model="searchResume.thick">
+          </base-input>
+          <base-input type="number"
+                label="Width"
+                placeholder="Width"
+                v-model="searchResume.width">
+          </base-input>
+          <div class="form-group">
+            <label>Size (Inchi)</label><br>
+            <select class="form-select form-control" aria-label="Default select example" v-model="searchResume.size">
+              <option selected>Select</option>
+              <option value='1 "'>1 "</option>
+              <option value='1½ "'>1½ "</option>
+              <option value='1¼ "'>1¼ "</option>
+              <option value='2 "'>2 "</option>
+              <option value='2½ "'>2½ "</option>
+              <option value='3 "'>3 "</option>
+              <option value='4 "'>4 "</option>
+              <option value='5 "'>5 "</option>
+            </select>
+          </div>
+          <!-- <base-input type="number"
+                label="Age"
+                placeholder="Days"
+                v-model="search.age">
+          </base-input> -->
+         </div>
+         <template slot="footer">
+             <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilterResume.show = false">Close</button>
+             <button type="primary" class="btn btn-sm btn-info btn-fill" @click="getResume(), formFilterResume.show = false">Filter</button>
+         </template>
+        </modal>
+
       </div>
     </div>
   </div>
 </template>
 <script>
   import Card from '@/components/Cards/Card.vue'
+  import ModalLg from '@/components/ModalLg.vue'
   import Modal from '@/components/Modal.vue'
   import config from '@/configs/config';
   import Api from '@/helpers/api';
@@ -476,6 +643,7 @@
     components: {
       Card,
       Modal,
+      ModalLg,
       Autocomplete,
       flatPicker,
       ChartCard,
@@ -491,6 +659,9 @@
         },
         onLoading: false,
         table: {
+          data: []
+        },
+        tableResumeSlit: {
           data: []
         },
         tabelError: {
@@ -513,6 +684,18 @@
             title: "Filter",
             show: false
         },
+        formFilterResume: {
+            add: true,
+            title: "Filter",
+            show: false
+        },
+        formResumeSlit: {
+            add: true,
+            title: "Resume Slit Coil",
+            show: false
+        },
+        totalCoilresume: '',
+        totalWeightresume: '',
         formImport: {
             add: true,
             title: "Import Slit Coil",
@@ -538,6 +721,19 @@
           slit_from: '',
           age: '',
         },
+        searchResume: {
+          po_no: '',
+          travel_latter_no: '',
+          coil_no: '',
+          process_program: '',
+          owner: '',
+          pack: '',
+          thick: '',
+          width: '',
+          size: '',
+          slitting_date: '',
+          age: '',
+        },
         apiUrl :config.apiUrl,
         tokenApi : '',
         role : '',
@@ -546,12 +742,14 @@
     },
     mounted(){
       this.get();
+      this.getResume();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
       this.role = localStorage.getItem('role');
     },
     methods: {
       get(param){
-        let context = this;               
+        let context = this;    
+
         Api(context, slitCoil.index({job_no: context.search.job_no, po_no: context.search.po_no, travel_latter_no: context.search.travel_latter_no, coil_no: context.search.coil_no, process_program: context.search.process_program, owner: context.search.owner, pack: context.search.pack, thick: context.search.thick, width: context.search.width, weight: context.search.weight, size: context.search.size, slitting_date: context.search.slitting_date, material_status: context.search.material_status, slit_from: context.search.slit_from, age: context.search.age, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page;
@@ -569,11 +767,36 @@
         })
         .call()
       },
+      getResume(){
+        let context = this; 
+
+        Api(context, slitCoil.getResume({po_no: context.searchResume.po_no, travel_latter_no: context.searchResume.travel_latter_no, coil_no: context.searchResume.coil_no, process_program: context.searchResume.process_program, owner: context.searchResume.owner, thick: context.searchResume.thick, width: context.searchResume.width, size: context.searchResume.size, slitting_date: context.searchResume.slitting_date, age: context.searchResume.age})).onSuccess(function(response) {
+            context.tableResumeSlit.data  = response.data.data.resumeSlitCoil;
+            context.totalCoilresume       = response.data.data.totalCoilresume;
+            context.totalWeightresume     = response.data.data.totalWeightresume;
+
+        }).onError(function(error) {                    
+            if (error.response.status == 404) {
+                context.table.data = [];
+            }
+        })
+        .call()
+      },
       filter() {
         this.formFilter.add   = true;
         this.formFilter.show  = true;
         this.formFilter.title = "Filter";
         this.pagination.page  = 1 ;
+      },
+      filterResume() {
+        this.formFilterResume.add   = true;
+        this.formFilterResume.show  = true;
+        this.formFilterResume.title = "Filter";
+      },
+      resumeSlitCoil() {
+        this.formResumeSlit.add   = true;
+        this.formResumeSlit.show  = true;
+        this.formResumeSlit.title = "Resume Slit Coil";
       },
       create() {
           this.form.add     = true;
@@ -718,6 +941,9 @@
       // AMBIL DATA YANG DI PILIH AC FILTER
       getDataFilter(obj){
         this.search.owner = obj.client_name;
+      },
+      getDataFilterResume(obj){
+        this.searchResume.owner = obj.client_name;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

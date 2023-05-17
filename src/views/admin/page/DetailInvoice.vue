@@ -65,9 +65,9 @@
           <tr v-for="(row, i) in table.data" :key="i">
             <td style="text-align: right;">{{ i + 1 }}</td>
             <td style="text-align: right;">{{ convertRp(row.weight) }}</td>
-            <td v-if="detailInvoiceData.prod_class === 'Slitting'">Slitting Coil</td>
-            <td v-if="detailInvoiceData.prod_class === 'Tolling'">{{ row.type_pipa }}</td>
-            <td v-if="detailInvoiceData.prod_class === 'Shearing'">Shearing Coil</td>
+            <td v-if="detailInvoiceData.prod_class === 'Slitting'">Jasa Slitting Coil</td>
+            <td v-if="detailInvoiceData.prod_class === 'Tolling'">Jasa Tolling {{ row.type_pipa }}</td>
+            <td v-if="detailInvoiceData.prod_class === 'Shearing'">Jasa Shearing Coil</td>
             <td style="text-align: right;">{{ convertRp(row.rate) }}</td>
             <td style="text-align: right;">{{ convertRp(row.weight * row.rate) }}</td>
             <td style="text-align: right;">{{ row.packing_list_no }}</td>
@@ -224,7 +224,7 @@
             <tbody>
               <tr>
                 <td>
-                  Perhatian diminta dengan hormat Pembayaran dilakukan dengan giro bilyet A/N. PT Buana Centra Karya, Bank Syariah Indonesia, Cabang Cilegon, AC. 7149876938
+                  Perhatian diminta dengan hormat Pembayaran dilakukan dengan giro bilyet A/N. PT Buana Centra Karya, Bank Syariah Indonesia, Cabang Cilegon, AC. {{detailInvoiceData.no_rek}}
                 </td>
               </tr>
             </tbody>

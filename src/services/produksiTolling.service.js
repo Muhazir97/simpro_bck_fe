@@ -5,6 +5,9 @@ export default {
     index(params) {
         return Service().get('produksi-tolling/index', {params});
     },
+    getLP(params) {
+        return Service().get('produksi-tolling/get-lp-pipa', {params});
+    },
     show(id) {
         return Service().get('produksi-tolling/show/'+id);
     },

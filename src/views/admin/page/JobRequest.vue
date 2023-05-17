@@ -76,12 +76,83 @@
               </table>
             </div>
             <template slot="footer">
-              <div class="float-left">TOTAL : {{table.data.length}} </div>
+              <div class="float-left">TOTAL : {{table.data.length}} , TOTAL WEIGHT : {{ convertRp(totalWeight) }} </div>
               <div class="float-right">
                 <base-pagination :page-count="pagination.page_count" v-model="pagination.default" @input="changePage"></base-pagination>
               </div>
             </template>
           </card>
+
+          <!-- CHART ORDER -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive" v-if="role != 'Visitor'">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold"><u>DIAGRAM ORDER</u> </h5><br>
+                  <!-- <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">Desember - 2022</h5><br> -->
+                </div>
+                <div class="col-2">
+                  <a :href="apiUrl+'print-rkp-job-order?job_no='+search.job_no+'&job_name='+search.job_name+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&date='+search.date+''" target="_BLANK">
+                    <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                      <i class="fa fa-print "></i> Print
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </template>
+            <div class="container" >
+              <line-chart :chart-data="datacollection" :width="300" :height="120"></line-chart>
+            </div>
+          </card>
+
+          <!-- TOTAL AKUMULASI PER CLIENT -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive" v-if="role != 'Visitor'">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold">RKP WEIGHT ORDER</h5><br>
+                  <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+                </div>
+                <div class="col-2">
+                </div>
+              </div>
+            </template>
+            <!-- <div class="scroll"> -->
+              <table border='1'>
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th style="font-size: 13px; text-align: center;">NO</th>
+                      <th style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                      <th style="font-size: 13px; text-align: center;">SLITTING</th>
+                      <th style="font-size: 13px; text-align: center;">TOLLING PIPA</th>
+                      <th style="font-size: 13px; text-align: center;">SHEARING</th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableAkumulasiClient.data" :key="i">
+                    <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                    <td style="font-size: 13px;">{{ row.client_name }}</td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_slitting) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_tolling) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_shearing) }} </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;" colspan="2">TOTAL</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiSlittingALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiTollingALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiShearinggALL) }} </td>
+                  </tr>
+                </tbody>
+              </table>
+            <!-- </div> -->
+          </card>
+
         </div>
 
         <!-- MODAL CREATE JOB REQ-->
@@ -145,6 +216,11 @@
                   label=" Rate"
                   placeholder=" Rate"
                   v-model="jobRequestData.rate">
+              </base-input>
+              <base-input type="date"
+                    label="Date"
+                    placeholder="Date"
+                    v-model="jobRequestData.created_at">
               </base-input>
              </div>
              <template slot="footer">
@@ -255,8 +331,9 @@
   </div>
 </template>
 <script>
-  import Card from '@/components/Cards/Card.vue'
+  import StatsCard from '@/components/Cards/StatsCard.vue'
   import Modal from '@/components/Modal.vue'
+  import LineChart from '../LineChart.js'
   import config from '@/configs/config';
   import Api from '@/helpers/api';
   import jobRequest from '@/services/jobRequest.service';
@@ -268,10 +345,11 @@
   
   export default {
     components: {
-      Card,
+      StatsCard,
       Modal,
       Autocomplete,
       flatPicker,
+      LineChart,
     },
     data () {
       return {
@@ -285,6 +363,12 @@
         table: {
           data: []
         },
+        tableAkumulasiClient: {
+          data: []
+        },
+        totalAkumulasiSlittingALL: '',
+        totalAkumulasiTollingALL: '',
+        totalAkumulasiShearinggALL: '',
         form: {
             add: true,
             title: "Create Job Order",
@@ -309,12 +393,22 @@
           prod_class: '',
           date: '',
         },
+        totalWeight: '',
+        totalWeightSltDhj: '',
+        totalWeightSltKpi: '',
+        totalWeightTllDhj: '',
+        totalWeightTllKpi: '',
+        totalWeightShrAll: '',
+
         jobRequestData: {},
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
         tokenApi : '',
         role: '',
         dataImport: '',
+
+        date_chart : [],
+        datacollection: null,
       }
     },
     mounted(){
@@ -328,10 +422,24 @@
         Api(context, jobRequest.index({job_no: context.search.job_no, job_name: context.search.job_name, po_no: context.search.po_no, client_name: context.search.client_name, prod_class: context.search.prod_class, date: context.search.date, page: context.pagination.page})).onSuccess(function(response) {    
             context.table.data            = response.data.data.data.data;
             context.pagination.page_count = response.data.data.data.last_page
+            context.totalWeight           = response.data.data.totalWeight;
+
+            context.totalWeightSltDhj = response.data.data.totalWeightSltDhj;
+            context.totalWeightSltKpi = response.data.data.totalWeightSltKpi;
+            context.totalWeightTllDhj = response.data.data.totalWeightTllDhj;
+            context.totalWeightTllKpi = response.data.data.totalWeightTllKpi;
+            context.totalWeightShrAll = response.data.data.totalWeightShrAll;
+
+            context.tableAkumulasiClient.data  = response.data.data.totalAkumulasi;
+            context.totalAkumulasiSlittingALL  = response.data.data.totalAkumulasiSlittingALL;
+            context.totalAkumulasiTollingALL   = response.data.data.totalAkumulasiTollingALL;
+            context.totalAkumulasiShearinggALL = response.data.data.totalAkumulasiShearinggALL;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
             }
+        }).onFinish(function() {  
+            context.fillData()
         })
         .call()
       },
@@ -348,12 +456,14 @@
           this.form.show      = true;
           this.form.title     = "Create Job Order";
           this.jobRequestData = {}
+          this.defaultDate()
           this.$refs.autocompleteAdd.clearInput()
       },
       edit(id) {
         let context = this;               
         Api(context, jobRequest.show(id)).onSuccess(function(response) {
             context.jobRequestData = response.data.data[0];
+            context.jobRequestData.created_at = response.data.data[0].created_at.split(' ')[0];
             context.form.show      = true;
             context.form.title     = 'Edit Job Order';
             context.$refs.autocompleteAdd.setValue(response.data.data[0].client_name)                        
@@ -398,7 +508,7 @@
         let context = this;
         let formData = new FormData(); 
 
-        if (this.jobRequestData.job_name != undefined && this.jobRequestData.prod_class != undefined && this.jobRequestData.client_name != undefined && this.jobRequestData.weight != undefined && this.jobRequestData.rate != undefined) {
+        if (this.jobRequestData.job_name != undefined && this.jobRequestData.prod_class != undefined && this.jobRequestData.client_name != undefined && this.jobRequestData.weight != undefined && this.jobRequestData.rate != undefined  && this.jobRequestData.created_at != undefined) {
           formData.append('job_name', this.jobRequestData.job_name);
           // formData.append('job_description', this.jobRequestData.job_description);
           formData.append('client_name', this.jobRequestData.client_name);
@@ -406,6 +516,7 @@
           formData.append('prod_class', this.jobRequestData.prod_class);
           formData.append('weight', this.jobRequestData.weight);
           formData.append('rate', this.jobRequestData.rate);
+          formData.append('created_at', this.jobRequestData.created_at);
         }else{
           alert('Semua Field Wajib Di Isi')
         }
@@ -454,6 +565,14 @@
         this.pagination.page = page;
         this.get();
       },
+      defaultDate(){
+        var date  = new Date();
+        var day   = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+
+        this.jobRequestData.created_at = today
+      },
       convertRp(bilangan) {
         if (bilangan) {
           var number_string = bilangan.toString(),
@@ -468,6 +587,23 @@
           }else{
             return bilangan
           }
+        }
+      },
+      fillData () {
+        this.datacollection = {
+          labels: ['SLITTING', 'TOLLING', 'SHEARING ALL CLIENT'],
+          datasets: [
+            {
+              label: 'DHJ',
+              backgroundColor: '#7FFFD4',
+              data: [this.totalWeightSltDhj,this.totalWeightTllDhj,this.totalWeightShrAll]
+            }, 
+            {
+              label: 'KPI',
+              backgroundColor: '#f87979',
+              data: [this.totalWeightSltKpi,this.totalWeightTllKpi,0]
+            }
+          ],
         }
       },
 

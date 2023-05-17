@@ -373,12 +373,12 @@
                     label="Job No"
                     placeholder="Job No"
                     v-model="search.job_no">
-              </base-input>
+              </base-input> -->
               <base-input type="text"
                     label="PO No"
                     placeholder="PO No"
                     v-model="search.po_no">
-              </base-input> -->
+              </base-input>
               <small class="d-block text-uppercase font-weight-bold mb-3">Date Entry</small>
               <div class="input-daterange datepicker row align-items-center">
                   <div class="col">
@@ -885,6 +885,7 @@
           this.formFilter.add   = true;
           this.formFilter.show  = true;
           this.formFilter.title = "Add Material";
+          this.search.po_no     = this.detailProdTollingData.po_no
       },
       convertRp(bilangan) {
         if (bilangan) {

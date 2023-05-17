@@ -36,6 +36,7 @@ import DeliverySltInt from "./views/admin/page/DeliverySltInt";
 import DeliverySltExt from "./views/admin/page/DeliverySltExt";
 import DeliveryTl from "./views/admin/page/DeliveryTl";
 import DeliveryShr from "./views/admin/page/DeliveryShr";
+import DeliverySpo from "./views/admin/page/DeliverySpo";
 import DetailDelivery from "./views/admin/page/DetailDelivery";
 import News from "./views/admin/page/News";
 import DetailNews from "./views/admin/page/DetailNews";
@@ -195,6 +196,11 @@ const vurRouter = new Router({
         path: 'delivery-shr',
         name: 'DeliveryShr',
         component: DeliveryShr
+      },
+      {
+        path: 'delivery-spo',
+        name: 'DeliverySpo',
+        component: DeliverySpo
       },
       {
         path: 'detail-delivery/:packing_list_no',

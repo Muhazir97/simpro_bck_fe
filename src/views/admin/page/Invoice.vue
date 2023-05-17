@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <a :href="apiUrl+'report-excel/invoice?job_no='+search.job_no+'&po_no='+search.po_no+'&invoice_no='+search.invoice_no+'&invoice_weight='+search.invoice_weight+'&invoice_qty='+search.invoice_qty+'&date='+search.date+'&ppn_status='+search.ppn_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
+          <a :href="apiUrl+'report-excel/invoice?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&invoice_no='+search.invoice_no+'&invoice_weight='+search.invoice_weight+'&invoice_qty='+search.invoice_qty+'&date='+search.date+'&ppn_status='+search.ppn_status+''" target="_BLANK" class="btn btn-sm btn-primary mb-4"><i class="fa fa-download fa-sm"></i> Export</a>
           <button class="btn btn-sm btn-success mb-4" @click="modalImport()"><i class="fa fa-upload fa-sm"></i> Import</button>
 
           <!-- CARD -->
@@ -12,10 +12,15 @@
           >
             <template slot="header">
               <div class="row">
-                <div class="col-4">
+                <div class="col-6">
                   <h4 class="card-title">Invoice</h4>
                 </div>
-                <div class="col-4">
+                <div class="col-2">
+                  <select class="form-select form-control" aria-label="Default select example" v-model="search.ppn_status"  @change="get()">
+                  <option selected>Select Status</option>
+                  <option value="INCLUDE PPN">INCLUDE PPN</option>
+                  <option value="NOT INCLUDE PPN">NOT INCLUDE PPN</option>
+                </select>
                 </div>
                 <div class="col-4">
                   <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filter()">
@@ -43,9 +48,10 @@
                       <th>INVOICE DATE</th>
                       <th>INVOICE WEIGHT</th>
                       <th>INVOICE AMOUNT</th>
-                      <!-- <th>INVOICE BALANCE</th> -->
+                      <th>STATUS</th>
                       <th></th>
                       <th></th>
+                      <th style="display: none" ></th>
                     </tr>
                   </slot>
                 </thead>
@@ -70,7 +76,14 @@
                     <td style="font-size: 13px;">{{ moment(row.invoice_date).locale('id').format('L') }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_weight) }}</td>
                     <td style="font-size: 13px;">{{ convertRp(row.invoice_amount) }}</td>
-                    <!-- <td style="font-size: 13px;">{{ convertRp(row.invoice_balance) }}</td> -->
+                    <td style="font-size: 13px;">
+                      <label class="badge badge-light" v-if="((moment(moment(row.invoice_date).add(row.due_date, 'days')).format('DDMMYYYY')) < (moment(new Date()).format('DDMMYYYY')))">{{moment(moment(row.invoice_date).add(row.due_date, 'days')).format('DDMMYYYY')}} < {{moment(new Date()).format('DDMMYYYY')}}</label>
+
+                      <label class="badge badge-danger" v-if="((moment(moment(row.invoice_date).add(row.due_date, 'days')).format('DDMMYYYY')) > (moment(new Date()).format('DDMMYYYY')))">{{moment(moment(row.invoice_date).add(row.due_date, 'days')).format('DDMMYYYY')}} > {{moment(new Date()).format('DDMMYYYY')}}</label>
+
+                      <label class="badge badge-success" v-if="row.status == 'Paid'">{{ row.status }}</label>
+                      <label class="badge badge-warning" v-if="row.status == 'Partially Paid'">{{ row.status }}</label>
+                    </td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
                     </td>
@@ -89,6 +102,77 @@
               </div>
             </template>
           </card>
+
+          <!-- CHART INVOICE -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold"><u>DIAGRAM INVOICE</u> </h5><br>
+                  <!-- <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">Desember - 2022</h5><br> -->
+                </div>
+                <div class="col-2">
+                  <a :href="apiUrl+'print-rkp-invoice?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&invoice_no='+search.invoice_no+'&invoice_weight='+search.invoice_weight+'&invoice_qty='+search.invoice_qty+'&date='+search.date+'&ppn_status='+search.ppn_status+''" target="_BLANK">
+                    <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                      <i class="fa fa-print "></i> Print
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </template>
+            <div class="container" >
+              <line-chart :chart-data="datacollection" :width="300" :height="120"></line-chart>
+            </div>
+          </card>
+
+          <!-- TOTAL AKUMULASI PER CLIENT -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold">RKP WEIGHT INVOICE</h5><br>
+                  <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+                </div>
+                <div class="col-2">
+                </div>
+              </div>
+            </template>
+            <div class="scroll">
+              <table border='1'>
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th style="font-size: 13px; text-align: center;">NO</th>
+                      <th style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                      <th style="font-size: 13px; text-align: center;">SLITTING</th>
+                      <th style="font-size: 13px; text-align: center;">TOLLING PIPA</th>
+                      <th style="font-size: 13px; text-align: center;">SHEARING</th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableAkumulasiClient.data" :key="i">
+                    <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                    <td style="font-size: 13px;">{{ row.client_name }}</td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_slitting) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_tolling) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_shearing) }} </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;" colspan="2">TOTAL</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiSlittingALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiTollingALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiShearinggALL) }} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </card>
+
         </div>
 
         <!-- MODAL CREATE -->
@@ -136,8 +220,13 @@
               </base-input> -->
              </div>
              <template slot="footer">
-                 <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
-                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="save()">Save</button>
+                <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="form.show = false">Close</button>
+                <button type="primary" class="btn btn-sm btn-info btn-fill" @click="save()" :disabled="onLoading">
+                    <span v-if="onLoading"><i class="fa fa-spinner fa-spin"></i> Please Wait...</span>
+                    <span v-else>
+                        <span>Save</span>
+                    </span>
+                </button>
              </template>
            </modal>
         </div>
@@ -166,6 +255,36 @@
                 </autocomplete>
               </div>
               <base-input type="text"
+                    label="Po Number"
+                    placeholder="Po Number"
+                    v-model="search.po_no">
+              </base-input>
+              <div class="form-group">
+                <label>Client</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilterClient"
+                  placeholder="Choose Client"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
+              <div class="form-group">
+                <label>Production Classification</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="search.prod_class">
+                  <option selected>Select Classification</option>
+                  <option value="Slitting">Slitting</option>
+                  <option value="Tolling">Tolling</option>
+                  <option value="Shearing">Shearing</option>
+                </select>
+              </div>
+              <base-input type="text"
                     label="Invoice No"
                     placeholder="Invoice No"
                     v-model="search.invoice_no">
@@ -184,7 +303,7 @@
                       </base-input>
                   </div>
               </div>
-              <base-input type="number"
+              <!-- <base-input type="number"
                     label="Invoice Weight"
                     placeholder="Invoice Weight"
                     v-model="search.invoice_weight">
@@ -193,7 +312,7 @@
                     label="Invoice Qty"
                     placeholder="Invoice Qty"
                     v-model="search.invoice_qty">
-              </base-input>
+              </base-input> -->
               <div class="form-group">
                 <label>Status PPN</label><br>
                 <select class="form-select form-control" aria-label="Default select example" v-model="search.ppn_status">
@@ -242,7 +361,7 @@
   </div>
 </template>
 <script>
-  import Card from '@/components/Cards/Card.vue'
+  // import Card from '@/components/Cards/Card.vue'
   import Modal from '@/components/Modal.vue'
   import config from '@/configs/config';
   import Api from '@/helpers/api';
@@ -252,13 +371,17 @@
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
   var moment = require('moment');
+  import LineChart from '../LineChart.js'
+  import StatsCard from '@/components/Cards/StatsCard.vue'
   
   export default {
     components: {
-      Card,
+      // Card,
       Modal,
       Autocomplete,
       flatPicker,
+      LineChart,
+      StatsCard,
     },
     data () {
       return {
@@ -272,6 +395,12 @@
         table: {
           data: []
         },
+        tableAkumulasiClient: {
+          data: []
+        },
+        totalAkumulasiSlittingALL: '',
+        totalAkumulasiTollingALL: '',
+        totalAkumulasiShearinggALL: '',
         form: {
             add: true,
             title: "Add Data",
@@ -288,12 +417,20 @@
             show: false
         },
         totalWeight: '',
+        totalWeightSltDhj: '',
+        totalWeightSltKpi: '',
+        totalWeightTllDhj: '',
+        totalWeightTllKpi: '',
+        totalWeightShrAll: '',
+
         invoiceData: {}, 
         storageUrl : config.storageUrl,
         loadTimeout: null,
         search: {
           job_no: '',
           po_no: '',
+          client_name: '',
+          prod_class: '',
           invoice_no: '',
           invoice_weight: '',
           invoice_qty: '',
@@ -302,6 +439,9 @@
         },
         apiUrl :config.apiUrl,
         tokenApi : '',
+
+        datacollection: null,
+
       }
     },
     mounted(){
@@ -311,13 +451,28 @@
     methods: {
       get(param){
         let context = this;               
-        Api(context, invoice.index({job_no: context.search.job_no, po_no: context.search.po_no, invoice_no: context.search.invoice_no, invoice_weight: context.search.invoice_weight, invoice_qty: context.search.invoice_qty, date: context.search.date, ppn_status: context.search.ppn_status, page: context.pagination.page})).onSuccess(function(response) {    
-            context.table.data  = response.data.data.data.data;
-            context.totalWeight = response.data.data.totalWeight;
+        Api(context, invoice.index({job_no: context.search.job_no, po_no: context.search.po_no, client_name: context.search.client_name, prod_class: context.search.prod_class, invoice_no: context.search.invoice_no, invoice_weight: context.search.invoice_weight, invoice_qty: context.search.invoice_qty, date: context.search.date, ppn_status: context.search.ppn_status, page: context.pagination.page})).onSuccess(function(response) {    
+            context.table.data            = response.data.data.data.data;
+            context.pagination.page_count = response.data.data.data.last_page
+            context.totalWeight           = response.data.data.totalWeight;
+
+            context.totalWeightSltDhj = response.data.data.totalWeightSltDhj;
+            context.totalWeightSltKpi = response.data.data.totalWeightSltKpi;
+            context.totalWeightTllDhj = response.data.data.totalWeightTllDhj;
+            context.totalWeightTllKpi = response.data.data.totalWeightTllKpi;
+            context.totalWeightShrAll = response.data.data.totalWeightShrAll;
+
+            context.tableAkumulasiClient.data  = response.data.data.totalAkumulasi;
+            context.totalAkumulasiSlittingALL  = response.data.data.totalAkumulasiSlittingALL;
+            context.totalAkumulasiTollingALL   = response.data.data.totalAkumulasiTollingALL;
+            context.totalAkumulasiShearinggALL = response.data.data.totalAkumulasiShearinggALL;
+            console.log(response.data.data)
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
             }
+        }).onFinish(function() {  
+            context.fillData()
         })
         .call()
       },
@@ -334,6 +489,7 @@
           this.invoiceData = {}
           this.defaultDate()
           this.$refs.autocomplete.clearInput()
+          this.onLoading = false
       },
       edit(id) {
         let context = this;               
@@ -382,6 +538,7 @@
         let api = null;
         let context = this;
         let formData = new FormData();
+        this.onLoading = true;
 
         if (this.invoiceData.job_no != undefined && this.invoiceData.invoice_no != undefined && this.invoiceData.invoice_date != undefined) {
           formData.append('job_no', this.invoiceData.job_no);
@@ -403,6 +560,7 @@
         }).onError(function(error) {                    
             context.notifyVue((context.formTitle === 'Add Data') ? 'Data Gagal di Simpan' : 'Data Gagal di Update' , 'top', 'right', 'danger')
         }).onFinish(function() {  
+            context.onLoading = false
         })
         .call();
       },
@@ -444,6 +602,23 @@
           }
         }
       },
+      fillData () {
+        this.datacollection = {
+          labels: ['SLITTING', 'TOLLING', 'SHEARING ALL CLIENT'],
+          datasets: [
+            {
+              label: 'DHJ',
+              backgroundColor: '#7FFFD4',
+              data: [this.totalWeightSltDhj,this.totalWeightTllDhj,this.totalWeightShrAll]
+            }, 
+            {
+              label: 'KPI',
+              backgroundColor: '#f87979',
+              data: [this.totalWeightSltKpi,this.totalWeightTllKpi,0]
+            }
+          ],
+        }
+      },
       changePage(page){
         this.pagination.page = page;
         this.get();
@@ -464,6 +639,9 @@
       },
       getDataFilter(obj){
         this.search.job_no = obj.job_no;
+      },
+      getDataFilterClient(obj){
+        this.search.client_name = obj.client_name;
       },
       // AMBIL DATA DARI API AC
       processJSON(json) {

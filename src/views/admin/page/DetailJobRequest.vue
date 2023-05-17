@@ -269,6 +269,36 @@
                       </template>
 
                       <template v-if="jobRequestData.prod_class == 'Tolling'">
+                        <!-- RESUME PIPA -->
+                        <p class="font-weight-bold">Resume Pipa</p>
+                        <table class="table">
+                          <thead style="font-size: 13px;">
+                            <slot name="columns">
+                              <tr style="background-color: #F0F8FF;">
+                                <th>No</th>
+                                <th>SIZE</th>
+                                <th>Qty Pipa Prime</th>
+                                <!-- <th>Qty Pipa Non Prime</th> -->
+                                <th>Weight Pipa Prime</th>
+                                <!-- <th>Weight Pipa Non Prime</th> -->
+                                <th style="display: none" ></th>
+                              </tr>
+                            </slot>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(row, i) in tableDataResumProd.data" :key="i">
+                              <td style="font-size: 15px;">{{ i + 1 }}</td>
+                              <td style="font-size: 15px;">{{ row.produksi_nd }} X {{ row.material_tebal }} mm X {{ row.length }} mm</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.qty_a - (+row.remark_b + +row.remark_c)) }}</td>
+                              <!-- <td style="font-size: 15px;">{{ convertRp(+row.remark_b + +row.remark_c) }}</td> -->
+                              <td style="font-size: 15px;">{{ convertRp(((row.prod_weight / row.qty_a) *  (row.qty_a - (+row.remark_b + +row.remark_c))).toFixed(0)) }}</td>
+                              <!-- <td style="font-size: 15px;">{{ convertRp(((row.prod_weight / row.qty_a) *  (+row.remark_b + +row.remark_c)).toFixed(0)) }}</td> -->
+                              <td style="display: none" ></td>
+                            </tr>
+                          </tbody>
+                        </table><hr>
+                        <!-- DETAIL PIPA -->
+                        <p class="font-weight-bold">Detail Pipa</p>
                         <table class="table">
                           <thead style="font-size: 13px;">
                             <slot name="columns">
@@ -400,6 +430,34 @@
                       </div>
                     </div>
                     <div class="table-responsive">
+                      <!-- <template v-if="jobRequestData.prod_class == 'Tolling'"> -->
+                        <!-- RESUME PIPA -->
+                        <!-- <p class="font-weight-bold">Resume Pipa Terkirim</p>
+                        <table class="table">
+                          <thead style="font-size: 13px;">
+                            <slot name="columns">
+                              <tr style="background-color: #F0F8FF;">
+                                <th>No</th>
+                                <th>Length</th>
+                                <th>Qty Pipa Delivery</th>
+                                <th>Weight Pipa Delivery</th>
+                                <th style="display: none" ></th>
+                              </tr>
+                            </slot>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(row, i) in tableDataDelivPipe.data" :key="i">
+                              <td style="font-size: 15px;">{{ i + 1 }}</td>
+                              <td style="font-size: 15px;">{{ row.panjang }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.qty) }}</td>
+                              <td style="font-size: 15px;">{{ convertRp(row.weight) }}</td>
+                              <td style="display: none" ></td>
+                            </tr>
+                          </tbody>
+                        </table><hr> -->
+                      <!-- DETAIL DELIVERY -->
+                      <!-- <p class="font-weight-bold">Detail Delivery</p>
+                      </template> -->
                       <table class="table">
                         <thead style="font-size: 13px;">
                           <slot name="columns">
@@ -610,7 +668,13 @@
         tableMatMas: {
           data: []
         },
+        tableDataResumProd: {
+          data: []
+        },
         tableDataProd: {
+          data: []
+        },
+        tableDataDelivPipe: {
           data: []
         },
         tableDataDeliv: {
@@ -665,18 +729,20 @@
       getMaterialReq() {
         let context = this;               
         Api(context, jobRequest.getMaterialReq({job_no: context.$route.params.job_no, prod_class: context.jobRequestData.prod_class})).onSuccess(function(response) {
-            context.tableMatReq.data    = response.data.data.data;
-            context.totalWeight         = response.data.data.totalWeight;
-            context.tableDataProd.data  = response.data.data.dataProd;
-            context.totalWeightProd     = response.data.data.totalWeightProd;
-            context.totalWeightScrap    = response.data.data.totalWeightScrap;
-            context.tableDataDeliv.data = response.data.data.dataDelivery;
-            context.totalWeightDeliv    = response.data.data.totalWeightDeliv;
-            context.totalQtyDeliv       = response.data.data.totalQtyDeliv;
-            context.tableDataInv.data   = response.data.data.dataInvoice;
-            context.totalWeightInv      = response.data.data.totalWeightInv;
-            context.totalAmountInv      = response.data.data.totalAmountInv;
-            console.log(response.data.data.data)
+            context.tableMatReq.data        = response.data.data.data;
+            context.totalWeight             = response.data.data.totalWeight;
+            context.tableDataResumProd.data = response.data.data.resumeProd;
+            context.tableDataProd.data      = response.data.data.dataProd;
+            context.totalWeightProd         = response.data.data.totalWeightProd;
+            context.totalWeightScrap        = response.data.data.totalWeightScrap;
+            context.tableDataDelivPipe.data = response.data.data.delivPipe;
+            context.tableDataDeliv.data     = response.data.data.dataDelivery;
+            context.totalWeightDeliv        = response.data.data.totalWeightDeliv;
+            context.totalQtyDeliv           = response.data.data.totalQtyDeliv;
+            context.tableDataInv.data       = response.data.data.dataInvoice;
+            context.totalWeightInv          = response.data.data.totalWeightInv;
+            context.totalAmountInv          = response.data.data.totalAmountInv;
+            console.log(response.data.data.resumeProd)
         })
         .onError(function(error) {                    
             context.tableMatReq.data = []

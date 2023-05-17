@@ -66,7 +66,7 @@
           </router-link>
         </div>
 
-        <!-- <div class="col-xl-4 col-md-6">
+        <div class="col-xl-4 col-md-6">
           <router-link :to="'/delivery-spo'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
@@ -89,14 +89,14 @@
                 <i class="nc-icon nc-layers-3 text-warning"></i>
               </div>
               <div slot="content">
-                <p class="card-category">Scrap</p>
+                <p class="card-category">Pipa Non Prime</p>
                 <h4 class="card-title"> {{ convertRp(SltScr) }} </h4>
               </div>
               <div slot="footer">
               </div>
             </stats-card>
           </router-link>
-        </div> -->
+        </div>
       </div>
 
       <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
@@ -112,7 +112,7 @@
             </div>
           </div>
         </template>
-        <div class="scroll">
+        <!-- <div class="scroll"> -->
           <table border='1'>
             <thead>
               <slot name="columns">
@@ -127,84 +127,84 @@
             </thead>
             <tbody>
               <tr>
-                <td style="font-size: 13px;">JANUARI</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(1)">JANUARI</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Jan) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Jan) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Jan) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Jan) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">FEBRUARI</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(2)">FEBRUARI</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Feb) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Feb) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Feb) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Feb) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">MARET</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(3)">MARET</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Mar) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Mar) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Mar) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Mar) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">APRIL</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(4)">APRIL</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Apr) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Apr) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Apr) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Apr) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">MEI</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(5)">MEI</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Mei) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Mei) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Mei) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Mei) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">JUNI</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(6)">JUNI</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Jun) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Jun) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Jun) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Jun) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">JULI</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(7)">JULI</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Jul) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Jul) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Jul) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Jul) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">AGUSTUS</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(8)">AGUSTUS</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Aug) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Aug) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Aug) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Aug) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">SEPTEMBER</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(9)">SEPTEMBER</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Sep) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Sep) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Sep) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Sep) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">OKTOBER</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(10)">OKTOBER</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Oct) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Oct) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Oct) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Oct) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">NOVEMBER</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(11)">NOVEMBER</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Nov) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Nov) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Nov) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #FFF5EE;">{{ convertRp(rkpShr.Nov) }}</td>
               </tr>
               <tr>
-                <td style="font-size: 13px;">DESEMBER</td>
+                <td style="font-size: 13px; cursor: pointer; color: blue;" @click="get(12)">DESEMBER</td>
                 <td style="font-size: 13px; text-align: center; background-color: #F0E68C;">{{ convertRp(rkpSltInt.Des) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #E6E6FA;">{{ convertRp(rkpSltExt.Des) }}</td>
                 <td style="font-size: 13px; text-align: center; background-color: #00FA9A;">{{ convertRp(rkpTll.Des) }}</td>
@@ -224,7 +224,80 @@
               </tr>
             </tbody>
           </table>
+        <!-- </div> -->
+      </card>
+
+      <!-- CHART DELIVERY -->
+      <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+        <template slot="header">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-8 text-center">
+              <h5 class="card-title font-weight-bold"><u>DIAGRAM DELIVERY</u> </h5><br>
+              <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">
+                <span v-if="month != '' ">{{ moment().set({'month': (month - 1)}).locale('id').format('MMMM').toUpperCase() }} {{new Date().getFullYear()}}</span>
+                <span v-else>ALL</span>
+              </h5><br>
+            </div>
+            <div class="col-2">
+              <a :href="apiUrl+'print-rkp-delivery?month='+month+''" target="_BLANK">
+                <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                  <i class="fa fa-print "></i> Print
+                </button>
+              </a>
+            </div>
+          </div>
+        </template>
+        <div class="container" >
+          <line-chart :chart-data="datacollection" :width="300" :height="120"></line-chart>
         </div>
+      </card>
+
+      <!-- TOTAL AKUMULASI PER CLIENT -->
+      <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+        <template slot="header">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-8 text-center">
+              <h5 class="card-title font-weight-bold">RKP WEIGHT DELIVERY</h5><br>
+              <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+            </div>
+            <div class="col-2">
+            </div>
+          </div>
+        </template>
+        <!-- <div class="scroll"> -->
+          <table border='1'>
+            <thead>
+              <slot name="columns">
+                <tr style="background-color: #F0F8FF;">
+                  <th style="font-size: 13px; text-align: center;">NO</th>
+                  <th style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                  <th style="font-size: 13px; text-align: center;">SLITTING</th>
+                  <th style="font-size: 13px; text-align: center;">TOLLING PIPA</th>
+                  <th style="font-size: 13px; text-align: center;">SHEARING</th>
+                </tr>
+              </slot>
+            </thead>
+            <tbody>
+              <tr v-for="(row, i) in tableAkumulasiClient.data" :key="i">
+                <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                <td style="font-size: 13px;">{{ row.client_name }}</td>
+                <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_slitting) }} </td>
+                <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_tolling) }} </td>
+                <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_shearing) }} </td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;" colspan="2">TOTAL</td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiSlittingALL) }} </td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiTollingALL) }} </td>
+                <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiShearinggALL) }} </td>
+              </tr>
+            </tbody>
+          </table>
+        <!-- </div> -->
       </card>
 
       </div>
@@ -237,14 +310,24 @@
   import delivery from '@/services/delivery.service';
   import ChartCard from '@/components/Cards/ChartCard.vue'
   import StatsCard from '@/components/Cards/StatsCard.vue'
+  import LineChart from '../LineChart.js'
+  var moment = require('moment');
   
   export default {
     components: {
       ChartCard,
       StatsCard,
+      LineChart,
     },
     data () {
-      return {        
+      return {      
+        moment:moment,  
+        tableAkumulasiClient: {
+          data: []
+        },
+        totalAkumulasiSlittingALL: '',
+        totalAkumulasiTollingALL: '',
+        totalAkumulasiShearinggALL: '',
         apiUrl :config.apiUrl,
         tokenApi : '',
         role : '',
@@ -264,6 +347,15 @@
         totalWeightSltExt: '',
         totalWeightTll: '',
         totalWeightShr: '',
+
+        totalWeightSltDhj: '',
+        totalWeightSltKpi: '',
+        totalWeightTllDhj: '',
+        totalWeightTllKpi: '',
+        totalWeightShrAll: '',
+
+        datacollection: null,
+        month: '',
       }
     },
     mounted(){
@@ -273,18 +365,34 @@
       this.role = localStorage.getItem('role');
     },
     methods: {
-      get(param){
+      get(month){
         let context = this;               
-        Api(context, delivery.getCardAll()).onSuccess(function(response) {    
+        Api(context, delivery.getCardAll({month: month})).onSuccess(function(response) {    
             context.SltInt = response.data.data.SltInt;
             context.SltExt = response.data.data.SltExt;
             context.SltTl  = response.data.data.SltTl;
             context.SltShr = response.data.data.SltShr;
             context.SltScr = response.data.data.SltScr;
             context.SltSpo = response.data.data.SltSpo;
+
+            context.totalWeightSltDhj = response.data.data.totalWeightSltDhj;
+            context.totalWeightSltKpi = response.data.data.totalWeightSltKpi;
+            context.totalWeightTllDhj = response.data.data.totalWeightTllDhj;
+            context.totalWeightTllKpi = response.data.data.totalWeightTllKpi;
+            context.totalWeightShrAll = response.data.data.totalWeightShrAll;
+
+            context.tableAkumulasiClient.data  = response.data.data.totalAkumulasi;
+            context.totalAkumulasiSlittingALL  = response.data.data.totalAkumulasiSlittingALL;
+            context.totalAkumulasiTollingALL   = response.data.data.totalAkumulasiTollingALL;
+            context.totalAkumulasiShearinggALL = response.data.data.totalAkumulasiShearinggALL;
+            
+            context.month = (month != undefined) ? Number(month) : '';
+            context.$forceUpdate();
         }).onError(function(error) {                    
             if (error.response.status == 404) {
             }
+        }).onFinish(function() {  
+            context.fillData()
         })
         .call()
       },
@@ -320,6 +428,23 @@
           }else{
             return bilangan
           }
+        }
+      },
+      fillData () {
+        this.datacollection = {
+          labels: ['SLITTING', 'TOLLING', 'SHEARING ALL CLIENT'],
+          datasets: [
+            {
+              label: 'DHJ',
+              backgroundColor: '#7FFFD4',
+              data: [this.totalWeightSltDhj,this.totalWeightTllDhj,this.totalWeightShrAll]
+            }, 
+            {
+              label: 'KPI',
+              backgroundColor: '#f87979',
+              data: [this.totalWeightSltKpi,this.totalWeightTllKpi,0]
+            }
+          ],
         }
       },
       

@@ -283,16 +283,19 @@
               <base-input type="text"
                     label="Surat Jalan No"
                     placeholder="Surat Jalan No"
+                    v-on:keyup.enter="get()"
                     v-model="search.travel_latter_no">
               </base-input>
               <base-input type="text"
                     label="Coil No"
                     placeholder="Coil No"
+                    v-on:keyup.enter="get()"
                     v-model="search.coil_no">
               </base-input>
               <base-input type="text"
                     label="Program No"
                     placeholder="Program No"
+                    v-on:keyup.enter="get()"
                     v-model="search.process_program">
               </base-input>
               <div class="form-group">
@@ -305,6 +308,7 @@
                   label="client_code"
                   :on-select="getDataFilter"
                   placeholder="Choose Owner"
+                  v-on:keyup.enter="get()"
                   :min="3"
                   :process="processJSON"
                   :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
@@ -314,21 +318,25 @@
               <base-input type="text"
                     label="Pack"
                     placeholder="Pack"
+                    v-on:keyup.enter="get()"
                     v-model="search.pack">
               </base-input>
               <base-input type="number"
                     label="Thick"
                     placeholder="Thick"
+                    v-on:keyup.enter="get()"
                     v-model="search.thick">
               </base-input>
               <base-input type="number"
                     label="Width"
                     placeholder="Width"
+                    v-on:keyup.enter="get()"
                     v-model="search.width">
               </base-input>
               <base-input type="number"
                     label="Weight"
                     placeholder="Weight"
+                    v-on:keyup.enter="get()"
                     v-model="search.weight">
               </base-input>
               <!-- <base-input type="number"

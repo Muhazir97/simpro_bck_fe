@@ -83,7 +83,7 @@
           </router-link>
         </div>
 
-        <div class="col-xl-3 col-md-6">
+        <!-- <div class="col-xl-3 col-md-6">
           <router-link :to="'/news'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
@@ -97,7 +97,7 @@
               </div>
             </stats-card>
           </router-link>
-        </div>
+        </div> -->
 
         <div class="col-xl-3 col-md-6">
           <router-link :to="'/invoice'">
@@ -115,7 +115,7 @@
           </router-link>
         </div>
 
-        <!-- <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-6">
           <router-link :to="'/payment'">
             <stats-card class="shadow">
               <div slot="header" class="icon-info">
@@ -123,13 +123,13 @@
               </div>
               <div slot="content">
                 <p class="card-category">Payment</p>
-                <h4 class="card-title">{{ count_task.invoice }}</h4>
+                <h4 class="card-title">0</h4>
               </div>
               <div slot="footer">
               </div>
             </stats-card>
           </router-link>
-        </div> -->
+        </div>
       </div>
 
         <div class="table-responsive" v-if="role != 'Visitor'">
