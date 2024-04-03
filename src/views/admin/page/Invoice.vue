@@ -303,11 +303,11 @@
                       <th rowspan="2" style="font-size: 13px; text-align: center;">INVOICE NO</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center;">TANGGAL</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center;">OP NO</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center;">No. SURAT JALAN COIL</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center;">SIZE</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center;">COIL TERPAKAI (KG)</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center; background-color: red;">No. SURAT JALAN COIL</th>
+                      <th rowspan="2" colspan="2" style="font-size: 13px; text-align: center;">SIZE</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center; background-color: red;">COIL TERPAKAI (KG)</th>
                       <th colspan="2" style="font-size: 13px; text-align: center;">HASIL PRODUKSI</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center;">YIELD</th>
+                      <!-- <th rowspan="2" style="font-size: 13px; text-align: center;">YIELD</th> -->
                       <th rowspan="2" style="font-size: 13px; text-align: center;">PO NO</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center;">COIL NO</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center;">CUSTOMER</th>
@@ -323,17 +323,18 @@
                     <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ moment(row.date).locale('id').format('L') }}</td>
-                    <td style="font-size: 13px; text-align: center;">{{ row.op_no }}</td>
-                    <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td>
-                    <td style="font-size: 13px; text-align: center;">
-                      {{ row.produksi_nd }} x {{ row.material_tebal }} x {{ row.length }}</span>
+                    <td style="font-size: 13px; text-align: center; white-space: nowrap;">{{ row.op_no }}</td>
+                    <td style="font-size: 13px; text-align: center; background-color: red;">{{ row.packing_list_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.produksi_odia }}</td>
+                    <td style="font-size: 13px; text-align: center; white-space: nowrap;">
+                      {{ row.produksi_nd }} x {{ row.produksi_tebal }} x {{ row.length }}</span>
                     </td>
-                    <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
+                    <td style="font-size: 13px; text-align: center; background-color: red;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_btg_count) }}</td>
-                    <td style="font-size: 13px; text-align: center;">
-                      {{ convertRp(((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))).toFixed(2)) }}
-                    </td>
-                    <td style="font-size: 13px; text-align: center;">{{ (((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))) / row.total_coil_terpakai_count * 100).toFixed(2) }} %</td>
+                    <td style="font-size: 13px; text-align: center;">{{ convertRp((row.total_coil_terpakai_count)) }}</td>
+                    <!-- <td style="font-size: 13px; text-align: center;">
+                      {{ (((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))) / row.total_coil_terpakai_count * 100).toFixed(2) }} %
+                    </td> -->
                     <td style="font-size: 13px; text-align: center;">{{ row.po_no }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ row.coil_no }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ row.client_name }}</td>
