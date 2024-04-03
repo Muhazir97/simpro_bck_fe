@@ -13,6 +13,9 @@ export default {
     show(id) {
         return Service().get('delivery/show/'+id);
     },
+    generateDeliveryNumber(params) {
+        return Service().get('delivery/generate-delivery-number', {params});
+    },
     create(params) {
         return Service().post('delivery/create', params, {
             headers: {

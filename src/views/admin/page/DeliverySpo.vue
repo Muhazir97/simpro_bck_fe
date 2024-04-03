@@ -379,6 +379,16 @@
           this.defaultDate()
           this.$refs.autocompleteJO.clearInput()
           this.onLoading = false
+          this.generateDelivNo()
+      },
+      generateDelivNo(){
+        // get delivery no
+          let context = this;               
+          Api(context, delivery.generateDeliveryNumber({type_sj: '-BCK-SPO-'})).onSuccess(function(response) {            
+              context.deliveryData.packing_list_no = response.data;
+              context.$forceUpdate();
+          })
+          .call() 
       },
       edit(id) {
         let context = this;               

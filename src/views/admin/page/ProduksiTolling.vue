@@ -56,10 +56,11 @@
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY OP</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT OP</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">ESTIMASI CUT OFF</th>
+                      <!-- <th v-if="role == 'Admin' || role == 'Delivery'">ESTIMASI WEIGHT</th> -->
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY DELIV</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT DELIV</th>
                       <th v-if="role == 'Admin' || role == 'Delivery'">QTY SISA</th>
-                      <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SISA</th>
+                      <!-- <th v-if="role == 'Admin' || role == 'Delivery'">WEIGHT SISA</th> -->
                       <th>CREATED AT</th>
                       <th></th>
                       <th></th>
@@ -101,8 +102,12 @@
                     </td>
                     <!-- ESTIMASI CUT OFF -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
-                      {{ convertRp(row.total_btg_count) }}
+                      <label class="badge badge-dark badge-fill text-white">{{ convertRp(row.total_btg_count) }}</label>
                     </td>
+                    <!-- ESTIMASI WEIGHT -->
+                    <!-- <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      <label class="badge badge-dark badge-fill text-white">{{ convertRp(row.total_coil_terpakai_count) }}</label>
+                    </td> -->
                     <!-- QTY DELIV -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
                       {{ convertRp(row.qty_deliv) }}
@@ -113,12 +118,12 @@
                     </td>
                     <!-- QTY SISA -->
                     <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
-                      <label class="badge badge-danger badge-fill">{{ convertRp(row.produksi_jumlah1 + row.produksi_jumlah + row.produksi_jumlah2 - row.qty_deliv) }}</label>
+                      <label class="badge badge-danger badge-fill">{{ convertRp((row.total_btg_count) - row.qty_deliv) }}</label>
                     </td>
                     <!-- WEIGHT SISA -->
-                    <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
-                      <label class="badge badge-danger badge-fill">{{ Number(+(row.produksi_berat_total1) + +(row.produksi_berat_total) + +(row.produksi_berat_total2) - (row.weight_deliv)).toFixed(2) }}</label>
-                    </td>
+                    <!-- <td style="font-size: 13px;" v-if="role == 'Admin' || role == 'Delivery'">
+                      <label class="badge badge-danger badge-fill">{{ Number((row.total_btg_count) - (row.weight_deliv)).toFixed(2) }}</label>
+                    </td> -->
                     <td style="font-size: 13px;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                     <td>
                       <i class="fa fa-edit" aria-hidden="true" style="cursor: pointer;" @click="edit(row.id)" title="Edit"></i>
@@ -168,6 +173,9 @@
                 <div class="col-2">
                   <select class="form-select form-control w-10" v-model="year" @change="getLP()">
                     <option selected>Year</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
                     <option value="2023">2023</option>
                     <option value="2022">2022</option>
                     <option value="2021">2021</option>

@@ -464,6 +464,7 @@
                             <tr style="background-color: #F0F8FF;">
                               <th>No</th>
                               <th>Surat Jalan No</th>
+                              <th>Alamat Kirim</th>
                               <th>Weight</th>
                               <th>Qty</th>
                               <th>Date</th>
@@ -484,13 +485,14 @@
                                 <label class="badge badge-info">{{row.packing_list_no}}</label>
                               </div>
                             </td>
+                            <td style="font-size: 15px;">{{ row.alamat_kirim.substring(15) }}</td>
                             <td style="font-size: 15px;">{{convertRp(row.weight)}}</td>
                             <td style="font-size: 15px;">{{convertRp(row.qty)}}</td>
                             <td style="font-size: 15px;">{{moment(row.packing_date).locale('id').format('L')}}</td>
                             <td style="display: none" ></td>
                           </tr>
                           <tr>
-                            <td colspan="2" style="font-size: 13px; font-weight: bold;">TOTAL</td>
+                            <td colspan="3" style="font-size: 13px; font-weight: bold;">TOTAL</td>
                             <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalWeightDeliv) }}</td>
                             <td style="font-size: 13px; font-weight: bold;">{{ convertRp(totalQtyDeliv) }}</td>
                             <td colspan="3"></td>

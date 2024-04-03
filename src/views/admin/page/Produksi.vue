@@ -182,6 +182,13 @@
               <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
             </div>
             <div class="col-2">
+              <select class="form-select form-control" aria-label="Default select example" v-model="year" @click="getRkpProduksiMonth(), getRkpProduksiDaily(month)">
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+              </select>
             </div>
           </div>
         </template>
@@ -289,10 +296,10 @@
             </div>
             <div class="col-8 text-center">
               <h5 class="card-title font-weight-bold">DAILY PRODUCTION REPORT</h5><br>
-              <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">{{ moment().set({'month': month}).format('MMMM').toUpperCase() }} {{new Date().getFullYear()}}</h5><br>
+              <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">{{ moment().set({'month': Number(month) - 1}).locale('id').format('MMMM').toUpperCase() }} {{ year }}</h5><br>
             </div>
             <div class="col-2">
-              <a :href="apiUrl+'print-daily-production-report?month='+Number(month + 1)+''" target="_BLANK">
+              <a :href="apiUrl+'print-daily-production-report?month='+month+'&year='+year+''" target="_BLANK">
                 <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
                   <i class="fa fa-print"></i> Print
                 </button>
@@ -315,11 +322,11 @@
             </thead>
             <tbody>
               <tr v-for="(row, i) in table.data" :key="i">
-                <td style="font-size: 13px; text-align: center;" :style="(moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Sab' || moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : ''">{{ moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') }}</td>
-                <td style="font-size: 13px; text-align: center;" :style="(moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Sab' || moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : ''">{{ i }}</td>
-                <td style="font-size: 13px; text-align: center;" :style="(moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Sab' || moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : 'background-color: #DCDCDC;'">{{ convertRp(table.data[i]) }}</td>
-                <td style="font-size: 13px; text-align: center;" :style="(moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Sab' || moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : 'background-color: #F0FFF0;'">{{ convertRp(table.dataTll[i]) }}</td>
-                <td style="font-size: 13px; text-align: center;" :style="(moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Sab' || moment( new Date().getFullYear()+'-'+Number(month + 1)+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : 'background-color: #FFFACD;'">{{ convertRp(table.dataShr[i]) }}</td>
+                <td style="font-size: 13px; text-align: center;" :style="(moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Sab' || moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : ''">{{ moment(year+'-'+month+'-'+i).locale('id').format('ddd') }}</td>
+                <td style="font-size: 13px; text-align: center;" :style="(moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Sab' || moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : ''">{{ i }}</td>
+                <td style="font-size: 13px; text-align: center;" :style="(moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Sab' || moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : 'background-color: #DCDCDC;'">{{ convertRp(table.data[i]) }}</td>
+                <td style="font-size: 13px; text-align: center;" :style="(moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Sab' || moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : 'background-color: #F0FFF0;'">{{ convertRp(table.dataTll[i]) }}</td>
+                <td style="font-size: 13px; text-align: center;" :style="(moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Sab' || moment(year+'-'+month+'-'+i).locale('id').format('ddd') == 'Min') ? 'background-color: red; color: white;' : 'background-color: #FFFACD;'">{{ convertRp(table.dataShr[i]) }}</td>
               </tr>
               <tr>
                 <td colspan="2" style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL</td>
@@ -340,10 +347,10 @@
             </div>
             <div class="col-8 text-center">
               <h5 class="card-title font-weight-bold"><u>DIAGRAM WEIGHT PRODUKSI</u> </h5><br>
-              <!-- <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">Desember - 2022</h5><br> -->
+              <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">{{ moment().set({'month': Number(month) - 1}).locale('id').format('MMMM').toUpperCase() }} {{ year }}</h5><br>
             </div>
             <div class="col-2">
-              <a :href="apiUrl+'print-rkp-produksi?month='+Number(month + 1)+''" target="_BLANK">
+              <a :href="apiUrl+'print-rkp-produksi?month='+month+'&year='+year+''" target="_BLANK">
                 <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
                   <i class="fa fa-print "></i> Print
                 </button>
@@ -365,6 +372,7 @@
             <div class="col-8 text-center">
               <h5 class="card-title font-weight-bold">RKP WEIGHT PRODUKSI</h5><br>
               <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+              <h5 class="card-title font-weight-bold" style="margin-top: 10px; margin-bottom: -30px;">{{ moment().set({'month': Number(month) - 1}).locale('id').format('MMMM').toUpperCase() }} {{ year }}</h5><br>
             </div>
             <div class="col-2">
             </div>
@@ -506,27 +514,29 @@
 
         datacollection: null,
         month: '',
+        year: '',
       }
     },
     mounted(){
+      this.tokenApi = 'Bearer '+localStorage.getItem('token');
+      this.role = localStorage.getItem('role');
+      this.month = moment().format('MM')
+      this.year  = new Date().getFullYear()
       this.get();
       this.getRkpProduksiMonth();
       this.getWeeklyReport();
       this.getRkpProduksiDaily(moment().format('MM'));
-      this.tokenApi = 'Bearer '+localStorage.getItem('token');
-      this.role = localStorage.getItem('role');
-      this.month = moment().format('MM')
     },
     methods: {
       get(){
         let context = this;               
-        Api(context, produksi.getCardAll({month: this.month})).onSuccess(function(response) {    
+        Api(context, produksi.getCardAll({month: context.month, year: context.year})).onSuccess(function(response) {    
             context.Slt = response.data.data.Slt;
             context.Tll = response.data.data.Tll;
             context.Shr = response.data.data.Shr;
 
-            context.totalWeightSltDhj = response.data.data.totalWeightSltDhj;
-            context.totalWeightSltKpi = response.data.data.totalWeightSltKpi;
+            context.totalWeightSltDhj = response.data.data.totalWeightSltDhj.totalWeightSltDhj;
+            context.totalWeightSltKpi = response.data.data.totalWeightSltKpi.totalWeightSltKpi;
             context.totalWeightTllDhj = response.data.data.totalWeightTllDhj;
             context.totalWeightTllKpi = response.data.data.totalWeightTllKpi;
 
@@ -544,7 +554,7 @@
       },
       getRkpProduksiMonth(param){
         let context = this;               
-        Api(context, produksi.getRkpProduksiMonth()).onSuccess(function(response) {    
+        Api(context, produksi.getRkpProduksiMonth({year: context.year})).onSuccess(function(response) {    
             context.rkpSlt = response.data.data.sltInt;
             context.rkpTll = response.data.data.tll;
             context.rkpShr = response.data.data.shr;
@@ -560,7 +570,7 @@
       },
       getRkpProduksiDaily(month){
         let context = this;               
-        Api(context, produksi.getRkpProduksiDaily({month: month})).onSuccess(function(response) {
+        Api(context, produksi.getRkpProduksiDaily({month: month, year: context.year})).onSuccess(function(response) {
             context.table.data    = response.data.data.slt;
             context.table.dataTll = response.data.data.tll;
             context.table.dataShr = response.data.data.shr;
@@ -569,8 +579,8 @@
             context.weightTllDaily = response.data.data.weightTllDaily;
             context.weightShrDaily = response.data.data.weightShrDaily;
 
-            // context.get(month)
-            context.month = Number(month - 1);
+            context.month = month;
+            context.get(month)
             context.$forceUpdate();
         }).onError(function(error) {                    
             if (error.response.status == 404) {

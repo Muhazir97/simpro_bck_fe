@@ -279,19 +279,19 @@
               <!-- NAMA : <input type="" name="" style="border: 1px solid white;"><hr> -->
             </p>
           </div>
-          <div class="col-2 text-center">
+          <!-- <div class="col-2 text-center">
             <p style="margin-left: 5px; margin-bottom: 120px; margin-top: 23px; font-size: 13px;">GUDANG</p>
             <p style="margin-left: -10px; font-size: 13px; font-size: 13px; margin-bottom: -25px;">
               <input type="" name="" style="border: 1px solid white; text-align: center;" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.gudang"><hr>
             </p>
-          </div>
-          <div class="col-2 text-center">
+          </div> -->
+          <div class="col-3 text-center">
             <p style="margin-left: 5px; margin-bottom: 120px; margin-top: 23px; font-size: 13px;">DRIVER</p>
             <p style="margin-left: 5px; font-size: 13px; font-size: 13px; margin-bottom: -20px;">
               {{ dataSJ.driver }}<hr>
             </p>
           </div>
-          <div class="col-2 text-center">
+          <div class="col-3 text-center">
             <p style="margin-left: 5px; margin-bottom: 120px; margin-top: 23px; font-size: 13px;">SECURITY</p>
             <p style="margin-left: -10px; font-size: 13px; font-size: 13px; margin-bottom: -25px;">
               <input type="" name="" style="border: 1px solid white; text-align: center;" @change="updateSJ(detailDeliveryData.packing_list_no)" v-model="dataSJ.security"><hr>
@@ -315,7 +315,8 @@
            </template>
            <div>
 
-            TOTAL : {{tableMatMdl.data.length}}
+            TOTAL QTY : {{tableMatMdl.data.length}}<br>
+            TOTAL WEIGHT : {{convertRp(totalWeightMdl)}}
             <i class="fa fa-check-circle text-primary fa-lg ml-2" style="cursor: pointer;" aria-hidden="true" title="Add Material All" @click="saveMaterial('all')"></i>
             <base-input 
                   v-if="detailDeliveryData.packing_list_no.includes('SPO')"
@@ -337,7 +338,7 @@
                       <th style="font-size: 13px;">Thick</th>
                       <th style="font-size: 13px;">Width</th>
                       <th style="font-size: 13px;">Weight</th>
-                      <!-- <th style="font-size: 13px;">Spec</th> -->
+                      <th style="font-size: 13px; width:">SJ NO</th>
                     </tr>
                   </slot>
                 </thead>
@@ -351,6 +352,7 @@
                     <td style="font-size: 13px;">{{row.thick}}</td>
                     <td style="font-size: 13px;">{{row.width}}</td>
                     <td style="font-size: 13px;">{{row.weight}}</td>
+                    <td style="font-size: 13px;"><span style="white-space: nowrap;">{{row.travel_latter_no}}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -400,6 +402,7 @@
         },
         totalQty: '',
         totalWeight: '',
+        totalWeightMdl: '',
         update_job_note: '',
         apiUrl :config.apiUrl,
         storageUrl : config.storageUrl,
@@ -597,7 +600,9 @@
       getMaterialMdl() {
         let context = this;               
         Api(context, delivery.getMaterialMdl({process_program: context.process_program, type_pengiriman: context.dataSJ.type_pengiriman, surat_jalan_no: context.detailDeliveryData.packing_list_no, job_no: context.detailDeliveryData.job_no, thick: context.search.thick,})).onSuccess(function(response) {
-            context.tableMatMdl.data = response.data.data;                   
+            context.tableMatMdl.data = response.data.data.data;
+            context.totalWeightMdl   = response.data.data.totalWeight;
+            console.log(response.data.data)                   
         })
         .onError(function(error) {                    
             context.tableMatMdl.data = []

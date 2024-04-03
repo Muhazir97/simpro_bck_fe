@@ -103,14 +103,14 @@
             </template>
           </card>
 
-          <!-- CHART INVOICE -->
+          <!-- =============================== CHART WEIGHT INVOICE ============================ -->
           <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
             <template slot="header">
               <div class="row">
                 <div class="col-2">
                 </div>
                 <div class="col-8 text-center">
-                  <h5 class="card-title font-weight-bold"><u>DIAGRAM INVOICE</u> </h5><br>
+                  <h5 class="card-title font-weight-bold"><u>DIAGRAM WEIGHT INVOICE</u> </h5><br>
                   <!-- <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">Desember - 2022</h5><br> -->
                 </div>
                 <div class="col-2">
@@ -127,7 +127,7 @@
             </div>
           </card>
 
-          <!-- TOTAL AKUMULASI PER CLIENT -->
+          <!-- TOTAL AKUMULASI PER CLIENT WEIGHT -->
           <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
             <template slot="header">
               <div class="row">
@@ -171,6 +171,184 @@
                 </tbody>
               </table>
             </div>
+          </card>
+
+          <!-- ============================= CHART AMOUNT INVOICE ============================== -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold"><u>DIAGRAM AMOUNT INVOICE</u> </h5><br>
+                  <!-- <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">Desember - 2022</h5><br> -->
+                </div>
+                <div class="col-2">
+                  <a :href="apiUrl+'print-rkp-amount-invoice?job_no='+search.job_no+'&po_no='+search.po_no+'&client_name='+search.client_name+'&prod_class='+search.prod_class+'&invoice_no='+search.invoice_no+'&invoice_weight='+search.invoice_weight+'&invoice_qty='+search.invoice_qty+'&date='+search.date+'&ppn_status='+search.ppn_status+''" target="_BLANK">
+                    <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                      <i class="fa fa-print "></i> Print
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </template>
+            <div class="container" >
+              <line-chart :chart-data="datacollectionAmount" :width="300" :height="120"></line-chart>
+            </div>
+          </card>
+
+          <!-- TOTAL AKUMULASI PER CLIENT AMOUNT -->
+          <card class="strpied-tabled-with-hover shadow" body-classes="table-full-width table-responsive">
+            <template slot="header">
+              <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-8 text-center">
+                  <h5 class="card-title font-weight-bold">RKP AMOUNT INVOICE</h5><br>
+                  <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">PT. BUANA CENTRA KARYA</h5><br>
+                </div>
+                <div class="col-2">
+                </div>
+              </div>
+            </template>
+            <div class="scroll">
+              <table border='1'>
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th style="font-size: 13px; text-align: center;">NO</th>
+                      <th style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                      <th style="font-size: 13px; text-align: center;">SLITTING</th>
+                      <th style="font-size: 13px; text-align: center;">TOLLING PIPA</th>
+                      <th style="font-size: 13px; text-align: center;">SHEARING</th>
+                      <th style="font-size: 13px; text-align: center;">TOTAL ALL</th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableAkumulasiAmountClient.data" :key="i">
+                    <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                    <td style="font-size: 13px;">{{ row.client_name }}</td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_slitting) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_tolling) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp(row.weight_shearing) }} </td>
+                    <td style="font-size: 13px; text-align: center;"> {{ convertRp( (+row.weight_slitting + +row.weight_tolling + +row.weight_shearing) ) }} </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;" colspan="2">TOTAL</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiAmountSlittingALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiAmountTollingALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp(totalAkumulasiAmountShearinggALL) }} </td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"> {{ convertRp( (+totalAkumulasiAmountSlittingALL + +totalAkumulasiAmountTollingALL + +totalAkumulasiAmountShearinggALL) ) }} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </card>
+
+          <!-- AKUMULASI TOLLING PRODUKSI PIPA -->
+          <card class="strpied-tabled-with-hover shadow container-fluid" body-classes="table-full-width table-responsive">
+            <template slot="header">
+              <div class="row">
+                <!-- <div class="col-2">
+                </div> -->
+                <div class="col-6 text-center mb-3">
+                  <h5 class="card-title font-weight-bold">LAPORAN PRODUKSI PIPA</h5><br>
+                  <h5 class="card-title font-weight-bold" style="margin-top: -20px; margin-bottom: -30px;">BULAN {{ moment().set({'month': month - 1}).locale('id').format('MMMM').toUpperCase() }} {{ moment().set({'year': year}).format('Y') }}</h5><br>
+                </div>
+                <div class="col-2">
+                  <select class="form-select form-control w-10" v-model="month" @change="getLPInv()">
+                    <option selected>Month</option>
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                  </select>
+                </div>
+                <div class="col-2">
+                  <select class="form-select form-control w-10" v-model="year" @change="getLPInv()">
+                    <option selected>Year</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                 </div>
+                 <div class="col-2">
+                  <a :href="apiUrl+'print-month-lp-pipa?month='+Number(month)+'&year='+year+''" target="_BLANK">
+                    <button type="submit" class="btn btn-sm btn-success btn-fill float-right ml-2">
+                      <i class="fa fa-file-text"></i> Print
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </template>
+            <!-- <div class="scroll"> -->
+              <table border='1'>
+                <thead>
+                  <slot name="columns">
+                    <tr style="background-color: #F0F8FF;">
+                      <th rowspan="2" style="font-size: 13px; text-align: center;" width="4">NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">INVOICE NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">TANGGAL</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">OP NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">No. SURAT JALAN COIL</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">SIZE</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">COIL TERPAKAI (KG)</th>
+                      <th colspan="2" style="font-size: 13px; text-align: center;">HASIL PRODUKSI</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">YIELD</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">PO NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">COIL NO</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">CUSTOMER</th>
+                    </tr>
+                    <tr>
+                      <th style="font-size: 13px; text-align: center;">BTG</th>
+                      <th style="font-size: 13px; text-align: center;">BERAT (KG)</th>
+                    </tr>
+                  </slot>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableLPPipa.data" :key="i">
+                    <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ moment(row.date).locale('id').format('L') }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.op_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">
+                      {{ row.produksi_nd }} x {{ row.material_tebal }} x {{ row.length }}</span>
+                    </td>
+                    <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_btg_count) }}</td>
+                    <td style="font-size: 13px; text-align: center;">
+                      {{ convertRp(((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))).toFixed(2)) }}
+                    </td>
+                    <td style="font-size: 13px; text-align: center;">{{ (((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))) / row.total_coil_terpakai_count * 100).toFixed(2) }} %</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.po_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.coil_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.client_name }}</td>
+                  </tr>
+                  <tr style="background-color: #F0F8FF;">
+                    <td colspan="4" style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalCoilTerpakaiAll) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBtgAll) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBeratProduksiAll.toFixed(2)) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ (totalBeratProduksiAll / totalCoilTerpakaiAll * 100).toFixed(2) }} %</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            <!-- </div> -->
           </card>
 
         </div>
@@ -401,6 +579,13 @@
         totalAkumulasiSlittingALL: '',
         totalAkumulasiTollingALL: '',
         totalAkumulasiShearinggALL: '',
+
+        tableAkumulasiAmountClient: {
+          data: []
+        },
+        totalAkumulasiAmountSlittingALL: '',
+        totalAkumulasiAmountTollingALL: '',
+        totalAkumulasiAmountShearinggALL: '',
         form: {
             add: true,
             title: "Add Data",
@@ -417,11 +602,18 @@
             show: false
         },
         totalWeight: '',
+        // grafik weight
         totalWeightSltDhj: '',
         totalWeightSltKpi: '',
         totalWeightTllDhj: '',
         totalWeightTllKpi: '',
         totalWeightShrAll: '',
+        // grafik amount
+        totalAmountSltDhj: '',
+        totalAmountSltKpi: '',
+        totalAmountTllDhj: '',
+        totalAmountTllKpi: '',
+        totalAmountShrAll: '',
 
         invoiceData: {}, 
         storageUrl : config.storageUrl,
@@ -441,11 +633,22 @@
         tokenApi : '',
 
         datacollection: null,
+        datacollectionAmount: null,
+
+        tableLPPipa: {
+          data: []
+        },
+        totalCoilTerpakaiAll: 0,
+        totalBtgAll: 0,
+        totalBeratProduksiAll: 0,
+        month: '3',
+        year: moment().format('Y'),
 
       }
     },
     mounted(){
       this.get();
+      this.getLPInv();
       this.tokenApi = 'Bearer '+localStorage.getItem('token');
     },
     methods: {
@@ -456,23 +659,52 @@
             context.pagination.page_count = response.data.data.data.last_page
             context.totalWeight           = response.data.data.totalWeight;
 
+            // REKAPAN INVOICE WEIGHT CHART
             context.totalWeightSltDhj = response.data.data.totalWeightSltDhj;
             context.totalWeightSltKpi = response.data.data.totalWeightSltKpi;
             context.totalWeightTllDhj = response.data.data.totalWeightTllDhj;
             context.totalWeightTllKpi = response.data.data.totalWeightTllKpi;
             context.totalWeightShrAll = response.data.data.totalWeightShrAll;
-
+            // REKAPAN INVOICE WEIGHT TABLE
             context.tableAkumulasiClient.data  = response.data.data.totalAkumulasi;
             context.totalAkumulasiSlittingALL  = response.data.data.totalAkumulasiSlittingALL;
             context.totalAkumulasiTollingALL   = response.data.data.totalAkumulasiTollingALL;
             context.totalAkumulasiShearinggALL = response.data.data.totalAkumulasiShearinggALL;
-            console.log(response.data.data)
+
+            // REKAPAN INVOICE WEIGHT CHART
+            context.totalAmountSltDhj = response.data.data.totalAmountSltDhj;
+            context.totalAmountSltKpi = response.data.data.totalAmountSltKpi;
+            context.totalAmountTllDhj = response.data.data.totalAmountTllDhj;
+            context.totalAmountTllKpi = response.data.data.totalAmountTllKpi;
+            context.totalAmountShrAll = response.data.data.totalAmountShrAll;
+            // REKAPAN INVOICE AMOUNT
+            context.tableAkumulasiAmountClient.data  = response.data.data.totalAkumulasiAmount;
+            context.totalAkumulasiAmountSlittingALL  = response.data.data.totalAkumulasiAmountSlittingALL;
+            context.totalAkumulasiAmountTollingALL   = response.data.data.totalAkumulasiAmountTollingALL;
+            context.totalAkumulasiAmountShearinggALL = response.data.data.totalAkumulasiAmountShearinggALL;
+
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.table.data = [];
             }
         }).onFinish(function() {  
             context.fillData()
+            context.fillDataAmount()
+        })
+        .call()
+      },
+      getLPInv(){
+        let context = this;               
+        Api(context, invoice.getLPInv({month: this.month, year: this.year})).onSuccess(function(response) {  
+            context.tableLPPipa.data      = response.data.data.data;
+            context.totalBtgAll           = (response.data.data.totalBtgAll - response.data.data.totalBtgAllB - response.data.data.totalBtgAllC);
+            context.totalCoilTerpakaiAll  = response.data.data.totalCoilTerpakaiAll;
+            context.totalBeratProduksiAll = ((response.data.data.totalBeratProduksiAll / response.data.data.totalBtgAll) *  (response.data.data.totalBtgAll - (+response.data.data.totalBtgAllB + +response.data.data.totalBtgAllC)));
+            console.log(((response.data.data.totalBeratProduksiAll / response.data.data.totalBtgAll) *  (response.data.data.totalBtgAll - (+response.data.data.totalBtgAllB + +response.data.data.totalBtgAllC))));
+        }).onError(function(error) {                    
+            if (error.response.status == 404) {
+                context.tableLPPipa.data = [];
+            }
         })
         .call()
       },
@@ -615,6 +847,23 @@
               label: 'KPI',
               backgroundColor: '#f87979',
               data: [this.totalWeightSltKpi,this.totalWeightTllKpi,0]
+            }
+          ],
+        }
+      },
+      fillDataAmount () {
+        this.datacollectionAmount = {
+          labels: ['SLITTING', 'TOLLING', 'SHEARING ALL CLIENT'],
+          datasets: [
+            {
+              label: 'DHJ',
+              backgroundColor: '#40E0D0',
+              data: [this.totalAmountSltDhj,this.totalAmountTllDhj,this.totalAmountShrAll]
+            }, 
+            {
+              label: 'KPI',
+              backgroundColor: '#FF4500',
+              data: [this.totalAmountSltKpi,this.totalAmountTllKpi,0]
             }
           ],
         }

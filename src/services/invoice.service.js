@@ -41,4 +41,7 @@ export default {
     updateInv(params) {
         return Service().post('invoice/update-inv', params);
     },
+    getLPInv(params) {
+        return Service().get('invoice/get-lp-pipa-inv', {params});
+    },
 }
