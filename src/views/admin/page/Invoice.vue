@@ -291,6 +291,7 @@
                       <i class="fa fa-file-text"></i> Print
                     </button>
                   </a>
+                  <button type="submit" class="btn btn-sm btn-secondary btn-fill float-right" @click="filterSumaryPipa()">Filter</button>
                 </div>
               </div>
             </template>
@@ -300,7 +301,7 @@
                   <slot name="columns">
                     <tr style="background-color: #F0F8FF;">
                       <th rowspan="2" style="font-size: 13px; text-align: center;" width="4">NO</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center;">INVOICE NO</th>
+                      <!-- <th rowspan="2" style="font-size: 13px; text-align: center;">INVOICE NO</th> -->
                       <th rowspan="2" style="font-size: 13px; text-align: center;">TANGGAL</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center;">OP NO</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center; background-color: red;">No. SURAT JALAN COIL</th>
@@ -321,17 +322,15 @@
                 <tbody>
                   <tr v-for="(row, i) in tableLPPipa.data" :key="i">
                     <td style="font-size: 13px; text-align: center;">{{ i + 1 }}</td>
-                    <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td>
-                    <td style="font-size: 13px; text-align: center;">{{ moment(row.date).locale('id').format('L') }}</td>
+                    <!-- <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td> -->
+                    <td style="font-size: 13px; text-align: center;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                     <td style="font-size: 13px; text-align: center; white-space: nowrap;">{{ row.op_no }}</td>
                     <td style="font-size: 13px; text-align: center; background-color: red;">{{ row.packing_list_no }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ row.produksi_odia }}</td>
-                    <td style="font-size: 13px; text-align: center; white-space: nowrap;">
-                      {{ row.produksi_nd }} x {{ row.produksi_tebal }} x {{ row.length }}</span>
-                    </td>
+                    <td style="font-size: 13px; text-align: center; white-space: nowrap;">{{ row.produksi_nd }} x {{ row.produksi_tebal }} x {{ row.length }}</td>
                     <td style="font-size: 13px; text-align: center; background-color: red;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_btg_count) }}</td>
-                    <td style="font-size: 13px; text-align: center;">{{ convertRp((row.total_coil_terpakai_count)) }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
                     <!-- <td style="font-size: 13px; text-align: center;">
                       {{ (((row.total_berat_produksi_count / row.total_btg_count) *  (row.total_btg_count - (+row.remark_b + +row.remark_c))) / row.total_coil_terpakai_count * 100).toFixed(2) }} %
                     </td> -->
@@ -340,11 +339,12 @@
                     <td style="font-size: 13px; text-align: center;">{{ row.client_name }}</td>
                   </tr>
                   <tr style="background-color: #F0F8FF;">
-                    <td colspan="4" style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL</td>
+                    <td colspan="6" style="font-size: 13px; text-align: center; font-weight: bold;">TOTAL</td>
                     <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalCoilTerpakaiAll) }}</td>
                     <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBtgAll) }}</td>
-                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBeratProduksiAll.toFixed(2)) }}</td>
-                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ (totalBeratProduksiAll / totalCoilTerpakaiAll * 100).toFixed(2) }} %</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;">{{ convertRp(totalBeratProduksiAll) }}</td>
+                    <td style="font-size: 13px; text-align: center; font-weight: bold;"></td>
+                    <td></td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -509,6 +509,77 @@
            </modal>
         </div>
 
+        <!-- MODAL FILTER SUMARY PIPA -->
+        <div>
+           <modal :show.sync="formFilterSummaryPipa.show">
+             <template slot="header">
+                <h5 class="modal-title" id="exampleModalLabel">{{formFilterSummaryPipa.title}}</h5>
+             </template>
+             <div>
+              <div class="form-group">
+                <small class="d-block text-uppercase font-weight-bold mb-3">Date range</small>
+                <div class="input-daterange datepicker row align-items-center">
+                    <div class="col">
+                        <base-input addon-left-icon="ni ni-calendar-grid-58">
+                            <flat-picker slot-scope="{focus, blur}"
+                                         @on-open="focus"
+                                         @on-close="blur"
+                                         :config="{allowInput: true, mode: 'range',}"
+                                         class="form-control datepicker"
+                                         v-model="searchSummaryProd.date">
+                            </flat-picker>
+                        </base-input>
+                    </div>
+                </div>
+              </div>
+              <base-input type="text"
+                    label="OP Number"
+                    placeholder="OP Number"
+                    v-model="searchSummaryProd.op_no">
+              </base-input>
+              <div class="form-group">
+                <label>Size</label><br>
+                <select class="form-select form-control" aria-label="Default select example" v-model="formFilterSummaryPipa.size">
+                  <option selected>Select</option>
+                  <option value='1 "'>1 "</option>
+                  <option value='1½ "'>1½ "</option>
+                  <option value='1¼ "'>1¼ "</option>
+                  <option value='2 "'>2 "</option>
+                  <option value='2½ "'>2½ "</option>
+                  <option value='3 "'>3 "</option>
+                  <option value='4 "'>4 "</option>
+                  <option value='5 "'>5 "</option>
+                </select>
+              </div>
+              <base-input type="text"
+                    label="PO Number"
+                    placeholder="PO Number"
+                    v-model="searchSummaryProd.po_no">
+              </base-input>
+              <div class="form-group">
+                <label>Client</label><br>
+                <autocomplete 
+                  ref="autocomplete"
+                  :url="apiUrl+'client/find-client'"
+                  :customHeaders="{ Authorization: tokenApi }"
+                  anchor="client_name"
+                  label="client_code"
+                  :on-select="getDataFilterClient"
+                  placeholder="Choose Client"
+                  :min="3"
+                  :process="processJSON"
+                  :classes="{ input: 'form-control', list: 'list', item: 'data-list-item' }"
+                  >
+                </autocomplete>
+              </div>
+             </div>
+             <template slot="footer">
+                 <button type="secondary" class="btn btn-sm btn-secondary btn-fill mr-4" @click="formFilterSummaryPipa.show = false">Close</button>
+                 <button type="primary" class="btn btn-sm btn-info btn-fill" @click="getLPInv(), formFilterSummaryPipa.show = false">Filter</button>
+             </template>
+           </modal>
+        </div>
+
         <!-- MODAL IMPORT -->
         <div>
            <modal :show.sync="formImport.show">
@@ -597,6 +668,11 @@
           title: "Filter",
           show: false
         },
+        formFilterSummaryPipa: {
+          add: true,
+          title: "Filter Summary",
+          show: false
+        },
         formImport: {
             add: true,
             title: "Import Invoice",
@@ -644,7 +720,14 @@
         totalBeratProduksiAll: 0,
         month: '3',
         year: moment().format('Y'),
-
+        searchSummaryProd: {
+          date: '',
+          op_no: '',
+          surat_jalan_no: '',
+          size: '',
+          po_no: '',
+          client_name: '',
+        },
       }
     },
     mounted(){
@@ -696,12 +779,11 @@
       },
       getLPInv(){
         let context = this;               
-        Api(context, invoice.getLPInv({month: this.month, year: this.year})).onSuccess(function(response) {  
+        Api(context, invoice.getLPInv({month: this.month, year: this.year, date: this.searchSummaryProd.date, op_no: this.searchSummaryProd.op_no, surat_jalan_no: this.searchSummaryProd.surat_jalan_no, size: this.searchSummaryProd.size, po_no: this.searchSummaryProd.po_no, client_name: this.searchSummaryProd.client_name})).onSuccess(function(response) {  
             context.tableLPPipa.data      = response.data.data.data;
-            context.totalBtgAll           = (response.data.data.totalBtgAll - response.data.data.totalBtgAllB - response.data.data.totalBtgAllC);
+            context.totalBtgAll           = response.data.data.totalBtgAll;
             context.totalCoilTerpakaiAll  = response.data.data.totalCoilTerpakaiAll;
             context.totalBeratProduksiAll = ((response.data.data.totalBeratProduksiAll / response.data.data.totalBtgAll) *  (response.data.data.totalBtgAll - (+response.data.data.totalBtgAllB + +response.data.data.totalBtgAllC)));
-            console.log(((response.data.data.totalBeratProduksiAll / response.data.data.totalBtgAll) *  (response.data.data.totalBtgAll - (+response.data.data.totalBtgAllB + +response.data.data.totalBtgAllC))));
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.tableLPPipa.data = [];
@@ -714,6 +796,11 @@
         this.formFilter.show  = true;
         this.formFilter.title = "Filter";
         this.pagination.page  = 1 ;
+      },
+      filterSumaryPipa() {
+        this.formFilterSummaryPipa.add   = true;
+        this.formFilterSummaryPipa.show  = true;
+        this.formFilterSummaryPipa.title = "Filter";
       },
       create() {
           this.form.add    = true;
