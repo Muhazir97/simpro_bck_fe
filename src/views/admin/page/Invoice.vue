@@ -304,9 +304,9 @@
                       <!-- <th rowspan="2" style="font-size: 13px; text-align: center;">INVOICE NO</th> -->
                       <th rowspan="2" style="font-size: 13px; text-align: center;">TANGGAL</th>
                       <th rowspan="2" style="font-size: 13px; text-align: center;">OP NO</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center; background-color: red;">No. SURAT JALAN COIL</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">No. SURAT JALAN COIL</th>
                       <th rowspan="2" colspan="2" style="font-size: 13px; text-align: center;">SIZE</th>
-                      <th rowspan="2" style="font-size: 13px; text-align: center; background-color: red;">COIL TERPAKAI (KG)</th>
+                      <th rowspan="2" style="font-size: 13px; text-align: center;">COIL TERPAKAI (KG)</th>
                       <th colspan="2" style="font-size: 13px; text-align: center;">HASIL PRODUKSI</th>
                       <!-- <th rowspan="2" style="font-size: 13px; text-align: center;">YIELD</th> -->
                       <th rowspan="2" style="font-size: 13px; text-align: center;">PO NO</th>
@@ -325,10 +325,32 @@
                     <!-- <td style="font-size: 13px; text-align: center;">{{ row.invoice_no }}</td> -->
                     <td style="font-size: 13px; text-align: center;">{{ moment(row.created_at).locale('id').format('L') }}</td>
                     <td style="font-size: 13px; text-align: center; white-space: nowrap;">{{ row.op_no }}</td>
-                    <td style="font-size: 13px; text-align: center; background-color: red;">{{ row.packing_list_no }}</td>
+                    <td style="font-size: 13px; text-align: center;">{{ row.surat_jalan_coil }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ row.produksi_odia }}</td>
                     <td style="font-size: 13px; text-align: center; white-space: nowrap;">{{ row.produksi_nd }} x {{ row.produksi_tebal }} x {{ row.length }}</td>
-                    <td style="font-size: 13px; text-align: center; background-color: red;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
+                    <td style="font-size: 13px; text-align: center;">
+                      <!-- jika i sama dengan 0 -->
+                      <div v-if="i == 0">
+                        {{ convertRp(row.material_berat_total) }}
+                      </div>
+                      <!-- jika i bukan sama dengan 0 -->
+                      <div v-else>
+                        <!-- jika coil no sekarang dan sebelumnya sama -->
+                        <div v-if="row.op_no == tableLPPipa.data[i - 1].op_no">
+                          <!-- jika i sama dengan 0 -->
+                          <div v-if="i == 0">
+                            {{ convertRp(row.material_berat_total) }}
+                          </div>
+                          <!-- jika i bukan sama dengan 0 -->
+                          <div v-else>
+                          </div>
+                        </div>
+                        <!-- jika coil no sekarang dan sebelumnya tidak sama -->
+                        <div v-else>
+                          {{ convertRp(row.material_berat_total) }}
+                        </div>
+                      </div>
+                    </td>
                     <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_btg_count) }}</td>
                     <td style="font-size: 13px; text-align: center;">{{ convertRp(row.total_coil_terpakai_count) }}</td>
                     <!-- <td style="font-size: 13px; text-align: center;">
