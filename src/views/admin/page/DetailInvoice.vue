@@ -82,7 +82,10 @@
             </td>
             <td style="text-align: right; margin-top: 100px;" colspan="2">
               Sub Total <br>
-              <template v-if="detailInvoiceData.ppn == 1">PPN 11 % <br></template>
+              <template v-if="detailInvoiceData.ppn == 1">
+                <span v-if="detailInvoiceData.ppn_value == 0.11"> PPN 11 % <br> </span>
+                <span v-if="detailInvoiceData.ppn_value == 0.12"> PPN 12 % <br> </span>
+              </template>
               <p style="margin-top: 15px; font-weight: bold;">Total</p>
             </td>
             <td style="text-align: right; margin-top: 100px;">
