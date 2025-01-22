@@ -83,6 +83,7 @@
             <td style="text-align: right; margin-top: 100px;" colspan="2">
               Sub Total <br>
               <template v-if="detailInvoiceData.ppn == 1">
+                <span v-if="detailInvoiceData.ppn_value == 0.12"> DPP Nilai Lain <br></span>
                 <span v-if="detailInvoiceData.ppn_value == 0.11"> PPN 11 % <br> </span>
                 <span v-if="detailInvoiceData.ppn_value == 0.12"> PPN 12 % <br> </span>
               </template>
@@ -90,7 +91,10 @@
             </td>
             <td style="text-align: right; margin-top: 100px;">
               {{ convertRp(totalAmount) }} <br>
-              <template v-if="detailInvoiceData.ppn == 1">{{ convertRp(Number(ppn).toFixed(0)) }} <br></template>
+              <template v-if="detailInvoiceData.ppn == 1">
+                <span v-if="detailInvoiceData.ppn_value == 0.12"> {{ convertRp(Number(dppLain).toFixed(0)) }} <br></span>
+                {{ convertRp(Number(ppn).toFixed(0)) }} <br>
+              </template>
               <hr style="margin-top: -1px; background: black; height: 1px;">
               <p style="margin-top: -20px; font-weight: bold;"> {{ convertRp(Number(totalAmount + ppn).toFixed(0)) }}</p>
             </td>
@@ -295,6 +299,7 @@
         totalQty: '',
         totalAmount: '',
         ppn: '',
+        dppLain: '',
       }
     },
     mounted(){
@@ -310,6 +315,7 @@
             context.table.data        = response.data.data.dataSJTbl;
             context.totalAmount       = response.data.data.totalAmount;
             context.ppn               = response.data.data.ppn;
+            context.dppLain           = response.data.data.dppLain;
         }).onError(function(error) {                    
             if (error.response.status == 404) {
                 context.detailInvoiceData = '';
